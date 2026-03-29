@@ -5,6 +5,7 @@ const path = require('path');
 const { extractTextFromFile } = require('../services/fileParser');
 const { extractCVData } = require('../services/cvExtractor');
 const { validateProfile } = require('../services/schemaValidator');
+const UserProfile = require('../models/UserProfile');
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ const upload = multer({
 router.post('/upload', upload.single('cv'), async (req, res) => {
   try {
     // 1. Extract raw text
-  const rawText = await extractTextFromFile(req.file.buffer, req.file.mimetype);
+    const rawText = await extractTextFromFile(req.file.buffer, req.file.mimetype);
     // 2. Send to Gemini
     const extractedData = await extractCVData(rawText);
 
@@ -34,9 +35,17 @@ router.post('/upload', upload.single('cv'), async (req, res) => {
     }
 
     // 4. Save to MongoDB (your existing User model)
-    // const user = await User.create({ profile, userId: req.user.id });
+    const userProfile = await UserProfile.create({
+      userId: req.headers['x-user-id'] || 'anonymous',
+      cvRawText: rawText,
+      cvFileName: req.file.originalname,
+      cvMimeType: req.file.mimetype,
+      extractedData: profile,
+      status: valid ? 'complete' : 'draft',
+      extractionErrors: errors,
+    });
 
-    res.json({ success: true, profile });
+    res.json({ success: true, profile, profileId: userProfile._id });
 
   } catch (err) {
     console.error('Extraction error:', err);
