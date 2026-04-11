@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const uploadRoute = require('./routes/upload');
 const deployRoute = require('./routes/deploy');
-const connectDB = require('./config/db');
+// const connectDB = require('./config/db');
 
 const app = express();
 
@@ -14,25 +14,26 @@ app.use(express.json());
 app.use('/api/cv', uploadRoute);
 app.use('/api/', deployRoute);
 
-const PORT = process.env.PORT || 3003;
+const PORT = 5001 ;
 
-// async function start() {
-//     try {
-//         await connectDB();
-//         console.log('MongoDB connected');
-//     } catch (err) {
-//         console.log('MongoDB not available - starting without DB');
-//     }
-//     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-// }
+async function start() {
+    try {
+        await connectDB();
+        console.log('MongoDB connected');
+    } catch (err) {
+        console.log('MongoDB not available - starting without DB');
+    }
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
 
-// process.on('unhandledRejection', (err) => {
-//     console.log('Unhandled Rejection:', err.message);
-// });
+process.on('unhandledRejection', (err) => {
+    console.log('Unhandled Rejection:', err.message);
+});
 
-// process.on('uncaughtException', (err) => {
-//     console.log('Uncaught Exception:', err.message);
-// });
+process.on('uncaughtException', (err) => {
+    console.log('Uncaught Exception:', err.message);
+});
 
-// start();
+start();
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
