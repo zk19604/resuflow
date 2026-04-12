@@ -152,6 +152,17 @@ router.post('/deploy', async (req, res) => {
   }
 });
 
+router.get('/profile/:username', (req, res) => {
+  const { username } = req.params;
+  const profile = userProfiles.get(username);
+
+  if (!profile) {
+    return res.status(404).json({ message: 'Profile not found' });
+  }
+
+  res.json(profile);
+});
+
 router.get('/status/:userId', async (req, res) => {
   const { userId } = req.params;
   const username = userId.toLowerCase().replace(/[^a-z0-9]/g, '-');
