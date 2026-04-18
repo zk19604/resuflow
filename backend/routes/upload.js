@@ -22,30 +22,41 @@ const upload = multer({
 
 router.post('/upload', upload.single('cv'), async (req, res) => {
   try {
-    // 1. Extract raw text
-    const rawText = await extractTextFromFile(req.file.buffer, req.file.mimetype);
-    // 2. Send to Gemini
-    const extractedData = await extractCVData(rawText);
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
 
-    // 3. Validate & normalize
+    const rawText = await extractTextFromFile(req.file.buffer, req.file.mimetype);
+    const extractedData = await extractCVData(rawText);
     const { valid, errors, profile } = validateProfile(extractedData);
 
     if (!valid) {
       return res.status(422).json({ message: 'Extraction issues', errors, profile });
     }
 
-    // 4. Save to MongoDB (your existing User model)
-    const userProfile = await UserProfile.create({
-      userId: req.headers['x-user-id'] || 'anonymous',
-      cvRawText: rawText,
-      cvFileName: req.file.originalname,
-      cvMimeType: req.file.mimetype,
-      extractedData: profile,
-      status: valid ? 'complete' : 'draft',
-      extractionErrors: errors,
-    });
+    const userId = req.headers['x-user-id'] || 'anonymous';
 
-    res.json({ success: true, profile, profileId: userProfile._id });
+    let profileId = null;
+    try {
+      const userProfile = await UserProfile.findOneAndUpdate(
+        { userId },
+        {
+          userId,
+          cvRawText: rawText,
+          cvFileName: req.file.originalname,
+          cvMimeType: req.file.mimetype,
+          extractedData: profile,
+          status: 'complete',
+          extractionErrors: errors,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      profileId = userProfile._id;
+    } catch (dbErr) {
+      console.warn('MongoDB save failed (non-fatal):', dbErr.message);
+    }
+
+    res.json({ success: true, profile, profileId });
 
   } catch (err) {
     console.error('Extraction error:', err);

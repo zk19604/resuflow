@@ -1,12 +1,22 @@
 const mammoth = require('mammoth');
 
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms / 1000}s`)), ms)
+    ),
+  ]);
+}
+
 async function extractTextFromFile(buffer, mimeType) {
   if (mimeType === 'application/pdf') {
-    const pdfParse = require('pdf-parse');
-    const data = await pdfParse(buffer);
+    const { PDFParse } = require('pdf-parse');
+    const parser = new PDFParse({ data: buffer });
+    const data = await withTimeout(parser.getText(), 30000, 'PDF parsing');
     return data.text;
   } else if (mimeType.includes('word') || mimeType.includes('docx')) {
-    const result = await mammoth.extractRawText({ buffer });
+    const result = await withTimeout(mammoth.extractRawText({ buffer }), 30000, 'DOCX parsing');
     return result.value;
   }
   throw new Error('Unsupported file type');

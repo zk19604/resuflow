@@ -120,7 +120,12 @@ async function extractCVData(rawText) {
 
   const prompt = CV_SCHEMA_PROMPT + rawText;
 
-  const result = await model.generateContent(prompt);
+  const apiCall = model.generateContent(prompt);
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Gemini API timed out after 60s')), 60000)
+  );
+
+  const result = await Promise.race([apiCall, timeout]);
   const responseText = result.response.text();
 
   const cleaned = responseText
@@ -128,8 +133,11 @@ async function extractCVData(rawText) {
     .replace(/```/g, '')
     .trim();
 
-  const parsed = JSON.parse(cleaned);
-  return parsed;
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    throw new Error('Gemini returned invalid JSON — check your API key and model name');
+  }
 }
 
 module.exports = { extractCVData };

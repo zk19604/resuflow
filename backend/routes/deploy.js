@@ -6,9 +6,21 @@ const router = express.Router();
 
 const DEPLOYED_APP_URL = process.env.DEPLOYED_APP_URL || 'https://your-portfolio-app.vercel.app';
 
+const configSchema = z.object({
+  template: z.string().optional().default('glassmorphism'),
+  palette: z.object({
+    name: z.string(),
+    colors: z.array(z.string()),
+  }).optional(),
+  font: z.enum(['sans', 'serif']).optional().default('sans'),
+  sectionsVisible: z.record(z.boolean()).optional(),
+  tone: z.string().optional().default('professional'),
+}).optional();
+
 const profileSchema = z.object({
   userId: z.string().min(1, 'userId is required').max(100),
   template: z.string().optional().default('glassmorphism'),
+  config: configSchema,
   profile: z.object({
     personalInfo: z.object({
       name: z.string(),
@@ -125,14 +137,16 @@ router.post('/deploy', async (req, res) => {
       return res.status(400).json({ message: 'Validation failed', errors });
     }
 
-    const { userId, profile } = parseResult.data;
+    const { userId, profile, config, template } = parseResult.data;
 
     if (!checkRateLimit(userId)) {
       return res.status(429).json({ message: 'Rate limit exceeded: max 10 updates per hour' });
     }
 
     const username = userId.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    userProfiles.set(username, profile);
+    const resolvedConfig = config || {};
+    if (!resolvedConfig.template) resolvedConfig.template = template || 'glassmorphism';
+    userProfiles.set(username, { profile, config: resolvedConfig });
 
     const portfolioUrl = `${DEPLOYED_APP_URL}/${username}`;
 
@@ -154,13 +168,13 @@ router.post('/deploy', async (req, res) => {
 
 router.get('/profile/:username', (req, res) => {
   const { username } = req.params;
-  const profile = userProfiles.get(username);
+  const entry = userProfiles.get(username);
 
-  if (!profile) {
+  if (!entry) {
     return res.status(404).json({ message: 'Profile not found' });
   }
 
-  res.json(profile);
+  res.json({ profile: entry.profile, config: entry.config || {} });
 });
 
 router.get('/status/:userId', async (req, res) => {

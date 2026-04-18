@@ -97,6 +97,17 @@ export interface UserProfile {
   extras: Extras;
 }
 
+export interface PortfolioConfig {
+  template: string;
+  palette?: {
+    name: string;
+    colors: string[];
+  };
+  font?: 'sans' | 'serif';
+  sectionsVisible?: Record<string, boolean>;
+  tone?: string;
+}
+
 export const defaultUserProfile: UserProfile = {
   personalInfo: {
     name: '',

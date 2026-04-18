@@ -1,4 +1,4 @@
-import { UserProfile } from '@/types/userProfile';
+import { UserProfile, PortfolioConfig } from '@/types/userProfile';
 import { Background } from '@/components/glassmorphism/Background';
 import { NavBar } from '@/components/glassmorphism/NavBar';
 import { HeroSection } from '@/components/glassmorphism/HeroSection';
@@ -8,23 +8,27 @@ import { WorkSection } from '@/components/glassmorphism/WorkSection';
 import { TestimonialsSection } from '@/components/glassmorphism/TestimonialsSection';
 import { ContactSection } from '@/components/glassmorphism/ContactSection';
 import { Footer } from '@/components/glassmorphism/Footer';
+import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
 }
 
-async function getUserProfile(username: string): Promise<UserProfile | null> {
+interface ProfileResponse {
+  profile: UserProfile;
+  config: PortfolioConfig;
+}
+
+async function getPortfolioData(username: string): Promise<ProfileResponse | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     const res = await fetch(`${baseUrl}/api/profile/${username}`, {
       next: { revalidate: 60 }
     });
-    
     if (!res.ok) {
       if (res.status === 404) return null;
       throw new Error('Failed to fetch profile');
     }
-    
     return res.json();
   } catch (error) {
     console.error('Error fetching profile:', error);
@@ -34,9 +38,9 @@ async function getUserProfile(username: string): Promise<UserProfile | null> {
 
 export default async function PortfolioPage({ params }: PageProps) {
   const { username } = await params;
-  const profile = await getUserProfile(username);
+  const data = await getPortfolioData(username);
 
-  if (!profile) {
+  if (!data) {
     return (
       <div
         style={{
@@ -58,6 +62,17 @@ export default async function PortfolioPage({ params }: PageProps) {
     );
   }
 
+  const { profile, config } = data;
+
+  if (config?.template === 'highendminimalist') {
+    return <HighEndMinimalistTemplate profile={profile} config={config} />;
+  }
+
+  const visible = config?.sectionsVisible || {};
+  const isVisible = (section: string) => visible[section] !== false;
+
+  const accentColor = config?.palette?.colors[1] || 'rgba(123,47,255,0.4)';
+
   return (
     <div
       style={{
@@ -71,12 +86,11 @@ export default async function PortfolioPage({ params }: PageProps) {
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         html { scroll-behavior: smooth; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #080810; }
-        ::-webkit-scrollbar-thumb { background: rgba(123,47,255,0.4); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: ${accentColor}; border-radius: 3px; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -131,9 +145,9 @@ export default async function PortfolioPage({ params }: PageProps) {
 
       <main style={{ position: 'relative', zIndex: 2 }}>
         <HeroSection profile={profile} />
-        <AboutSection profile={profile} />
-        <SkillsSection skills={profile.skills} />
-        <WorkSection experience={profile.workExperience} />
+        {isVisible('about') && <AboutSection profile={profile} />}
+        {isVisible('skills') && <SkillsSection skills={profile.skills} />}
+        {isVisible('experience') && <WorkSection experience={profile.workExperience} />}
         <TestimonialsSection />
         <ContactSection profile={profile} />
       </main>
