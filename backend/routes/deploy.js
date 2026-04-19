@@ -1,5 +1,6 @@
 const express = require('express');
 const { z } = require('zod');
+const QRCode = require('qrcode');
 const AppError = require('../services/AppError');
 
 const router = express.Router();
@@ -192,6 +193,38 @@ router.get('/status/:userId', async (req, res) => {
     portfolioUrl,
     username,
   });
+});
+
+router.get('/qrcode/:username', async (req, res) => {
+  const { username } = req.params;
+  const profile = userProfiles.get(username);
+
+  if (!profile) {
+    return res.status(404).json({ message: 'Profile not found' });
+  }
+
+  const portfolioUrl = `${DEPLOYED_APP_URL}/${username}`;
+
+  try {
+    const qrCodeDataUrl = await QRCode.toDataURL(portfolioUrl, {
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#0E1627',
+        light: '#F4E1E0',
+      },
+      errorCorrectionLevel: 'H',
+    });
+
+    res.json({
+      qrCode: qrCodeDataUrl,
+      portfolioUrl,
+      username,
+    });
+  } catch (err) {
+    console.error('QR code generation error:', err);
+    res.status(500).json({ message: 'Failed to generate QR code' });
+  }
 });
 
 module.exports = router;

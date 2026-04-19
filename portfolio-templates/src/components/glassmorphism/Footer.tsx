@@ -34,7 +34,7 @@ export function Footer({ profile }: FooterProps) {
             color: 'rgba(255,255,255,0.35)',
           }}
         >
-          {profile.personalInfo.name || 'Portfolio'} © {new Date().getFullYear()}
+          {profile?.personalInfo?.name || 'Portfolio'} © {new Date().getFullYear()}
         </span>
         <span
           style={{

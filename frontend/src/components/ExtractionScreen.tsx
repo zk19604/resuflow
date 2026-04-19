@@ -3,90 +3,31 @@ import { useNavigate } from "react-router";
 import { CheckCircle2 } from "lucide-react";
 import { Breadcrumb } from "./Breadcrumb";
 import { Navbar } from "./Navbar";
+import glassmorphismThumb from "../assets/glassmorphism.png";
+import highendminimalistThumb from "../assets/highendminimalist.png";
 
-const vibes = [
+const templates = [
   {
-    name: "Minimal",
-    desc: "Clean, whitespace-forward, content first.",
-    layout: [
-      { w: "70%", h: 10, top: 16, left: 16 },
-      { w: "40%", h: 7, top: 32, left: 16 },
-      { w: "80%", h: 5, top: 52, left: 16 },
-      { w: "60%", h: 5, top: 63, left: 16 },
-    ],
+    id: "glassmorphism" as const,
+    label: "Glassmorphism",
+    desc: "Dark, glassy, modern aesthetic with gradient orbs.",
+    thumb: glassmorphismThumb,
   },
   {
-    name: "Editorial",
-    desc: "Magazine-style with bold headers and contrast.",
-    layout: [
-      { w: "100%", h: 18, top: 0, left: 0, color: "#0E1627" },
-      { w: "55%", h: 8, top: 24, left: 16 },
-      { w: "80%", h: 5, top: 38, left: 16 },
-      { w: "65%", h: 5, top: 49, left: 16 },
-    ],
-  },
-  {
-    name: "Bold",
-    desc: "High contrast, expressive, personal brand.",
-    layout: [
-      { w: "40%", h: 80, top: 0, left: 0, color: "#7F6269" },
-      { w: "50%", h: 8, top: 16, left: "44%" },
-      { w: "45%", h: 5, top: 30, left: "44%" },
-      { w: "50%", h: 5, top: 42, left: "44%" },
-    ],
-  },
-  {
-    name: "Classic",
-    desc: "Traditional, ATS-friendly, professional tone.",
-    layout: [
-      { w: "50%", h: 9, top: 16, left: "25%" },
-      { w: "70%", h: 1, top: 30, left: "15%", color: "#BDB8B9" },
-      { w: "80%", h: 5, top: 38, left: 10 },
-      { w: "65%", h: 5, top: 49, left: 10 },
-    ],
+    id: "highendminimalist" as const,
+    label: "High-End Minimalist",
+    desc: "Clean, editorial, elegant white-space layout.",
+    thumb: highendminimalistThumb,
   },
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];
-const paletteSwatches = ["#7F6269", "#0E1627", "#F4E1E0", "#BDB8B9", "#E5C5C1"];
-
-function VibeLayoutThumb({ layout }: { layout: typeof vibes[0]["layout"] }) {
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "80px",
-        backgroundColor: "rgba(189,184,185,0.06)",
-        borderRadius: "6px",
-        position: "relative",
-        overflow: "hidden",
-        marginBottom: "10px",
-      }}
-    >
-      {layout.map((block, i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            width: block.w,
-            height: block.h,
-            top: block.top,
-            left: block.left,
-            backgroundColor: (block as any).color || "rgba(189,184,185,0.4)",
-            borderRadius: "3px",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
 
 export function ExtractionScreen() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
-  const [selectedVibe, setSelectedVibe] = useState(0);
+  const [selectedTemplate, setSelectedTemplate] = useState<"glassmorphism" | "highendminimalist">("glassmorphism");
   const [selectedTone, setSelectedTone] = useState(0);
-  const [selectedPalette, setSelectedPalette] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("resuflow_profile");
@@ -128,12 +69,11 @@ export function ExtractionScreen() {
     localStorage.setItem(
       "resuflow_vibe",
       JSON.stringify({
-        vibe: vibes[selectedVibe].name,
+        template: selectedTemplate,
         tone: toneOptions[selectedTone],
-        palette: paletteSwatches[selectedPalette],
       })
     );
-    navigate("/templates");
+    navigate("/preview");
   };
 
   return (
@@ -322,25 +262,25 @@ export function ExtractionScreen() {
               }}
             >
               <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "16px" }}>
-                Choose Your Vibe
+                Choose Your Template
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px", marginBottom: "28px" }}>
-                {vibes.map((vibe, i) => (
+                {templates.map((t) => (
                   <div
-                    key={vibe.name}
-                    onClick={() => setSelectedVibe(i)}
+                    key={t.id}
+                    onClick={() => setSelectedTemplate(t.id)}
                     style={{
                       backgroundColor: "rgba(189,184,185,0.04)",
                       borderRadius: "12px",
-                      padding: "16px",
-                      border: selectedVibe === i ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)",
+                      overflow: "hidden",
+                      border: selectedTemplate === t.id ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)",
                       cursor: "pointer",
                       position: "relative",
                       transition: "border 0.15s ease",
                     }}
                   >
-                    {selectedVibe === i && (
+                    {selectedTemplate === t.id && (
                       <div
                         style={{
                           position: "absolute",
@@ -353,14 +293,21 @@ export function ExtractionScreen() {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          zIndex: 1,
                         }}
                       >
                         <CheckCircle2 size={12} style={{ color: "#F4E1E0" }} />
                       </div>
                     )}
-                    <VibeLayoutThumb layout={vibe.layout} />
-                    <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{vibe.name}</div>
-                    <div style={{ color: "#BDB8B9", fontSize: "12px" }}>{vibe.desc}</div>
+                    <img
+                      src={t.thumb}
+                      alt={t.label}
+                      style={{ width: "100%", height: "100px", objectFit: "cover", display: "block" }}
+                    />
+                    <div style={{ padding: "12px" }}>
+                      <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>
+                      <div style={{ color: "#BDB8B9", fontSize: "11px" }}>{t.desc}</div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -368,7 +315,7 @@ export function ExtractionScreen() {
               <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>
                 Tone of Voice
               </div>
-              <div className="flex gap-3 mb-7">
+              <div className="flex gap-3 mb-8">
                 {toneOptions.map((tone, i) => (
                   <button
                     key={tone}
@@ -391,28 +338,6 @@ export function ExtractionScreen() {
                 ))}
               </div>
 
-              <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>
-                Color Palette
-              </div>
-              <div className="flex gap-3 mb-8">
-                {paletteSwatches.map((color, i) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedPalette(i)}
-                    style={{
-                      width: "28px",
-                      height: "28px",
-                      borderRadius: "50%",
-                      backgroundColor: color,
-                      border: selectedPalette === i ? "2.5px solid #F4E1E0" : "2px solid transparent",
-                      cursor: "pointer",
-                      outline: selectedPalette === i ? "2px solid rgba(244,225,224,0.3)" : "none",
-                      transition: "all 0.15s ease",
-                    }}
-                  />
-                ))}
-              </div>
-
               <button
                 onClick={handleContinue}
                 style={{
@@ -430,7 +355,7 @@ export function ExtractionScreen() {
                 }}
                 className="hover:opacity-90 transition-opacity"
               >
-                Choose Template →
+                Continue to Preview →
               </button>
             </div>
           </div>

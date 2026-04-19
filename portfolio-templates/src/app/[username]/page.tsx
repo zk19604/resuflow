@@ -146,8 +146,8 @@ export default async function PortfolioPage({ params }: PageProps) {
       <main style={{ position: 'relative', zIndex: 2 }}>
         <HeroSection profile={profile} />
         {isVisible('about') && <AboutSection profile={profile} />}
-        {isVisible('skills') && <SkillsSection skills={profile.skills} />}
-        {isVisible('experience') && <WorkSection experience={profile.workExperience} />}
+        {isVisible('skills') && profile?.skills && <SkillsSection skills={profile.skills} />}
+        {isVisible('experience') && profile?.workExperience && <WorkSection experience={profile.workExperience} />}
         <TestimonialsSection />
         <ContactSection profile={profile} />
       </main>
