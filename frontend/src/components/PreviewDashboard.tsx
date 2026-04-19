@@ -4,6 +4,8 @@ import { Navbar } from "./Navbar";
 import { Breadcrumb } from "./Breadcrumb";
 import glassmorphismThumb from "../assets/glassmorphism.png";
 import highendminimalistThumb from "../assets/highendminimalist.png";
+import neumorphismThumb from "../assets/neumorphism.png";
+import handcraftedThumb from "../assets/handcrafted.png";
 
 const paletteRows = [
   { name: "Rose Navy", colors: ["#0E1627", "#7F6269", "#F4E1E0", "#BDB8B9", "#E5C5C1"] },
@@ -14,9 +16,323 @@ const paletteRows = [
 ];
 
 const sections = ["About", "Skills", "Experience", "Education", "Projects", "Achievements"];
-
 const fontOptions = ["Modern Sans", "Serif Editorial"];
 
+type TemplateType = "glassmorphism" | "highendminimalist" | "neumorphism" | "handcrafted";
+
+const templateLabels: Record<TemplateType, string> = {
+  glassmorphism: "Glassmorphism",
+  highendminimalist: "High-End Minimalist",
+  neumorphism: "Neumorphism",
+  handcrafted: "Handcrafted",
+};
+function HandcraftedPreview({
+  palette,
+  profile,
+}: {
+  palette: (typeof paletteRows)[0];
+  profile: any;
+}) {
+  const name = profile?.personalInfo?.name || "Emma Richardson";
+  const role = profile?.workExperience?.[0]?.role || "Architect & Interior Designer";
+  const company = profile?.workExperience?.[0]?.company || "Richardson Studio";
+  const location = profile?.personalInfo?.location || "New York, NY";
+  const email = profile?.personalInfo?.email || "emma@richardson.studio";
+  const phone = profile?.personalInfo?.phone || "+1 (212) 555-0182";
+  const summary = profile?.summary || "Creating spaces that inspire and transform. Specializing in sustainable residential and commercial design with a focus on natural materials and biophilic principles.";
+  
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+    ...(profile?.skills?.soft || []),
+  ].slice(0, 6);
+
+  // Handcrafted aesthetic uses warm, organic colors
+  const bgColor = "#F9F6F0";
+  const accentColor = palette.colors[1] || "#C4724B";
+  const secondaryColor = palette.colors[2] || "#D4956B";
+  const textColor = "#3E3A36";
+  const mutedColor = "#8B7E74";
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: bgColor,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Cormorant Garamond', 'Georgia', serif",
+        padding: "30px",
+        overflow: "auto",
+        position: "relative",
+      }}
+    >
+      {/* Decorative hand-drawn elements */}
+      <svg
+        style={{
+          position: "absolute",
+          top: "15px",
+          right: "20px",
+          width: "60px",
+          height: "60px",
+          opacity: 0.15,
+        }}
+        viewBox="0 0 60 60"
+      >
+        <circle cx="30" cy="30" r="25" fill="none" stroke={accentColor} strokeWidth="1.5" />
+        <circle cx="30" cy="30" r="18" fill="none" stroke={accentColor} strokeWidth="0.8" strokeDasharray="4 3" />
+      </svg>
+
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "500px",
+          background: "#FFFFFF",
+          borderRadius: "0px",
+          padding: "32px 28px",
+          boxShadow: `
+            0 4px 20px rgba(0, 0, 0, 0.06),
+            0 1px 3px rgba(0, 0, 0, 0.03)
+          `,
+          border: `1px solid ${accentColor}20`,
+          position: "relative",
+        }}
+      >
+        {/* Decorative border accent */}
+        <div
+          style={{
+            position: "absolute",
+            top: "-3px",
+            left: "30px",
+            right: "30px",
+            height: "3px",
+            background: `linear-gradient(90deg, transparent, ${accentColor}60, ${accentColor}, ${accentColor}60, transparent)`,
+          }}
+        />
+
+        {/* Header with name and role */}
+        <div style={{ marginBottom: "24px", textAlign: "center" }}>
+          <h1
+            style={{
+              fontSize: "28px",
+              fontWeight: 400,
+              color: textColor,
+              margin: "0 0 4px 0",
+              letterSpacing: "0.5px",
+              fontFamily: "'Cormorant Garamond', serif",
+              textTransform: "uppercase",
+            }}
+          >
+            {name}
+          </h1>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              marginBottom: "6px",
+            }}
+          >
+            <span
+              style={{
+                width: "30px",
+                height: "1px",
+                background: accentColor,
+                opacity: 0.5,
+              }}
+            />
+            <span
+              style={{
+                fontSize: "13px",
+                color: accentColor,
+                fontWeight: 400,
+                letterSpacing: "2px",
+                textTransform: "uppercase",
+              }}
+            >
+              {role}
+            </span>
+            <span
+              style={{
+                width: "30px",
+                height: "1px",
+                background: accentColor,
+                opacity: 0.5,
+              }}
+            />
+          </div>
+          <p
+            style={{
+              fontSize: "11px",
+              color: mutedColor,
+              margin: "4px 0 0 0",
+              fontFamily: "'Inter', sans-serif",
+              letterSpacing: "0.3px",
+            }}
+          >
+            {company} · {location}
+          </p>
+        </div>
+
+        {/* Summary - Handcrafted style with italic */}
+        <div
+          style={{
+            marginBottom: "24px",
+            padding: "0 8px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: "12px",
+              color: textColor,
+              lineHeight: 1.7,
+              margin: 0,
+              textAlign: "center",
+              fontStyle: "italic",
+              fontFamily: "'Cormorant Garamond', serif",
+            }}
+          >
+            "{summary.slice(0, 130)}{summary.length > 130 ? "…" : ""}"
+          </p>
+        </div>
+
+        {/* Contact Info - Minimal, elegant */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "24px",
+            marginBottom: "24px",
+            padding: "12px 0",
+            borderTop: `1px solid ${mutedColor}20`,
+            borderBottom: `1px solid ${mutedColor}20`,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            <span style={{ fontSize: "12px", opacity: 0.6 }}>✉</span>
+            <span style={{ fontSize: "10px", color: mutedColor }}>
+              {email.split("@")[0].slice(0, 12)}@...
+            </span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            <span style={{ fontSize: "12px", opacity: 0.6 }}>📞</span>
+            <span style={{ fontSize: "10px", color: mutedColor }}>{phone}</span>
+          </div>
+        </div>
+
+        {/* Skills - Crafted as organic tags */}
+        {skills.length > 0 && (
+          <div style={{ marginBottom: "20px" }}>
+            <p
+              style={{
+                fontSize: "10px",
+                color: mutedColor,
+                textTransform: "uppercase",
+                letterSpacing: "2px",
+                margin: "0 0 12px 0",
+                textAlign: "center",
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 500,
+              }}
+            >
+              — Expertise —
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px 6px",
+                justifyContent: "center",
+              }}
+            >
+              {(skills.length > 0 ? skills : ["Sustainable Design", "Space Planning", "3D Modeling", "Material Selection", "Client Relations"]).slice(0, 5).map((skill) => (
+                <span
+                  key={skill}
+                  style={{
+                    padding: "5px 14px",
+                    fontSize: "10px",
+                    fontWeight: 400,
+                    color: textColor,
+                    background: bgColor,
+                    border: `1px solid ${accentColor}30`,
+                    borderRadius: "0px",
+                    fontFamily: "'Inter', sans-serif",
+                    letterSpacing: "0.3px",
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Digital Business Card / Portfolio Link */}
+        <div
+          style={{
+            marginTop: "24px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "inline-block",
+              padding: "10px 28px",
+              background: "transparent",
+              border: `1.5px solid ${accentColor}`,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "11px",
+                fontWeight: 500,
+                color: accentColor,
+                textTransform: "uppercase",
+                letterSpacing: "2px",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              CardConnect — Digital Business Card
+            </span>
+          </div>
+        </div>
+
+        {/* Footer accent */}
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+            gap: "4px",
+          }}
+        >
+          <span style={{ color: accentColor, fontSize: "16px", opacity: 0.4 }}>◆</span>
+          <span style={{ color: accentColor, fontSize: "10px", opacity: 0.3 }}>◆</span>
+          <span style={{ color: accentColor, fontSize: "16px", opacity: 0.4 }}>◆</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 function GlassmorphismPreview({
   palette,
   profile,
@@ -383,9 +699,408 @@ function HighEndMinimalistPreview({ profile }: { profile: any }) {
   );
 }
 
+function NeumorphismPreview({
+  palette,
+  profile,
+}: {
+  palette: (typeof paletteRows)[0];
+  profile: any;
+}) {
+  const name = profile?.personalInfo?.name || "Alex Morgan";
+  const role = profile?.workExperience?.[0]?.role || "Product Designer";
+  const company = profile?.workExperience?.[0]?.company || "Design Studio";
+  const location = profile?.personalInfo?.location || "San Francisco, CA";
+  const summary = profile?.summary || "Designing meaningful digital experiences with a focus on user-centered design and clean aesthetics.";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+    ...(profile?.skills?.soft || []),
+  ].slice(0, 3);
+
+  // Neumorphism typically uses soft, muted backgrounds
+  const bgColor = "#E4E9F2";
+  const primaryColor = palette.colors[1] || "#7B6D8D";
+  const accentColor = palette.colors[2] || "#9B8DA8";
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: bgColor,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Inter', -apple-system, sans-serif",
+        padding: "24px",
+        overflow: "auto",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "480px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+        }}
+      >
+        {/* Header Card - Profile Info */}
+        <div
+          style={{
+            background: bgColor,
+            borderRadius: "24px",
+            padding: "28px 24px",
+            boxShadow: `
+              8px 8px 16px rgba(166, 180, 200, 0.4),
+              -8px -8px 16px rgba(255, 255, 255, 0.7),
+              inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+              inset -1px -1px 2px rgba(166, 180, 200, 0.2)
+            `,
+          }}
+        >
+          {/* Avatar + Name Row */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            {/* Neumorphic Avatar */}
+            <div
+              style={{
+                width: "70px",
+                height: "70px",
+                borderRadius: "50%",
+                background: bgColor,
+                boxShadow: `
+                  6px 6px 12px rgba(166, 180, 200, 0.4),
+                  -6px -6px 12px rgba(255, 255, 255, 0.8),
+                  inset 2px 2px 4px rgba(166, 180, 200, 0.2),
+                  inset -2px -2px 4px rgba(255, 255, 255, 0.9)
+                `,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "28px",
+                  fontWeight: 600,
+                  color: primaryColor,
+                  textShadow: "1px 1px 2px rgba(255,255,255,0.5)",
+                }}
+              >
+                {name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+
+            <div>
+              <h1
+                style={{
+                  fontSize: "22px",
+                  fontWeight: 700,
+                  color: "#3A4151",
+                  margin: "0 0 4px 0",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {name}
+              </h1>
+              <p
+                style={{
+                  fontSize: "13px",
+                  color: "#6B7A8F",
+                  margin: 0,
+                  fontWeight: 500,
+                }}
+              >
+                {role}
+              </p>
+              <p
+                style={{
+                  fontSize: "11px",
+                  color: "#8895A9",
+                  margin: "4px 0 0 0",
+                }}
+              >
+                {company} · {location}
+              </p>
+            </div>
+          </div>
+
+          {/* Summary */}
+          <p
+            style={{
+              fontSize: "11px",
+              color: "#5A6778",
+              lineHeight: 1.6,
+              margin: "0 0 20px 0",
+            }}
+          >
+            {summary.slice(0, 140)}{summary.length > 140 ? "…" : ""}
+          </p>
+
+          {/* Stats Row */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              marginBottom: "20px",
+            }}
+          >
+            {[
+              { label: "Projects", value: "24+" },
+              { label: "Experience", value: "5 yrs" },
+              { label: "Clients", value: "12" },
+            ].map((stat) => (
+              <div key={stat.label} style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 700,
+                    color: primaryColor,
+                  }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  style={{
+                    fontSize: "9px",
+                    color: "#8895A9",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Buttons */}
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+            }}
+          >
+            <button
+              style={{
+                flex: 1,
+                padding: "12px 0",
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "#FFFFFF",
+                background: `linear-gradient(145deg, ${primaryColor}, ${accentColor})`,
+                border: "none",
+                borderRadius: "40px",
+                cursor: "pointer",
+                boxShadow: `
+                  4px 4px 8px rgba(166, 180, 200, 0.4),
+                  -4px -4px 8px rgba(255, 255, 255, 0.6)
+                `,
+              }}
+            >
+              View Portfolio
+            </button>
+            <button
+              style={{
+                flex: 1,
+                padding: "12px 0",
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "#5A6778",
+                background: bgColor,
+                border: "none",
+                borderRadius: "40px",
+                cursor: "pointer",
+                boxShadow: `
+                  4px 4px 8px rgba(166, 180, 200, 0.3),
+                  -4px -4px 8px rgba(255, 255, 255, 0.7)
+                `,
+              }}
+            >
+              Contact Me
+            </button>
+          </div>
+        </div>
+
+        {/* Skills Section */}
+        <div
+          style={{
+            background: bgColor,
+            borderRadius: "20px",
+            padding: "18px 20px",
+            boxShadow: `
+              6px 6px 12px rgba(166, 180, 200, 0.3),
+              -6px -6px 12px rgba(255, 255, 255, 0.7)
+            `,
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#3A4151",
+              margin: "0 0 12px 0",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+            }}
+          >
+            Core Skills
+          </h3>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+            }}
+          >
+            {skills.length > 0 ? (
+              skills.map((skill) => (
+                <span
+                  key={skill}
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    color: "#5A6778",
+                    background: bgColor,
+                    borderRadius: "30px",
+                    boxShadow: `
+                      3px 3px 6px rgba(166, 180, 200, 0.2),
+                      -3px -3px 6px rgba(255, 255, 255, 0.8),
+                      inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+                      inset -1px -1px 2px rgba(166, 180, 200, 0.1)
+                    `,
+                  }}
+                >
+                  {skill}
+                </span>
+              ))
+            ) : (
+              <>
+                <span
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    color: "#5A6778",
+                    background: bgColor,
+                    borderRadius: "30px",
+                    boxShadow: `
+                      3px 3px 6px rgba(166, 180, 200, 0.2),
+                      -3px -3px 6px rgba(255, 255, 255, 0.8),
+                      inset 1px 1px 2px rgba(255, 255, 255, 0.9)
+                    `,
+                  }}
+                >
+                  UI Design
+                </span>
+                <span
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    color: "#5A6778",
+                    background: bgColor,
+                    borderRadius: "30px",
+                    boxShadow: `
+                      3px 3px 6px rgba(166, 180, 200, 0.2),
+                      -3px -3px 6px rgba(255, 255, 255, 0.8)
+                    `,
+                  }}
+                >
+                  Figma
+                </span>
+                <span
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    color: "#5A6778",
+                    background: bgColor,
+                    borderRadius: "30px",
+                    boxShadow: `
+                      3px 3px 6px rgba(166, 180, 200, 0.2),
+                      -3px -3px 6px rgba(255, 255, 255, 0.8)
+                    `,
+                  }}
+                >
+                  Prototyping
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Featured Work Preview */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "12px",
+          }}
+        >
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              style={{
+                background: bgColor,
+                borderRadius: "16px",
+                padding: "14px",
+                boxShadow: `
+                  4px 4px 8px rgba(166, 180, 200, 0.25),
+                  -4px -4px 8px rgba(255, 255, 255, 0.7)
+                `,
+              }}
+            >
+              <div
+                style={{
+                  width: "100%",
+                  height: "60px",
+                  borderRadius: "10px",
+                  background: `linear-gradient(145deg, ${primaryColor}20, ${accentColor}30)`,
+                  marginBottom: "10px",
+                  boxShadow: `
+                    inset 2px 2px 4px rgba(166, 180, 200, 0.2),
+                    inset -2px -2px 4px rgba(255, 255, 255, 0.7)
+                  `,
+                }}
+              />
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "#3A4151",
+                  marginBottom: "4px",
+                }}
+              >
+                Project {i}
+              </div>
+              <div
+                style={{
+                  fontSize: "9px",
+                  color: "#8895A9",
+                }}
+              >
+                {i === 1 ? "Mobile App Design" : "Brand Identity"}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 export function PreviewDashboard() {
   const navigate = useNavigate();
-  const [selectedTemplate, setSelectedTemplate] = useState<"glassmorphism" | "highendminimalist">("glassmorphism");
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>("glassmorphism");
   const [selectedPalette, setSelectedPalette] = useState(0);
   const [selectedTone, setSelectedTone] = useState(0);
   const [selectedFont, setSelectedFont] = useState(0);
@@ -412,7 +1127,7 @@ export function PreviewDashboard() {
     if (vibe) {
       try {
         const { template, tone } = JSON.parse(vibe);
-        if (template === "glassmorphism" || template === "highendminimalist") {
+        if (template === "glassmorphism" || template === "highendminimalist" || template === "neumorphism" || template === "handcrafted") {
           setSelectedTemplate(template);
         }
         const toneIdx = ["Professional", "Friendly", "Creative"].indexOf(tone);
@@ -477,6 +1192,14 @@ export function PreviewDashboard() {
     return slug ? `resuflow.app/${slug}` : "resuflow.app/your-portfolio";
   })();
 
+  const templateOptions: { id: TemplateType; label: string; thumb: string }[] = [
+    { id: "glassmorphism", label: "Glassmorphism", thumb: glassmorphismThumb },
+    { id: "highendminimalist", label: "High-End Minimalist", thumb: highendminimalistThumb },
+    { id: "neumorphism", label: "Neumorphism", thumb: neumorphismThumb },
+    { id: "handcrafted", label: "Handcrafted", thumb: handcraftedThumb },
+
+  ];
+
   return (
     <div
       style={{ backgroundColor: "#0E1627", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}
@@ -501,7 +1224,7 @@ export function PreviewDashboard() {
                   textTransform: "uppercase",
                 }}
               >
-                Live Preview — {selectedTemplate === "glassmorphism" ? "Glassmorphism" : "High-End Minimalist"}
+                Live Preview — {templateLabels[selectedTemplate]}
               </span>
               <span
                 style={{
@@ -564,11 +1287,19 @@ export function PreviewDashboard() {
 
               {/* Template Preview */}
               <div style={{ flex: 1, overflow: "hidden" }}>
-                {selectedTemplate === "glassmorphism" ? (
+                {selectedTemplate === "glassmorphism" && (
                   <GlassmorphismPreview palette={paletteRows[selectedPalette]} profile={profile} />
-                ) : (
+                )}
+                {selectedTemplate === "highendminimalist" && (
                   <HighEndMinimalistPreview profile={profile} />
                 )}
+                {selectedTemplate === "neumorphism" && (
+                  <NeumorphismPreview palette={paletteRows[selectedPalette]} profile={profile} />
+                )}
+                {selectedTemplate === "handcrafted" && (
+                  <HandcraftedPreview palette={paletteRows[selectedPalette]} profile={profile} />
+                )}
+
               </div>
             </div>
           </div>
@@ -613,12 +1344,7 @@ export function PreviewDashboard() {
               {/* Template Selection */}
               <CustomSection title="Template" icon="🖼️">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                  {(
-                    [
-                      { id: "glassmorphism", label: "Glassmorphism", thumb: glassmorphismThumb },
-                      { id: "highendminimalist", label: "High-End Minimalist", thumb: highendminimalistThumb },
-                    ] as const
-                  ).map((t) => (
+                  {templateOptions.map((t) => (
                     <div
                       key={t.id}
                       onClick={() => setSelectedTemplate(t.id)}
