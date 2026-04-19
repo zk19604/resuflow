@@ -7,6 +7,8 @@ import glassmorphismThumb from "../assets/glassmorphism.png";
 import highendminimalistThumb from "../assets/highendminimalist.png";
 import editorialThumb from "../assets/editorial.png";
 import bentoThumb from "../assets/bento.png";
+import handcraftedThumb from "../assets/handcrafted.png";
+import neumorphismThumb from "../assets/neumorphism.png";
 
 const templates = [
   {
@@ -32,6 +34,18 @@ const templates = [
     label: "Bento",
     desc: "Modern card grid layout with colorful bento boxes.",
     thumb: bentoThumb,
+  },
+  {
+    id: "handcrafted",
+    label: "Handcrafted",
+    desc: "Warm, organic aesthetic with hand-drawn elements and elegant typography.",
+    thumb: handcraftedThumb,
+  },
+  {
+    id: "neumorphism",
+    label: "Neumorphism",
+    desc: "Soft UI with subtle shadows and raised elements for a tactile feel.",
+    thumb: neumorphismThumb,
   },
 ];
 
@@ -279,7 +293,8 @@ export function ExtractionScreen() {
                 Choose Your Template
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px", marginBottom: "28px" }}>
+              {/* UPDATED: Changed to 3 columns to fit all 6 templates nicely */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "28px" }}>
                 {templates.map((t) => (
                   <div
                     key={t.id}
@@ -316,11 +331,11 @@ export function ExtractionScreen() {
                     <img
                       src={t.thumb}
                       alt={t.label}
-                      style={{ width: "100%", height: "100px", objectFit: "cover", display: "block" }}
+                      style={{ width: "100%", height: "80px", objectFit: "cover", display: "block" }}
                     />
-                    <div style={{ padding: "12px" }}>
-                      <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>
-                      <div style={{ color: "#BDB8B9", fontSize: "11px" }}>{t.desc}</div>
+                    <div style={{ padding: "10px" }}>
+                      <div style={{ color: "#F4E1E0", fontSize: "12px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>
+                      <div style={{ color: "#BDB8B9", fontSize: "10px", lineHeight: 1.4 }}>{t.desc}</div>
                     </div>
                   </div>
                 ))}
