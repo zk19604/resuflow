@@ -5,19 +5,33 @@ import { Breadcrumb } from "./Breadcrumb";
 import { Navbar } from "./Navbar";
 import glassmorphismThumb from "../assets/glassmorphism.png";
 import highendminimalistThumb from "../assets/highendminimalist.png";
+import editorialThumb from "../assets/editorial.png";
+import bentoThumb from "../assets/bento.png";
 
 const templates = [
   {
-    id: "glassmorphism" as const,
+    id: "glassmorphism",
     label: "Glassmorphism",
     desc: "Dark, glassy, modern aesthetic with gradient orbs.",
     thumb: glassmorphismThumb,
   },
   {
-    id: "highendminimalist" as const,
+    id: "highendminimalist",
     label: "High-End Minimalist",
     desc: "Clean, editorial, elegant white-space layout.",
     thumb: highendminimalistThumb,
+  },
+  {
+    id: "editorial",
+    label: "Editorial",
+    desc: "Bold serif typography with a magazine-style layout.",
+    thumb: editorialThumb,
+  },
+  {
+    id: "bento",
+    label: "Bento",
+    desc: "Modern card grid layout with colorful bento boxes.",
+    thumb: bentoThumb,
   },
 ];
 
@@ -26,7 +40,7 @@ const toneOptions = ["Professional", "Friendly", "Creative"];
 export function ExtractionScreen() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<"glassmorphism" | "highendminimalist">("glassmorphism");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("glassmorphism");
   const [selectedTone, setSelectedTone] = useState(0);
 
   useEffect(() => {

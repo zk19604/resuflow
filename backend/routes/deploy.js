@@ -2,6 +2,7 @@ const express = require('express');
 const { z } = require('zod');
 const QRCode = require('qrcode');
 const AppError = require('../services/AppError');
+const PortfolioDeployment = require('../models/PortfolioDeployment');
 
 const router = express.Router();
 
@@ -155,6 +156,16 @@ router.post('/deploy', async (req, res) => {
     if (!resolvedConfig.template) resolvedConfig.template = template || 'glassmorphism';
     userProfiles.set(username, { profile, config: resolvedConfig });
 
+    try {
+      await PortfolioDeployment.findOneAndUpdate(
+        { username },
+        { username, profile, config: resolvedConfig },
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
+      );
+    } catch (dbErr) {
+      console.warn('MongoDB deploy save failed (non-fatal):', dbErr.message);
+    }
+
     const portfolioUrl = `${DEPLOYED_APP_URL}/${username}`;
 
     res.json({
@@ -173,15 +184,21 @@ router.post('/deploy', async (req, res) => {
   }
 });
 
-router.get('/profile/:username', (req, res) => {
+router.get('/profile/:username', async (req, res) => {
   const { username } = req.params;
   const entry = userProfiles.get(username);
 
-  if (!entry) {
-    return res.status(404).json({ message: 'Profile not found' });
+  if (entry) {
+    return res.json({ profile: entry.profile, config: entry.config || {} });
   }
 
-  res.json({ profile: entry.profile, config: entry.config || {} });
+  try {
+    const doc = await PortfolioDeployment.findOne({ username }).lean();
+    if (!doc) return res.status(404).json({ message: 'Profile not found' });
+    return res.json({ profile: doc.profile, config: doc.config || {} });
+  } catch {
+    return res.status(404).json({ message: 'Profile not found' });
+  }
 });
 
 router.get('/status/:userId', async (req, res) => {

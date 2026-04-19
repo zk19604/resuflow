@@ -9,6 +9,8 @@ import { TestimonialsSection } from '@/components/glassmorphism/TestimonialsSect
 import { ContactSection } from '@/components/glassmorphism/ContactSection';
 import { Footer } from '@/components/glassmorphism/Footer';
 import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Template';
+import { EditorialTemplate } from '@/components/editorial/Template';
+import { BentoTemplate } from '@/components/bento/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -66,6 +68,14 @@ export default async function PortfolioPage({ params }: PageProps) {
 
   if (config?.template === 'highendminimalist') {
     return <HighEndMinimalistTemplate profile={profile} config={config} />;
+  }
+
+  if (config?.template === 'editorial') {
+    return <EditorialTemplate profile={profile} config={config} />;
+  }
+
+  if (config?.template === 'bento') {
+    return <BentoTemplate profile={profile} config={config} />;
   }
 
   const visible = config?.sectionsVisible || {};

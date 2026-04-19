@@ -49,7 +49,7 @@ router.post('/upload', upload.single('cv'), async (req, res) => {
           status: 'complete',
           extractionErrors: errors,
         },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
       );
       profileId = userProfile._id;
     } catch (dbErr) {

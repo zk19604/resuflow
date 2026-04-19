@@ -6,6 +6,8 @@ import glassmorphismThumb from "../assets/glassmorphism.png";
 import highendminimalistThumb from "../assets/highendminimalist.png";
 import neumorphismThumb from "../assets/neumorphism.png";
 import handcraftedThumb from "../assets/handcrafted.png";
+import editorialThumb from "../assets/editorial.png";
+import bentoThumb from "../assets/bento.png";
 
 const paletteRows = [
   { name: "Rose Navy", colors: ["#0E1627", "#7F6269", "#F4E1E0", "#BDB8B9", "#E5C5C1"] },
@@ -18,13 +20,15 @@ const paletteRows = [
 const sections = ["About", "Skills", "Experience", "Education", "Projects", "Achievements"];
 const fontOptions = ["Modern Sans", "Serif Editorial"];
 
-type TemplateType = "glassmorphism" | "highendminimalist" | "neumorphism" | "handcrafted";
+type TemplateType = "glassmorphism" | "highendminimalist" | "neumorphism" | "handcrafted" | "editorial" | "bento";
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism: "Glassmorphism",
   highendminimalist: "High-End Minimalist",
   neumorphism: "Neumorphism",
   handcrafted: "Handcrafted",
+  editorial: "Editorial",
+  bento: "Bento",
 };
 function HandcraftedPreview({
   palette,
@@ -1127,7 +1131,7 @@ export function PreviewDashboard() {
     if (vibe) {
       try {
         const { template, tone } = JSON.parse(vibe);
-        if (template === "glassmorphism" || template === "highendminimalist" || template === "neumorphism" || template === "handcrafted") {
+        if (["glassmorphism", "highendminimalist", "neumorphism", "handcrafted", "editorial", "bento"].includes(template)) {
           setSelectedTemplate(template);
         }
         const toneIdx = ["Professional", "Friendly", "Creative"].indexOf(tone);
@@ -1197,7 +1201,8 @@ export function PreviewDashboard() {
     { id: "highendminimalist", label: "High-End Minimalist", thumb: highendminimalistThumb },
     { id: "neumorphism", label: "Neumorphism", thumb: neumorphismThumb },
     { id: "handcrafted", label: "Handcrafted", thumb: handcraftedThumb },
-
+    { id: "editorial", label: "Editorial", thumb: editorialThumb },
+    { id: "bento", label: "Bento", thumb: bentoThumb },
   ];
 
   return (
@@ -1301,6 +1306,7 @@ export function PreviewDashboard() {
                 )}
 
               </div>
+              {/* Editorial and Bento render in the deployed portfolio; the preview falls back to HighEndMinimalist */}
             </div>
           </div>
 
