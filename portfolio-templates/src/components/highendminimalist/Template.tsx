@@ -107,21 +107,7 @@ export function HighEndMinimalistTemplate({ profile, config }: TemplateProps) {
                 Contact Me
               </button>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 border border-[#CCCCCC] bg-white flex items-center justify-center flex-shrink-0">
-                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                  <rect x="4" y="4" width="24" height="24" fill="#111111"/>
-                  <rect x="36" y="4" width="24" height="24" fill="#111111"/>
-                  <rect x="4" y="36" width="24" height="24" fill="#111111"/>
-                  <rect x="36" y="36" width="12" height="12" fill="#111111"/>
-                  <rect x="48" y="48" width="12" height="12" fill="#111111"/>
-                </svg>
-              </div>
-              <div>
-                <p className="text-[11px] text-[#999999]">Scan to view live portfolio</p>
-                <p className="text-[11px] text-[#AAAAAA]">resuflow.app/{personalInfo.name?.toLowerCase().replace(/\s+/g, '-') || 'portfolio'}</p>
-              </div>
-            </div>
+       
           </div>
           <div className="w-[45%] flex items-center justify-center" style={{ backgroundColor: accentLight }}>
             <div className="w-px h-[120px] bg-[#CCCCCC]" />

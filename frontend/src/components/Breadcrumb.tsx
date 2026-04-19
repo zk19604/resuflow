@@ -2,7 +2,7 @@ interface BreadcrumbProps {
   currentStep: number;
 }
 
-const steps = ["Upload & Fill", "Choose Template", "Customize", "Go Live"];
+const steps = ["Upload CV", "Review & Style", "Customize", "Go Live"];
 
 export function Breadcrumb({ currentStep }: BreadcrumbProps) {
   return (

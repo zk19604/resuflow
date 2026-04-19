@@ -1,25 +1,15 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { NavBar } from '@/components/highendminimalist/NavBar';
 import { ExperienceRow } from '@/components/highendminimalist/ExperienceRow';
 import { SkillCard } from '@/components/highendminimalist/SkillCard';
 import { AchievementCard } from '@/components/highendminimalist/AchievementCard';
 
 export default function App() {
-  const sectionRefs = {
-    home: useRef<HTMLDivElement>(null),
-    about: useRef<HTMLDivElement>(null),
-    experience: useRef<HTMLDivElement>(null),
-    skills: useRef<HTMLDivElement>(null),
-    contact: useRef<HTMLDivElement>(null),
-  };
-
   const handleNavigate = (section: string) => {
-    const ref = sectionRefs[section as keyof typeof sectionRefs];
-    if (ref?.current) {
-      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    const el = document.getElementById(`section-${section}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleContactClick = () => {
@@ -36,7 +26,7 @@ export default function App() {
       <NavBar onNavigate={handleNavigate} />
 
       {/* Hero Section - 100vh, minimum 900px */}
-      <section ref={sectionRefs.home} className="min-h-[900px] h-screen flex items-center">
+      <section id="section-home" className="min-h-[900px] h-screen flex items-center">
         <div className="w-full max-w-[1440px] mx-auto flex">
           {/* Left Column - 55% */}
           <div className="w-[55%] bg-white pl-20 pr-10 flex flex-col justify-center">
@@ -83,10 +73,7 @@ export default function App() {
                   <rect x="48" y="48" width="12" height="12" fill="#111111"/>
                 </svg>
               </div>
-              <div>
-                <p className="text-[11px] text-[#999999] font-['DM_Sans']">Scan to view live portfolio</p>
-                <p className="text-[11px] text-[#AAAAAA] font-['DM_Sans']">resumeflow.io/awhitmore</p>
-              </div>
+            
             </div>
           </div>
 
@@ -98,7 +85,7 @@ export default function App() {
       </section>
 
       {/* About Section - 100vh, minimum 800px */}
-      <section ref={sectionRefs.about} className="min-h-[800px] h-screen bg-white flex items-center">
+      <section id="section-about" className="min-h-[800px] h-screen bg-white flex items-center">
         <div className="w-full max-w-[1440px] mx-auto px-20 py-[120px]">
           <div className="flex gap-20">
             {/* Left Column - 38% */}
@@ -154,7 +141,7 @@ export default function App() {
       </section>
 
       {/* Experience Section - Auto height, minimum 1000px */}
-      <section ref={sectionRefs.experience} className="min-h-[1000px] bg-[#FAFAF8]">
+      <section id="section-experience" className="min-h-[1000px] bg-[#FAFAF8]">
         <div className="w-full max-w-[1440px] mx-auto px-20 py-[100px]">
           <div className="relative mb-10">
             <p className="font-['Playfair_Display'] text-[120px] text-[#EEECE8] absolute top-0 left-0 -translate-y-6 leading-none pointer-events-none">
@@ -196,7 +183,7 @@ export default function App() {
       </section>
 
       {/* Skills Section - 100vh, minimum 800px */}
-      <section ref={sectionRefs.skills} className="min-h-[800px] h-screen bg-white flex items-center">
+      <section id="section-skills" className="min-h-[800px] h-screen bg-white flex items-center">
         <div className="w-full max-w-[1440px] mx-auto px-20 py-[100px]">
           <div className="relative mb-2">
             <p className="font-['Playfair_Display'] text-[120px] text-[#F0EDE8] absolute top-0 left-0 -translate-y-6 leading-none pointer-events-none">
@@ -291,14 +278,14 @@ export default function App() {
       </section>
 
       {/* Contact Section - 100vh, minimum 700px */}
-      <section ref={sectionRefs.contact} className="min-h-[700px] h-screen bg-white flex flex-col">
+      <section id="section-contact" className="min-h-[700px] h-screen bg-white flex flex-col">
         <div className="flex-1 flex items-center">
           <div className="w-full max-w-[1440px] mx-auto px-20 py-[100px]">
             <div className="flex gap-20">
               {/* Left - 55% */}
               <div className="w-[55%]">
                 <h2 className="font-['Playfair_Display'] font-bold text-[60px] text-[#111111] leading-[1.1] mb-5">
-                  Let's Connect
+                  Let&apos;s Connect
                 </h2>
                 <p className="font-['DM_Sans'] text-[16px] text-[#666666] leading-[1.8] mb-12">
                   Open to advisory roles, board positions, and strategic partnerships.
