@@ -3,36 +3,19 @@ import { useNavigate } from "react-router";
 import { CheckCircle2 } from "lucide-react";
 import { Breadcrumb } from "./Breadcrumb";
 import { Navbar } from "./Navbar";
-import glassmorphismThumb from "../assets/glassmorphism.png";
-import highendminimalistThumb from "../assets/highendminimalist.png";
-import editorialThumb from "../assets/editorial.png";
-import bentoThumb from "../assets/bento.png";
+import {
+  GlassmorphismPreview,
+  HighEndMinimalistPreview,
+  EditorialPreview,
+  BentoPreview,
+  defaultPalette,
+} from "./TemplatePreviews";
 
 const templates = [
-  {
-    id: "glassmorphism",
-    label: "Glassmorphism",
-    desc: "Dark, glassy, modern aesthetic with gradient orbs.",
-    thumb: glassmorphismThumb,
-  },
-  {
-    id: "highendminimalist",
-    label: "High-End Minimalist",
-    desc: "Clean, editorial, elegant white-space layout.",
-    thumb: highendminimalistThumb,
-  },
-  {
-    id: "editorial",
-    label: "Editorial",
-    desc: "Bold serif typography with a magazine-style layout.",
-    thumb: editorialThumb,
-  },
-  {
-    id: "bento",
-    label: "Bento",
-    desc: "Modern card grid layout with colorful bento boxes.",
-    thumb: bentoThumb,
-  },
+  { id: "glassmorphism", label: "Glassmorphism", desc: "Dark, glassy, modern aesthetic with gradient orbs." },
+  { id: "highendminimalist", label: "High-End Minimalist", desc: "Clean, editorial, elegant white-space layout." },
+  { id: "editorial", label: "Editorial", desc: "Bold serif typography with a magazine-style layout." },
+  { id: "bento", label: "Bento", desc: "Modern card grid layout with colorful bento boxes." },
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];
@@ -313,11 +296,12 @@ export function ExtractionScreen() {
                         <CheckCircle2 size={12} style={{ color: "#F4E1E0" }} />
                       </div>
                     )}
-                    <img
-                      src={t.thumb}
-                      alt={t.label}
-                      style={{ width: "100%", height: "100px", objectFit: "cover", display: "block" }}
-                    />
+                    <div style={{ width: "100%", height: "100px", overflow: "hidden", pointerEvents: "none" }}>
+                      {t.id === "glassmorphism" && <GlassmorphismPreview palette={defaultPalette} profile={profile} />}
+                      {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
+                      {t.id === "editorial" && <EditorialPreview profile={profile} />}
+                      {t.id === "bento" && <BentoPreview profile={profile} />}
+                    </div>
                     <div style={{ padding: "12px" }}>
                       <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>
                       <div style={{ color: "#BDB8B9", fontSize: "11px" }}>{t.desc}</div>
