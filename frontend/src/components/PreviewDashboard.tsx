@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Navbar } from "./Navbar";
 import { Breadcrumb } from "./Breadcrumb";
@@ -62,6 +62,12 @@ export function PreviewDashboard() {
   const [deploying, setDeploying] = useState(false);
   const [deployError, setDeployError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!localStorage.getItem("resuflow_profile")) {
+      navigate("/upload");
+    }
+  }, [navigate]);
+
   const templateMap: Record<string, string> = {
     "Minimal": "highendminimalist",
     "Editorial": "glassmorphism",
@@ -101,7 +107,10 @@ export function PreviewDashboard() {
         }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Deployment failed");
+      if (!response.ok) {
+        const detail = data.errors?.map((e: any) => `${e.field}: ${e.message}`).join(", ");
+        throw new Error(detail || data.message || "Deployment failed");
+      }
       localStorage.setItem("resuflow_portfolio_url", data.portfolioUrl || "");
       localStorage.setItem("resuflow_username", data.username || userId);
       navigate("/deploy");
