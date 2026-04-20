@@ -11,6 +11,7 @@ import { Footer } from '@/components/glassmorphism/Footer';
 import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Template';
 import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
+import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -65,6 +66,10 @@ export default async function PortfolioPage({ params }: PageProps) {
   }
 
   const { profile, config } = data;
+
+  if (config?.template === 'luxuryhighend') {
+    return <LuxuryHighEndTemplate profile={profile} config={config} />;
+  }
 
   if (config?.template === 'highendminimalist') {
     return <HighEndMinimalistTemplate profile={profile} config={config} />;
