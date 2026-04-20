@@ -1,10 +1,4 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-// This will tell us immediately if it worked
-console.log("--- DEBUGGING API KEY ---");
-console.log("Key starting with AIza:", process.env.GEMINI_API_KEY?.startsWith("AIza"));
-console.log("-------------------------");
 require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');

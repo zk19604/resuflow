@@ -208,7 +208,7 @@ function HeroMockup() {
             fontFamily: "'DM Sans', sans-serif",
           }}
         >
-          FM
+          AM
         </div>
         <div>
           <div
@@ -219,10 +219,10 @@ function HeroMockup() {
               fontFamily: "'DM Sans', sans-serif",
             }}
           >
-            Fatima Mazhar
+            Alex Morgan
           </div>
           <div style={{ color: "#BDB8B9", fontSize: "13px", fontFamily: "'DM Sans', sans-serif" }}>
-            Senior UX Strategist
+            Senior Product Designer
           </div>
         </div>
       </div>
@@ -295,7 +295,7 @@ function HeroMockup() {
             fontFamily: "monospace",
           }}
         >
-          resuflow.app/fatima-mazhar
+          resuflow.app/alex-morgan
         </div>
         {/* QR code thumb */}
         <div
@@ -530,7 +530,7 @@ export function LandingPage() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section style={{ backgroundColor: "rgba(189,184,185,0.04)", borderTop: "1px solid rgba(189,184,185,0.1)", borderBottom: "1px solid rgba(189,184,185,0.1)" }} className="py-24">
+      <section style={{ backgroundColor: "#080f1a", borderTop: "1px solid rgba(189,184,185,0.1)", borderBottom: "1px solid rgba(189,184,185,0.1)" }} className="py-24">
         <div className="max-w-7xl mx-auto px-8">
           <h2
             style={{

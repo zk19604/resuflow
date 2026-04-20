@@ -254,11 +254,13 @@ function FormInput({
   placeholder,
   type = "text",
   fullSpan = false,
+  name,
 }: {
   label: string;
   placeholder?: string;
   type?: string;
   fullSpan?: boolean;
+  name?: string;
 }) {
   return (
     <div style={{ gridColumn: fullSpan ? "1 / -1" : "auto" }}>
@@ -278,6 +280,7 @@ function FormInput({
       <input
         type={type}
         placeholder={placeholder}
+        name={name}
         style={{
           width: "100%",
           backgroundColor: "rgba(244,225,224,0.08)",
@@ -301,12 +304,14 @@ function FormTextarea({
   height = 100,
   charCount,
   fullSpan = true,
+  name,
 }: {
   label?: string;
   placeholder?: string;
   height?: number;
   charCount?: string;
   fullSpan?: boolean;
+  name?: string;
 }) {
   return (
     <div style={{ gridColumn: fullSpan ? "1 / -1" : "auto", position: "relative" }}>
@@ -327,6 +332,7 @@ function FormTextarea({
       )}
       <textarea
         placeholder={placeholder}
+        name={name}
         style={{
           width: "100%",
           backgroundColor: "rgba(244,225,224,0.08)",
@@ -484,7 +490,8 @@ function FormSection({
 }
 
 /* ─── MANUAL FORM TAB ─── */
-function ManualFormTab({ onContinue }: { onContinue: () => void }) {
+function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [activeTone, setActiveTone] = useState(0);
   const [skills, setSkills] = useState(["UX Research", "Figma", "Product Strategy"]);
   const [skillInput, setSkillInput] = useState("");
@@ -499,6 +506,43 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
     "Contact Info": false,
   });
   const [wantsTestimonial, setWantsTestimonial] = useState<boolean | null>(true);
+
+  const tones = ["professional", "friendly", "creative"] as const;
+
+  const handleContinue = () => {
+    const fd = formRef.current ? new FormData(formRef.current) : new FormData();
+    const g = (k: string) => (fd.get(k) as string) || "";
+    const profile = {
+      personalInfo: {
+        name: g("name"),
+        title: g("title"),
+        email: g("email"),
+        phone: g("phone"),
+        location: [g("city"), g("country")].filter(Boolean).join(", "),
+        website: g("website"),
+        linkedin: g("linkedin"),
+        summary: g("about"),
+      },
+      skills: { technical: skills, domain: [], soft: [], tools: [] },
+      workExperience: [
+        {
+          role: g("jobTitle"),
+          company: g("company"),
+          startDate: g("startDate"),
+          endDate: g("endDate"),
+          location: g("workLocation"),
+          description: g("responsibilities"),
+          achievements: g("achievements"),
+        },
+      ].filter((e) => e.role || e.company),
+      education: [],
+      achievements: [],
+      tone: tones[activeTone],
+      industries: checkedIndustries,
+      opportunities: checkedOpportunities,
+    };
+    onContinue(profile);
+  };
 
   const industries = [
     "Technology", "Finance", "Healthcare", "Education", "Marketing",
@@ -527,6 +571,7 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <form ref={formRef} onSubmit={(e) => e.preventDefault()} style={{ width: "100%" }}>
       <div
         style={{
           backgroundColor: "rgba(189,184,185,0.05)",
@@ -570,12 +615,12 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
                 <span style={{ color: "#BDB8B9", fontSize: "11px" }}>Upload Photo</span>
               </div>
               <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-                <FormInput label="Full Name" placeholder="Fatima Mazhar" fullSpan={true} />
+                <FormInput label="Full Name" placeholder="Fatima Mazhar" fullSpan={true} name="name" />
               </div>
             </div>
 
-            <FormInput label="Professional Title / Role" placeholder="Senior UX Strategist" />
-            <FormInput label="Email Address" type="email" placeholder="fatima@example.com" />
+            <FormInput label="Professional Title / Role" placeholder="Senior UX Strategist" name="title" />
+            <FormInput label="Email Address" type="email" placeholder="fatima@example.com" name="email" />
             <div>
               <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, letterSpacing: "0.04em", marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>
                 Phone Number
@@ -589,14 +634,14 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
                   </select>
                   <ChevronDown size={10} style={{ position: "absolute", right: "6px", top: "50%", transform: "translateY(-50%)", color: "#BDB8B9", pointerEvents: "none" }} />
                 </div>
-                <input placeholder="7700 900 000" style={{ flex: 1, backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
+                <input name="phone" placeholder="7700 900 000" style={{ flex: 1, backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
               </div>
             </div>
-            <FormInput label="City" placeholder="London" />
-            <FormInput label="Country" placeholder="United Kingdom" />
-            <FormInput label="Personal Website or Portfolio URL" placeholder="https://yoursite.com" fullSpan={true} />
-            <FormInput label="LinkedIn URL" placeholder="https://linkedin.com/in/..." />
-            <FormInput label="Relevant Profile Link" placeholder="Dribbble / Behance / GitHub" />
+            <FormInput label="City" placeholder="London" name="city" />
+            <FormInput label="Country" placeholder="United Kingdom" name="country" />
+            <FormInput label="Personal Website or Portfolio URL" placeholder="https://yoursite.com" fullSpan={true} name="website" />
+            <FormInput label="LinkedIn URL" placeholder="https://linkedin.com/in/..." name="linkedin" />
+            <FormInput label="Relevant Profile Link" placeholder="Dribbble / Behance / GitHub" name="profileLink" />
           </div>
         </FormSection>
 
@@ -607,6 +652,7 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
               placeholder="Write a short professional summary about yourself... (2-4 sentences recommended)"
               height={120}
               charCount="142 / 400"
+              name="about"
             />
             <div>
               <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, letterSpacing: "0.04em", marginBottom: "8px", fontFamily: "'DM Sans', sans-serif" }}>
@@ -754,16 +800,16 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
             }}
           >
             <div style={{ display: "grid", gridTemplateColumns: "60fr 38fr", gap: "12px", marginBottom: "12px" }}>
-              <FormInput label="Job Title" placeholder="Senior UX Strategist" />
+              <FormInput label="Job Title" placeholder="Senior UX Strategist" name="jobTitle" />
               <FormSelect label="Employment Type" options={["Full-time", "Part-time", "Freelance", "Internship"]} />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-              <FormInput label="Company Name" placeholder="Horizon Digital" />
+              <FormInput label="Company Name" placeholder="Horizon Digital" name="company" />
               <FormSelect label="Industry" options={["Technology", "Finance", "Healthcare", "Design", "Consulting"]} />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "12px", marginBottom: "12px", alignItems: "end" }}>
-              <FormInput label="Start Date" placeholder="Jan 2021" />
-              <FormInput label="End Date" placeholder="Present" />
+              <FormInput label="Start Date" placeholder="Jan 2021" name="startDate" />
+              <FormInput label="End Date" placeholder="Present" name="endDate" />
               <div style={{ paddingBottom: "2px", display: "flex", alignItems: "center", gap: "7px" }}>
                 <div
                   style={{
@@ -784,7 +830,7 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
               </div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-              <FormInput label="Location" placeholder="London, UK" />
+              <FormInput label="Location" placeholder="London, UK" name="workLocation" />
               <FormSelect label="Work Mode" options={["Remote", "On-site", "Hybrid"]} />
             </div>
             <div style={{ marginBottom: "12px" }}>
@@ -792,12 +838,14 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
                 label="Key Responsibilities"
                 placeholder="Describe your main responsibilities and impact..."
                 height={90}
+                name="responsibilities"
               />
             </div>
             <FormTextarea
               label="Achievements"
               placeholder="List 2-3 measurable achievements (e.g. Increased sales by 30%)"
               height={80}
+              name="achievements"
             />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "14px" }}>
               <button style={{ background: "none", border: "none", color: "rgba(212,60,60,0.7)", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
@@ -1072,7 +1120,7 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
               Save Draft
             </button>
             <button
-              onClick={onContinue}
+              onClick={handleContinue}
               style={{
                 backgroundColor: "#7F6269",
                 color: "#F4E1E0",
@@ -1092,6 +1140,7 @@ function ManualFormTab({ onContinue }: { onContinue: () => void }) {
           </div>
         </div>
       </div>
+      </form>
     </div>
   );
 }
@@ -1106,7 +1155,10 @@ export function UploadForm() {
     navigate("/extraction");
   };
 
-  const handleManualContinue = () => navigate("/templates");
+  const handleManualContinue = (profile: any) => {
+    localStorage.setItem("resuflow_profile", JSON.stringify(profile));
+    navigate("/templates");
+  };
 
   return (
     <div

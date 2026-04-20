@@ -1,7 +1,9 @@
 const express = require('express');
 const { z } = require('zod');
 const QRCode = require('qrcode');
+const mongoose = require('mongoose');
 const AppError = require('../services/AppError');
+const PortfolioDeployment = require('../models/PortfolioDeployment');
 
 const router = express.Router();
 
@@ -24,80 +26,86 @@ const profileSchema = z.object({
   config: configSchema,
   profile: z.object({
     personalInfo: z.object({
-      name: z.string(),
-      email: z.string(),
-      phone: z.string(),
-      location: z.string(),
-      linkedin: z.string(),
-      github: z.string(),
-      website: z.string(),
-      portfolio: z.string(),
-    }),
-    summary: z.string(),
+      name: z.string().optional().default(''),
+      email: z.string().optional().default(''),
+      phone: z.string().optional().default(''),
+      location: z.string().optional().default(''),
+      linkedin: z.string().optional().default(''),
+      github: z.string().optional().default(''),
+      website: z.string().optional().default(''),
+      portfolio: z.string().optional().default(''),
+      title: z.string().optional().default(''),
+      summary: z.string().optional().default(''),
+    }).optional().default({}),
+    summary: z.string().optional().default(''),
     workExperience: z.array(z.object({
-      company: z.string(),
-      role: z.string(),
-      startDate: z.string(),
-      endDate: z.string(),
-      description: z.string(),
-      achievements: z.array(z.string()),
-    })),
+      company: z.string().optional().default(''),
+      role: z.string().optional().default(''),
+      startDate: z.string().optional().default(''),
+      endDate: z.string().optional().default(''),
+      description: z.string().optional().default(''),
+      location: z.string().optional().default(''),
+      achievements: z.union([z.array(z.string()), z.string()]).optional().default([]),
+    })).optional().default([]),
     education: z.array(z.object({
-      institution: z.string(),
-      degree: z.string(),
-      field: z.string(),
-      startDate: z.string(),
-      endDate: z.string(),
-      grade: z.string(),
-    })),
+      institution: z.string().optional().default(''),
+      degree: z.string().optional().default(''),
+      field: z.string().optional().default(''),
+      startDate: z.string().optional().default(''),
+      endDate: z.string().optional().default(''),
+      grade: z.string().optional().default(''),
+    })).optional().default([]),
     skills: z.object({
-      technical: z.array(z.string()),
-      tools: z.array(z.string()),
-      soft: z.array(z.string()),
-      domain: z.array(z.string()),
-      languages: z.array(z.string()),
-    }),
+      technical: z.array(z.string()).optional().default([]),
+      tools: z.array(z.string()).optional().default([]),
+      soft: z.array(z.string()).optional().default([]),
+      domain: z.array(z.string()).optional().default([]),
+      languages: z.array(z.string()).optional().default([]),
+    }).optional().default({}),
     certifications: z.array(z.object({
-      name: z.string(),
-      issuer: z.string(),
-      date: z.string(),
-    })),
+      name: z.string().optional().default(''),
+      issuer: z.string().optional().default(''),
+      date: z.string().optional().default(''),
+    })).optional().default([]),
     projects: z.array(z.object({
-      name: z.string(),
-      description: z.string(),
-      tools: z.array(z.string()),
-      link: z.string(),
-      type: z.string(),
-    })),
-    achievements: z.array(z.object({
-      title: z.string(),
-      description: z.string(),
-      date: z.string(),
-    })),
+      name: z.string().optional().default(''),
+      description: z.string().optional().default(''),
+      tools: z.array(z.string()).optional().default([]),
+      link: z.string().optional().default(''),
+      type: z.string().optional().default(''),
+    })).optional().default([]),
+    achievements: z.union([
+      z.array(z.object({
+        title: z.string().optional().default(''),
+        description: z.string().optional().default(''),
+        date: z.string().optional().default(''),
+      })),
+      z.array(z.string()),
+    ]).optional().default([]),
     volunteering: z.array(z.object({
-      organization: z.string(),
-      role: z.string(),
-      startDate: z.string(),
-      endDate: z.string(),
-      description: z.string(),
-    })),
+      organization: z.string().optional().default(''),
+      role: z.string().optional().default(''),
+      startDate: z.string().optional().default(''),
+      endDate: z.string().optional().default(''),
+      description: z.string().optional().default(''),
+    })).optional().default([]),
     publications: z.array(z.object({
-      title: z.string(),
-      publisher: z.string(),
-      date: z.string(),
-      link: z.string(),
-    })),
+      title: z.string().optional().default(''),
+      publisher: z.string().optional().default(''),
+      date: z.string().optional().default(''),
+      link: z.string().optional().default(''),
+    })).optional().default([]),
     references: z.array(z.object({
-      name: z.string(),
-      role: z.string(),
-      contact: z.string(),
-    })),
+      name: z.string().optional().default(''),
+      role: z.string().optional().default(''),
+      contact: z.string().optional().default(''),
+    })).optional().default([]),
     extras: z.object({
-      interests: z.array(z.string()),
-      memberships: z.array(z.string()),
-      speakingEngagements: z.array(z.string()),
-    }),
-  }),
+      interests: z.array(z.string()).optional().default([]),
+      memberships: z.array(z.string()).optional().default([]),
+      speakingEngagements: z.array(z.string()).optional().default([]),
+    }).optional().default({}),
+  }).optional().default({}),
 });
 
 const userProfiles = new Map();
@@ -149,6 +157,16 @@ router.post('/deploy', async (req, res) => {
     if (!resolvedConfig.template) resolvedConfig.template = template || 'glassmorphism';
     userProfiles.set(username, { profile, config: resolvedConfig });
 
+    try {
+      await PortfolioDeployment.findOneAndUpdate(
+        { username },
+        { username, profile, config: resolvedConfig },
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
+      );
+    } catch (dbErr) {
+      console.warn('MongoDB deploy save failed (non-fatal):', dbErr.message);
+    }
+
     const portfolioUrl = `${DEPLOYED_APP_URL}/${username}`;
 
     res.json({
@@ -167,15 +185,24 @@ router.post('/deploy', async (req, res) => {
   }
 });
 
-router.get('/profile/:username', (req, res) => {
+router.get('/profile/:username', async (req, res) => {
   const { username } = req.params;
   const entry = userProfiles.get(username);
 
-  if (!entry) {
-    return res.status(404).json({ message: 'Profile not found' });
+  if (entry) {
+    return res.json({ profile: entry.profile, config: entry.config || {} });
   }
 
-  res.json({ profile: entry.profile, config: entry.config || {} });
+  if (mongoose.connection.readyState !== 1)
+    return res.status(404).json({ message: 'Profile not found' });
+
+  try {
+    const doc = await PortfolioDeployment.findOne({ username }).lean();
+    if (!doc) return res.status(404).json({ message: 'Profile not found' });
+    return res.json({ profile: doc.profile, config: doc.config || {} });
+  } catch {
+    return res.status(404).json({ message: 'Profile not found' });
+  }
 });
 
 router.get('/status/:userId', async (req, res) => {

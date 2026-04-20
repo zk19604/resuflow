@@ -8,7 +8,6 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-
   server: {
     proxy: {
       '/api': {
@@ -17,5 +16,4 @@ export default defineConfig({
       },
     },
   },
-
 })
