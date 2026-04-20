@@ -13,7 +13,7 @@ import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
 import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
 import { MusicianTemplate } from '@/components/musician/Template';
-
+import { NeumorphismTemplate } from '@/components/neumorphism/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -85,6 +85,10 @@ export default async function PortfolioPage({ params }: PageProps) {
     return <BentoTemplate profile={profile} config={config} />;
   }
   
+
+  if (config?.template === 'neumorphism') {
+    return <NeumorphismTemplate profile={profile} config={config} />;
+  }
 
   const visible = config?.sectionsVisible || {};
   const isVisible = (section: string) => visible[section] !== false;
