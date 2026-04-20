@@ -7,6 +7,8 @@ const { extractCVData } = require('../services/cvExtractor');
 const { validateProfile } = require('../services/schemaValidator');
 const UserProfile = require('../models/UserProfile');
 
+const mongoose = require('mongoose');
+
 const router = express.Router();
 
 const upload = multer({
@@ -37,7 +39,7 @@ router.post('/upload', upload.single('cv'), async (req, res) => {
     const userId = req.headers['x-user-id'] || 'anonymous';
 
     let profileId = null;
-    try {
+    if (mongoose.connection.readyState === 1) try {
       const userProfile = await UserProfile.findOneAndUpdate(
         { userId },
         {

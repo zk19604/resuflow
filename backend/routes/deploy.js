@@ -1,6 +1,7 @@
 const express = require('express');
 const { z } = require('zod');
 const QRCode = require('qrcode');
+const mongoose = require('mongoose');
 const AppError = require('../services/AppError');
 const PortfolioDeployment = require('../models/PortfolioDeployment');
 
@@ -191,6 +192,9 @@ router.get('/profile/:username', async (req, res) => {
   if (entry) {
     return res.json({ profile: entry.profile, config: entry.config || {} });
   }
+
+  if (mongoose.connection.readyState !== 1)
+    return res.status(404).json({ message: 'Profile not found' });
 
   try {
     const doc = await PortfolioDeployment.findOne({ username }).lean();

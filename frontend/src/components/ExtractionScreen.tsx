@@ -3,50 +3,19 @@ import { useNavigate } from "react-router";
 import { CheckCircle2 } from "lucide-react";
 import { Breadcrumb } from "./Breadcrumb";
 import { Navbar } from "./Navbar";
-import glassmorphismThumb from "../assets/glassmorphism.png";
-import highendminimalistThumb from "../assets/highendminimalist.png";
-import editorialThumb from "../assets/editorial.png";
-import bentoThumb from "../assets/bento.png";
-import handcraftedThumb from "../assets/handcrafted.png";
-import neumorphismThumb from "../assets/neumorphism.png";
+import {
+  GlassmorphismPreview,
+  HighEndMinimalistPreview,
+  EditorialPreview,
+  BentoPreview,
+  defaultPalette,
+} from "./TemplatePreviews";
 
 const templates = [
-  {
-    id: "glassmorphism",
-    label: "Glassmorphism",
-    desc: "Dark, glassy, modern aesthetic with gradient orbs.",
-    thumb: glassmorphismThumb,
-  },
-  {
-    id: "highendminimalist",
-    label: "High-End Minimalist",
-    desc: "Clean, editorial, elegant white-space layout.",
-    thumb: highendminimalistThumb,
-  },
-  {
-    id: "editorial",
-    label: "Editorial",
-    desc: "Bold serif typography with a magazine-style layout.",
-    thumb: editorialThumb,
-  },
-  {
-    id: "bento",
-    label: "Bento",
-    desc: "Modern card grid layout with colorful bento boxes.",
-    thumb: bentoThumb,
-  },
-  {
-    id: "handcrafted",
-    label: "Handcrafted",
-    desc: "Warm, organic aesthetic with hand-drawn elements and elegant typography.",
-    thumb: handcraftedThumb,
-  },
-  {
-    id: "neumorphism",
-    label: "Neumorphism",
-    desc: "Soft UI with subtle shadows and raised elements for a tactile feel.",
-    thumb: neumorphismThumb,
-  },
+  { id: "glassmorphism", label: "Glassmorphism", desc: "Dark, glassy, modern aesthetic with gradient orbs." },
+  { id: "highendminimalist", label: "High-End Minimalist", desc: "Clean, editorial, elegant white-space layout." },
+  { id: "editorial", label: "Editorial", desc: "Bold serif typography with a magazine-style layout." },
+  { id: "bento", label: "Bento", desc: "Modern card grid layout with colorful bento boxes." },
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];
@@ -293,8 +262,7 @@ export function ExtractionScreen() {
                 Choose Your Template
               </div>
 
-              {/* UPDATED: Changed to 3 columns to fit all 6 templates nicely */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "28px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px", marginBottom: "28px" }}>
                 {templates.map((t) => (
                   <div
                     key={t.id}
@@ -328,14 +296,15 @@ export function ExtractionScreen() {
                         <CheckCircle2 size={12} style={{ color: "#F4E1E0" }} />
                       </div>
                     )}
-                    <img
-                      src={t.thumb}
-                      alt={t.label}
-                      style={{ width: "100%", height: "80px", objectFit: "cover", display: "block" }}
-                    />
-                    <div style={{ padding: "10px" }}>
-                      <div style={{ color: "#F4E1E0", fontSize: "12px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>
-                      <div style={{ color: "#BDB8B9", fontSize: "10px", lineHeight: 1.4 }}>{t.desc}</div>
+                    <div style={{ width: "100%", height: "100px", overflow: "hidden", pointerEvents: "none" }}>
+                      {t.id === "glassmorphism" && <GlassmorphismPreview palette={defaultPalette} profile={profile} />}
+                      {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
+                      {t.id === "editorial" && <EditorialPreview profile={profile} />}
+                      {t.id === "bento" && <BentoPreview profile={profile} />}
+                    </div>
+                    <div style={{ padding: "12px" }}>
+                      <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>
+                      <div style={{ color: "#BDB8B9", fontSize: "11px" }}>{t.desc}</div>
                     </div>
                   </div>
                 ))}
