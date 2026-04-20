@@ -3,12 +3,14 @@ import { useNavigate } from "react-router";
 import { CheckCircle2 } from "lucide-react";
 import { Breadcrumb } from "./Breadcrumb";
 import { Navbar } from "./Navbar";
+
 import {
   GlassmorphismPreview,
   HighEndMinimalistPreview,
   EditorialPreview,
   BentoPreview,
   NeumorphismPreview,
+  NeonVaultPreview,
   defaultPalette,
 } from "./TemplatePreviews";
 
@@ -18,6 +20,12 @@ const templates = [
   { id: "editorial", label: "Editorial", desc: "Bold serif typography with a magazine-style layout." },
   { id: "bento", label: "Bento", desc: "Modern card grid layout with colorful bento boxes." },
   { id: "neumorphism", label: "Neumorphism", desc: "Soft UI with subtle shadows and tactile feel." },
+  { 
+  id: "neon-vault", 
+  label: "Neon Vault", 
+  desc: "Modern purple neon style for full-stack developers.", 
+  
+},
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];
@@ -304,6 +312,9 @@ export function ExtractionScreen() {
                       {t.id === "editorial" && <EditorialPreview profile={profile} />}
                       {t.id === "bento" && <BentoPreview profile={profile} />}
                       {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />} 
+                       {t.id === "neon-vault" && <NeonVaultPreview profile={profile} />} 
+                      
+                     
                     </div>
                     <div style={{ padding: "12px" }}>
                       <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>

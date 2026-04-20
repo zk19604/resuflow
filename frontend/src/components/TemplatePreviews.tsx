@@ -633,3 +633,321 @@ export function NeumorphismPreview({ profile }: { profile: any }) {
     </div>
   );
 }
+
+export function NeonVaultPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const title =
+    profile?.personalInfo?.title ||
+    profile?.workExperience?.[0]?.role ||
+    "Creative Developer";
+  const location = profile?.personalInfo?.location || "Remote";
+  const summary =
+    profile?.personalInfo?.summary || profile?.summary || "";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 6);
+  const exp = profile?.workExperience || [];
+ 
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#0f172a",
+        position: "relative",
+        overflow: "hidden",
+        fontFamily: "'Syne', 'DM Sans', sans-serif",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* ── subtle grid ── */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(6,182,212,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.04) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          pointerEvents: "none",
+        }}
+      />
+ 
+      {/* ── ambient glows ── */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-30%",
+          left: "-15%",
+          width: "280px",
+          height: "280px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(147,51,234,0.25) 0%, transparent 70%)",
+          filter: "blur(40px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-20%",
+          right: "-10%",
+          width: "220px",
+          height: "220px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%)",
+          filter: "blur(40px)",
+          pointerEvents: "none",
+        }}
+      />
+ 
+      {/* ── navbar ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "8px 14px",
+          borderBottom: "1px solid rgba(6,182,212,0.15)",
+          background: "rgba(15,23,42,0.7)",
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <span style={{ fontSize: "9px", fontWeight: 800, letterSpacing: "0.12em", color: "#fff" }}>
+          NEON<span style={{ color: "#22d3ee" }}>VAULT</span>
+        </span>
+        <div style={{ display: "flex", gap: "10px" }}>
+          {["HOME", "WORK", "SKILLS", "CONTACT"].map((l) => (
+            <span key={l} style={{ fontSize: "5px", color: "rgba(148,163,184,0.7)", letterSpacing: "0.1em" }}>{l}</span>
+          ))}
+        </div>
+        <div
+          style={{
+            fontSize: "5px",
+            padding: "3px 8px",
+            borderRadius: "999px",
+            border: "1px solid rgba(6,182,212,0.5)",
+            color: "#22d3ee",
+            letterSpacing: "0.1em",
+          }}
+        >
+          HIRE ME
+        </div>
+      </div>
+ 
+      {/* ── hero ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "10px 16px 4px",
+          textAlign: "center",
+        }}
+      >
+        {/* status badge */}
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "5px",
+            padding: "3px 10px",
+            borderRadius: "999px",
+            border: "1px solid rgba(6,182,212,0.3)",
+            background: "rgba(6,182,212,0.08)",
+            marginBottom: "10px",
+          }}
+        >
+          <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#22d3ee" }} />
+          <span style={{ fontSize: "6px", color: "#22d3ee", fontFamily: "monospace", letterSpacing: "0.06em" }}>
+            Available for Work
+          </span>
+        </div>
+ 
+        {/* big name */}
+        <div
+          style={{
+            fontSize: "clamp(18px, 4vw, 28px)",
+            fontWeight: 800,
+            lineHeight: 1,
+            marginBottom: "4px",
+            background: "linear-gradient(90deg, #fff 0%, #22d3ee 50%, #a855f7 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            letterSpacing: "-0.03em",
+          }}
+        >
+          {name.split(" ")[0].toUpperCase()}
+        </div>
+        <div
+          style={{
+            fontSize: "clamp(16px, 3.5vw, 24px)",
+            fontWeight: 800,
+            lineHeight: 1,
+            marginBottom: "8px",
+            color: "#a855f7",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {name.split(" ").slice(1).join(" ").toUpperCase() || "DEVELOPER"}
+        </div>
+ 
+        {/* role + location */}
+        <div
+          style={{
+            display: "inline-block",
+            padding: "3px 12px",
+            borderRadius: "999px",
+            border: "1px solid rgba(168,85,247,0.3)",
+            background: "rgba(168,85,247,0.08)",
+            marginBottom: "8px",
+          }}
+        >
+          <span style={{ fontSize: "6px", color: "#c084fc", fontFamily: "monospace" }}>
+            {title} · {location}
+          </span>
+        </div>
+ 
+        {/* summary */}
+        {summary && (
+          <p
+            style={{
+              fontSize: "6.5px",
+              color: "rgba(148,163,184,0.85)",
+              lineHeight: 1.6,
+              maxWidth: "220px",
+              marginBottom: "10px",
+            }}
+          >
+            {summary.slice(0, 90)}{summary.length > 90 ? "…" : ""}
+          </p>
+        )}
+ 
+        {/* stats */}
+        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+          {[
+            { val: `${exp.length || 4}+`, label: "Yrs Exp" },
+            { val: `${profile?.projects?.length || 12}+`, label: "Projects" },
+          ].map((s) => (
+            <div key={s.label} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "16px", fontWeight: 800, color: "#22d3ee", lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontSize: "5.5px", color: "rgba(148,163,184,0.6)" }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+ 
+        {/* CTA */}
+        <div style={{ display: "flex", gap: "6px", marginBottom: "10px" }}>
+          <div
+            style={{
+              padding: "5px 14px",
+              borderRadius: "999px",
+              background: "linear-gradient(90deg, #06b6d4, #9333ea)",
+              fontSize: "6px",
+              fontWeight: 700,
+              color: "#fff",
+              letterSpacing: "0.04em",
+            }}
+          >
+            View My Work
+          </div>
+          <div
+            style={{
+              padding: "5px 14px",
+              borderRadius: "999px",
+              border: "1px solid rgba(6,182,212,0.5)",
+              fontSize: "6px",
+              fontWeight: 600,
+              color: "#22d3ee",
+            }}
+          >
+            Contact Me
+          </div>
+        </div>
+ 
+        {/* skills pills */}
+        {skills.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center", maxWidth: "240px" }}>
+            {skills.slice(0, 5).map((sk) => (
+              <div
+                key={sk}
+                style={{
+                  padding: "2px 8px",
+                  borderRadius: "999px",
+                  background: "rgba(30,41,59,0.6)",
+                  border: "1px solid rgba(168,85,247,0.3)",
+                  fontSize: "5.5px",
+                  color: "rgba(192,132,252,0.9)",
+                }}
+              >
+                <span style={{ color: "#22d3ee", marginRight: "2px" }}>#</span>{sk}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+ 
+      {/* ── experience strip ── */}
+      {exp.length > 0 && (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            margin: "0 10px 10px",
+            padding: "8px 10px",
+            borderRadius: "10px",
+            background: "rgba(30,41,59,0.5)",
+            border: "1px solid rgba(148,163,184,0.1)",
+          }}
+        >
+          <div style={{ fontSize: "5px", color: "rgba(6,182,212,0.7)", letterSpacing: "0.12em", marginBottom: "6px", textTransform: "uppercase" }}>
+            Mission History
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+            {exp.slice(0, 2).map((e: any, i: number) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontSize: "6.5px", fontWeight: 700, color: "#fff" }}>{e.role}</div>
+                  <div style={{ fontSize: "5.5px", color: "#a855f7" }}>{e.company}</div>
+                </div>
+                <div
+                  style={{
+                    fontSize: "4.5px",
+                    fontFamily: "monospace",
+                    color: "#22d3ee",
+                    padding: "1px 5px",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(6,182,212,0.3)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {e.endDate === "Present" || e.endYear === "Present" ? "ACTIVE" : "DONE"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+ 
+      {/* ── bottom scan line ── */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background: "linear-gradient(90deg, transparent, #22d3ee, transparent)",
+          opacity: 0.4,
+        }}
+      />
+    </div>
+  );
+}

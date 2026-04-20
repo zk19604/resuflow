@@ -4,6 +4,7 @@ import { Check, Star } from "lucide-react";
 import { Navbar } from "./Navbar";
 import { Breadcrumb } from "./Breadcrumb";
 
+
 // Template preview gradients (replacing Figma assets)
 const templateGradients: Record<number, string> = {
   1: "linear-gradient(135deg, #1a0810 0%, #3d1424 50%, #6b2040 100%)",
@@ -31,15 +32,10 @@ const templates = [
   { id: 7, name: "Fatima Mazhar", category: "Minimal", desc: "Elegant beige editorial layout with sophisticated typography.", rating: 4 },
   { id: 8, name: "Alex Moracain", category: "Creative", desc: "Space-themed dark design with purple gradients and modern cards.", rating: 5 },
   { id: 9, name: "Alexandra Whitmore", category: "Academic", desc: "Traditional clean layout with navy accents for corporate professionals.", rating: 4 },
-  { id: 10, name: "Taylor Sheeran", category: "Bold", desc: "High-contrast black design with cyan and orange accent colors.", rating: 5 },
-  { 
-    id: 11, 
-    name: "neon-vault", // Keep this lowercase/hyphenated to match your switcher
-    category: "Creative", 
-    desc: "Cyberpunk aesthetic with glowing purple accents and slate backgrounds.", 
-    rating: 5 
-  },
+  { id: 10, name: "Taylor Sheeran", category: "Bold", desc: "High-contrast black design with cyan and orange accent colors.", rating: 5 }, 
+  { id: 11,  name: "neon-vault", category: "Creative",  desc: "Cyberpunk aesthetic with glowing purple accents and slate backgrounds.", rating: 5 },
 ];
+
 
 function StarRating({ count }: { count: number }) {
   return (
