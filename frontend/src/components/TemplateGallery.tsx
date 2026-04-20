@@ -16,6 +16,7 @@ const templateGradients: Record<number, string> = {
   8: "linear-gradient(135deg, #070015 0%, #1c0535 50%, #4a0e70 100%)",
   9: "linear-gradient(135deg, #0a1828 0%, #1b3a5c 50%, #2e5a8a 100%)",
   10: "linear-gradient(135deg, #000000 0%, #111111 50%, #002222 100%)",
+  11: "linear-gradient(135deg, #0f172a 0%, #581c87 50%, #7c3aed 100%)", // Purple and Slate Neon
 };
 
 const categories = ["All", "Minimal", "Bold", "Creative", "Corporate", "Academic"];
@@ -31,6 +32,13 @@ const templates = [
   { id: 8, name: "Alex Moracain", category: "Creative", desc: "Space-themed dark design with purple gradients and modern cards.", rating: 5 },
   { id: 9, name: "Alexandra Whitmore", category: "Academic", desc: "Traditional clean layout with navy accents for corporate professionals.", rating: 4 },
   { id: 10, name: "Taylor Sheeran", category: "Bold", desc: "High-contrast black design with cyan and orange accent colors.", rating: 5 },
+  { 
+    id: 11, 
+    name: "neon-vault", // Keep this lowercase/hyphenated to match your switcher
+    category: "Creative", 
+    desc: "Cyberpunk aesthetic with glowing purple accents and slate backgrounds.", 
+    rating: 5 
+  },
 ];
 
 function StarRating({ count }: { count: number }) {
@@ -208,7 +216,7 @@ export function TemplateGallery() {
                       {tmpl.category}
                     </div>
                     <div style={{ color: "rgba(255,255,255,0.25)", fontSize: "14px", fontWeight: 600 }}>
-                      {tmpl.name}
+                      {tmpl.name === 'neon-vault' ? 'Neon Vault' : tmpl.name}
                     </div>
                   </div>
                   {/* Watermark */}

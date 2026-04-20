@@ -4,6 +4,7 @@ import { UploadForm } from "./components/UploadForm";
 import { ExtractionScreen } from "./components/ExtractionScreen";
 import { PreviewDashboard } from "./components/PreviewDashboard";
 import { DeploymentScreen } from "./components/DeploymentScreen";
+// Add these exact lines
 
 export const router = createBrowserRouter([
   {
@@ -26,4 +27,5 @@ export const router = createBrowserRouter([
     path: "/deploy",
     Component: DeploymentScreen,
   },
+
 ]);
