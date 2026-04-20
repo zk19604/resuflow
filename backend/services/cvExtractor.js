@@ -119,24 +119,34 @@ async function extractCVData(rawText) {
 
   const prompt = CV_SCHEMA_PROMPT + rawText;
 
-  const apiCall = model.generateContent(prompt);
-  const timeout = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('Gemini API timed out after 60s')), 60000)
-  );
+  let lastError;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt > 0) {
+      const delay = Math.min(1000 * 2 ** attempt, 16000);
+      await new Promise((r) => setTimeout(r, delay));
+    }
+    try {
+      const apiCall = model.generateContent(prompt);
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini API timed out after 60s')), 60000)
+      );
+      const result = await Promise.race([apiCall, timeout]);
+          const cleaned = responseText
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .trim();
 
-  const result = await Promise.race([apiCall, timeout]);
-  const responseText = result.response.text();
-
-  const cleaned = responseText
-    .replace(/```json/g, '')
-    .replace(/```/g, '')
-    .trim();
-
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    throw new Error('Gemini returned invalid JSON — check your API key and model name');
+      try {
+        return JSON.parse(cleaned);
+      } catch {
+        throw new Error('Gemini returned invalid JSON — check your API key and model name');
+      }
+    } catch (err) {
+      lastError = err;
+      if (err.status !== 503) throw err;
+    }
   }
+  throw lastError;
 }
 
 module.exports = { extractCVData };

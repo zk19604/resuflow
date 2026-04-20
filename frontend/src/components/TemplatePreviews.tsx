@@ -633,3 +633,78 @@ export function NeumorphismPreview({ profile }: { profile: any }) {
     </div>
   );
 }
+
+export function GlassDarkPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const firstName = name.split(" ")[0];
+  const role = profile?.workExperience?.[0]?.role || "UI/UX Designer";
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#0D0B1E",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "Inter, sans-serif",
+        position: "relative",
+        overflow: "hidden",
+        padding: "16px",
+      }}
+    >
+      <div style={{ position: "absolute", top: "10%", right: "5%", width: "80px", height: "80px", borderRadius: "50%", background: "radial-gradient(circle, #C850C070 0%, transparent 70%)", filter: "blur(20px)" }} />
+      <div style={{ position: "absolute", bottom: "15%", left: "5%", width: "60px", height: "60px", borderRadius: "50%", background: "radial-gradient(circle, #4158D060 0%, transparent 70%)", filter: "blur(15px)" }} />
+
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "260px",
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          backdropFilter: "blur(20px)",
+          borderRadius: "20px",
+          padding: "16px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "linear-gradient(135deg, #C850C0, #4158D0)", padding: "2px", marginBottom: "8px" }}>
+          <div style={{ width: "100%", height: "100%", borderRadius: "50%", background: "#1A1040", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: "16px", fontWeight: 700, background: "linear-gradient(90deg, #C850C0, #FF6B9D)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              {firstName.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        </div>
+
+        <h3 style={{ fontSize: "12px", fontWeight: 700, color: "#fff", margin: "0 0 2px", textAlign: "center" }}>{firstName}</h3>
+        <p style={{ fontSize: "9px", color: "rgba(255,255,255,0.5)", margin: "0 0 10px", textAlign: "center" }}>{role}</p>
+
+        <div style={{ display: "flex", gap: "12px", marginBottom: "10px" }}>
+          {["24+", "18+", "3+"].map((v, i) => (
+            <div key={i} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "14px", fontWeight: 800, background: "linear-gradient(90deg, #C850C0, #FF6B9D)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{v}</div>
+              <div style={{ fontSize: "7px", color: "rgba(255,255,255,0.3)" }}>{["Projects", "Clients", "Years"][i]}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ width: "100%" }}>
+          {[{ name: "Figma", pct: 92 }, { name: "UI Design", pct: 88 }].map((s) => (
+            <div key={s.name} style={{ marginBottom: "6px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
+                <span style={{ fontSize: "8px", color: "#fff" }}>{s.name}</span>
+                <span style={{ fontSize: "7px", color: "rgba(255,255,255,0.4)" }}>{s.pct}%</span>
+              </div>
+              <div style={{ height: "3px", background: "rgba(255,255,255,0.08)", borderRadius: "2px", overflow: "hidden" }}>
+                <div style={{ width: `${s.pct}%`, height: "100%", background: "linear-gradient(135deg, #C850C0, #4158D0)", borderRadius: "2px" }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

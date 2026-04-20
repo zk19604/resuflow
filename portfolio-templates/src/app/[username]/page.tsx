@@ -11,6 +11,8 @@ import { Footer } from '@/components/glassmorphism/Footer';
 import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Template';
 import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
+import { GlassDarkTemplate } from '@/components/glassDark/Template';
+import { NeumorphismTemplate } from '@/components/neumorphism/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -76,6 +78,14 @@ export default async function PortfolioPage({ params }: PageProps) {
 
   if (config?.template === 'bento') {
     return <BentoTemplate profile={profile} config={config} />;
+  }
+
+  if (config?.template === 'glassdark') {
+    return <GlassDarkTemplate profile={profile} config={config} />;
+  }
+
+  if (config?.template === 'neumorphism') {
+    return <NeumorphismTemplate profile={profile} config={config} />;
   }
 
   const visible = config?.sectionsVisible || {};

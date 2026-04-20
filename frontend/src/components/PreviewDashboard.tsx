@@ -8,6 +8,7 @@ import {
   EditorialPreview,
   BentoPreview,
   NeumorphismPreview,  // ADD THIS IMPORT
+  GlassDarkPreview,
 } from "./TemplatePreviews";
 
 const paletteRows = [
@@ -22,7 +23,7 @@ const sections = ["About", "Skills", "Experience", "Education", "Projects", "Ach
 const fontOptions = ["Modern Sans", "Serif Editorial"];
 
 // UPDATE TYPE
-type TemplateType = "glassmorphism" | "highendminimalist" | "editorial" | "bento" | "neumorphism";
+type TemplateType = "glassmorphism" | "highendminimalist" | "editorial" | "bento" | "neumorphism" | "glassdark";
 
 // UPDATE LABELS
 const templateLabels: Record<TemplateType, string> = {
@@ -31,6 +32,7 @@ const templateLabels: Record<TemplateType, string> = {
   editorial: "Editorial",
   bento: "Bento",
   neumorphism: "Neumorphism",
+  glassdark: "Glass Dark",
 };
 
 export function PreviewDashboard() {
@@ -63,7 +65,7 @@ export function PreviewDashboard() {
       try {
         const { template, tone } = JSON.parse(vibe);
         // UPDATE INCLUDES CHECK
-        if (["glassmorphism", "highendminimalist", "editorial", "bento", "neumorphism"].includes(template)) {
+        if (["glassmorphism", "highendminimalist", "editorial", "bento", "neumorphism", "glassdark"].includes(template)) {
           setSelectedTemplate(template);
         }
         const toneIdx = ["Professional", "Friendly", "Creative"].indexOf(tone);
@@ -135,6 +137,7 @@ export function PreviewDashboard() {
     { id: "editorial", label: "Editorial" },
     { id: "bento", label: "Bento" },
     { id: "neumorphism", label: "Neumorphism" },
+    { id: "glassdark", label: "Glass Dark" },
   ];
 
   return (
@@ -239,6 +242,9 @@ export function PreviewDashboard() {
                 {selectedTemplate === "neumorphism" && (
                   <NeumorphismPreview profile={profile} />
                 )}
+                {selectedTemplate === "glassdark" && (
+                  <GlassDarkPreview profile={profile} />
+                )}
               </div>
             </div>
           </div>
@@ -302,6 +308,7 @@ export function PreviewDashboard() {
                         {t.id === "editorial" && <EditorialPreview profile={profile} />}
                         {t.id === "bento" && <BentoPreview profile={profile} />}
                         {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />}
+                        {t.id === "glassdark" && <GlassDarkPreview profile={profile} />}
                       </div>
                       <div
                         style={{
