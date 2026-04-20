@@ -1,43 +1,26 @@
 @import "tailwindcss";
 
-/* 1. Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;600&display=swap');
-
 :root {
-  --background: #020204; /* Deep black for Neon Vault */
-  --foreground: #ededed;
-  --neon-cyan: #22d3ee;
-  --neon-purple: #7b2fff;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
-/* 2. Integrate with Tailwind v4 Theme Block */
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-neon-cyan: var(--neon-cyan);
-  --color-neon-purple: var(--neon-purple);
-  --font-syne: "Syne", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+} */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
-/* 3. Modern Tailwind v4 Utilities */
-@utility neon-text-cyan {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 10px rgba(34, 211, 238, 0.5), 0 0 20px rgba(34, 211, 238, 0.3);
-}
-
-@utility neon-border-purple {
-  border: 1px solid rgba(123, 47, 255, 0.4);
-  box-shadow: 0 0 15px rgba(123, 47, 255, 0.15);
-}
-
-/* 4. Global Styles */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter);
-}
-
-h1, h2, h3 {
-  font-family: var(--font-syne);
+  font-family: Arial, Helvetica, sans-serif;
 }

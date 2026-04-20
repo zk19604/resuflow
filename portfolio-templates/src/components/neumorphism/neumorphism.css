@@ -1,0 +1,148 @@
+/* Neumorphism Template Specific Styles */
+/* This file doesn't interfere with global Tailwind config */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+
+.neumorphism-template {
+  --bg-primary: #E8E3DC;
+  --bg-secondary: #DEDAD3;
+  --text-primary: #3D3830;
+  --text-secondary: #7A7268;
+  --text-muted: #A09890;
+  --accent-primary: #8B7355;
+  --accent-secondary: #D3A29D;
+}
+
+.neumorphism-template * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.neumorphism-template {
+  background: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.neumorphism-template .font-serif {
+  font-family: 'DM Serif Display', Georgia, serif;
+}
+
+.neumorphism-template .font-mono {
+  font-family: 'DM Sans', monospace;
+}
+
+/* Neumorphic Shadows */
+.neumorphism-template .shadow-raised {
+  box-shadow: -6px -6px 12px rgba(255, 252, 247, 0.8), 
+               6px 6px 12px rgba(163, 156, 146, 0.4);
+}
+
+.neumorphism-template .shadow-raised-sm {
+  box-shadow: -3px -3px 6px rgba(255, 252, 247, 0.6), 
+               3px 3px 6px rgba(163, 156, 146, 0.3);
+}
+
+.neumorphism-template .shadow-raised-lg {
+  box-shadow: -8px -8px 16px rgba(255, 252, 247, 0.9), 
+               8px 8px 16px rgba(163, 156, 146, 0.5);
+}
+
+.neumorphism-template .shadow-inset {
+  box-shadow: inset -4px -4px 8px rgba(255, 252, 247, 0.8), 
+              inset 4px 4px 8px rgba(163, 156, 146, 0.3);
+}
+
+.neumorphism-template .shadow-inset-lg {
+  box-shadow: inset -8px -8px 16px rgba(255, 252, 247, 0.9), 
+              inset 8px 8px 16px rgba(163, 156, 146, 0.4);
+}
+
+.neumorphism-template .shadow-accent {
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+}
+
+/* Gradients */
+.neumorphism-template .gradient-accent {
+  background: linear-gradient(135deg, #8B7355 0%, #D3A29D 100%);
+}
+
+.neumorphism-template .gradient-primary {
+  background: linear-gradient(135deg, #D3A29D 0%, #8B7355 100%);
+}
+
+.neumorphism-template .gradient-active {
+  background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+}
+
+.neumorphism-template .gradient-text {
+  background: linear-gradient(135deg, #8B7355 0%, #D3A29D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section Divider */
+.neumorphism-template .section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #A09890, transparent);
+  opacity: 0.3;
+}
+
+/* Animations */
+@keyframes neumorphism-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes neumorphism-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes neumorphism-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+@keyframes neumorphism-pulse-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px #8B7355; }
+  50% { opacity: 0.6; box-shadow: 0 0 15px #8B7355; }
+}
+
+.neumorphism-template .animate-float {
+  animation: neumorphism-float 4s ease-in-out infinite;
+}
+
+.neumorphism-template .animate-breathe {
+  animation: neumorphism-breathe 6s ease-in-out infinite;
+}
+
+.neumorphism-template .animate-scroll-bounce {
+  animation: neumorphism-scroll-bounce 2s ease infinite;
+}
+
+.neumorphism-template .animate-pulse-glow {
+  animation: neumorphism-pulse-glow 2s ease-in-out infinite;
+}
+
+/* Hover Effects */
+.neumorphism-template .hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.neumorphism-template .hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: -8px -8px 16px rgba(255, 252, 247, 0.9), 
+               8px 8px 16px rgba(163, 156, 146, 0.5);
+}
+
+.neumorphism-template .active-press {
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.neumorphism-template .active-press:active {
+  transform: translateY(1px);
+  box-shadow: inset -4px -4px 8px rgba(255, 252, 247, 0.8), 
+              inset 4px 4px 8px rgba(163, 156, 146, 0.3);
+}
