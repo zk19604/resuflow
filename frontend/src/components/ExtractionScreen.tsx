@@ -8,6 +8,7 @@ import {
   HighEndMinimalistPreview,
   EditorialPreview,
   BentoPreview,
+  NeumorphismPreview,
   defaultPalette,
 } from "./TemplatePreviews";
 
@@ -16,6 +17,7 @@ const templates = [
   { id: "highendminimalist", label: "High-End Minimalist", desc: "Clean, editorial, elegant white-space layout." },
   { id: "editorial", label: "Editorial", desc: "Bold serif typography with a magazine-style layout." },
   { id: "bento", label: "Bento", desc: "Modern card grid layout with colorful bento boxes." },
+  { id: "neumorphism", label: "Neumorphism", desc: "Soft UI with subtle shadows and tactile feel." },
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];
@@ -301,6 +303,7 @@ export function ExtractionScreen() {
                       {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
                       {t.id === "editorial" && <EditorialPreview profile={profile} />}
                       {t.id === "bento" && <BentoPreview profile={profile} />}
+                      {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />} 
                     </div>
                     <div style={{ padding: "12px" }}>
                       <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>

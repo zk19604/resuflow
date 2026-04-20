@@ -542,3 +542,94 @@ export function BentoPreview({ profile }: { profile: any }) {
     </div>
   );
 }
+
+export function NeumorphismPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || "Professional";
+  const skills = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#E4E9F2",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Inter', sans-serif",
+        padding: "16px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "280px",
+          background: "#E4E9F2",
+          borderRadius: "20px",
+          padding: "16px",
+          boxShadow: `
+            6px 6px 12px rgba(163, 177, 198, 0.3),
+            -6px -6px 12px rgba(255, 255, 255, 0.7)
+          `,
+        }}
+      >
+        {/* Avatar */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+          <div
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              background: "#E4E9F2",
+              boxShadow: `
+                4px 4px 8px rgba(163, 177, 198, 0.3),
+                -4px -4px 8px rgba(255, 255, 255, 0.8)
+              `,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span style={{ fontSize: "18px", fontWeight: 600, color: "#6B7B8D" }}>
+              {name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        </div>
+        
+        <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#3A4151", textAlign: "center", margin: "0 0 4px" }}>
+          {name.split(" ")[0]}
+        </h3>
+        <p style={{ fontSize: "10px", color: "#6B7B8D", textAlign: "center", margin: "0 0 12px" }}>
+          {role}
+        </p>
+        
+        {skills.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
+            {skills.slice(0, 2).map((skill) => (
+              <span
+                key={skill}
+                style={{
+                  padding: "4px 8px",
+                  fontSize: "8px",
+                  background: "#E4E9F2",
+                  borderRadius: "12px",
+                  color: "#5A6778",
+                  boxShadow: `
+                    2px 2px 4px rgba(163, 177, 198, 0.2),
+                    -2px -2px 4px rgba(255, 255, 255, 0.6)
+                  `,
+                }}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

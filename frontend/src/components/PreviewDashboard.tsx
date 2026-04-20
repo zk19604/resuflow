@@ -7,6 +7,7 @@ import {
   HighEndMinimalistPreview,
   EditorialPreview,
   BentoPreview,
+  NeumorphismPreview,  // ADD THIS IMPORT
 } from "./TemplatePreviews";
 
 const paletteRows = [
@@ -20,14 +21,18 @@ const paletteRows = [
 const sections = ["About", "Skills", "Experience", "Education", "Projects", "Achievements"];
 const fontOptions = ["Modern Sans", "Serif Editorial"];
 
-type TemplateType = "glassmorphism" | "highendminimalist" | "editorial" | "bento";
+// UPDATE TYPE
+type TemplateType = "glassmorphism" | "highendminimalist" | "editorial" | "bento" | "neumorphism";
 
+// UPDATE LABELS
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism: "Glassmorphism",
   highendminimalist: "High-End Minimalist",
   editorial: "Editorial",
   bento: "Bento",
+  neumorphism: "Neumorphism",
 };
+
 export function PreviewDashboard() {
   const navigate = useNavigate();
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>("glassmorphism");
@@ -57,7 +62,8 @@ export function PreviewDashboard() {
     if (vibe) {
       try {
         const { template, tone } = JSON.parse(vibe);
-        if (["glassmorphism", "highendminimalist", "editorial", "bento"].includes(template)) {
+        // UPDATE INCLUDES CHECK
+        if (["glassmorphism", "highendminimalist", "editorial", "bento", "neumorphism"].includes(template)) {
           setSelectedTemplate(template);
         }
         const toneIdx = ["Professional", "Friendly", "Creative"].indexOf(tone);
@@ -122,11 +128,13 @@ export function PreviewDashboard() {
     return slug ? `resuflow.app/${slug}` : "resuflow.app/your-portfolio";
   })();
 
+  // UPDATE TEMPLATE OPTIONS
   const templateOptions: { id: TemplateType; label: string }[] = [
     { id: "glassmorphism", label: "Glassmorphism" },
     { id: "highendminimalist", label: "High-End Minimalist" },
     { id: "editorial", label: "Editorial" },
     { id: "bento", label: "Bento" },
+    { id: "neumorphism", label: "Neumorphism" },
   ];
 
   return (
@@ -141,7 +149,7 @@ export function PreviewDashboard() {
         </div>
 
         <div className="flex gap-5" style={{ height: "calc(100vh - 220px)", minHeight: "600px" }}>
-          {/* ── LEFT PANEL: Live Preview ── */}
+          {/* LEFT PANEL: Live Preview */}
           <div style={{ flex: "0 0 65%", display: "flex", flexDirection: "column", gap: "10px" }}>
             <div className="flex items-center gap-2">
               <span
@@ -228,11 +236,14 @@ export function PreviewDashboard() {
                 {selectedTemplate === "bento" && (
                   <BentoPreview profile={profile} />
                 )}
+                {selectedTemplate === "neumorphism" && (
+                  <NeumorphismPreview profile={profile} />
+                )}
               </div>
             </div>
           </div>
 
-          {/* ── RIGHT PANEL: Customize ── */}
+          {/* RIGHT PANEL: Customize */}
           <div
             style={{
               flex: "0 0 33%",
@@ -269,9 +280,9 @@ export function PreviewDashboard() {
 
             {/* Content Area */}
             <div style={{ padding: "24px", flex: 1 }}>
-              {/* Template Selection */}
+              {/* Template Selection - Changed to 3 columns */}
               <CustomSection title="Template" icon="🖼️">
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
                   {templateOptions.map((t) => (
                     <div
                       key={t.id}
@@ -290,6 +301,7 @@ export function PreviewDashboard() {
                         {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
                         {t.id === "editorial" && <EditorialPreview profile={profile} />}
                         {t.id === "bento" && <BentoPreview profile={profile} />}
+                        {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />}
                       </div>
                       <div
                         style={{

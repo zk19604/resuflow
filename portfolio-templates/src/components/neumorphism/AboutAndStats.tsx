@@ -26,7 +26,6 @@ interface StatItem {
 }
 
 export function About({ profile }: AboutProps) {
-  // Get real data from profile with fallbacks
   const name = profile?.personalInfo?.name || "Your Name";
   const firstName = name.split(' ')[0];
   const summary = profile?.summary || profile?.personalInfo?.summary || "";
@@ -34,17 +33,14 @@ export function About({ profile }: AboutProps) {
   const education = profile?.education || [];
   const skills = profile?.skills || { technical: [], tools: [], soft: [] };
   
-  // Only use soft skills that actually exist
   const softSkills: string[] = skills.soft || [];
   
-  // Generate summary paragraphs - only if summary exists
   const summaryParagraphs: string[] = summary 
     ? summary.split('. ').filter((p: string) => p.trim().length > 0).map((p: string) => 
         p.endsWith('.') ? p : p + '.'
       )
     : [];
 
-  // Dynamic values based on available soft skills (skip if none)
   const valueIcons: LucideIcon[] = [Target, Eye, Lightbulb, Layers];
   const values: ValueItem[] = softSkills.length > 0 
     ? softSkills.slice(0, 4).map((skill: string, index: number) => ({
@@ -55,11 +51,10 @@ export function About({ profile }: AboutProps) {
               index === 2 ? 'Drives my problem-solving methodology' :
               'Key aspect of my professional identity'
       }))
-    : []; // Empty array - won't render if no soft skills
+    : [];
 
-  // Build timeline from real work experience
   const timeline: TimelineItem[] = workExperience
-    .filter((exp: any) => exp.role || exp.company) // Only show entries with data
+    .filter((exp: any) => exp.role || exp.company)
     .slice(0, 4)
     .map((exp: any, index: number) => ({
       year: exp.startDate?.split('-')[0] || exp.endDate?.split('-')[0] || new Date().getFullYear().toString(),
@@ -69,7 +64,6 @@ export function About({ profile }: AboutProps) {
       active: index === 0,
     }));
 
-  // If no work experience, try education timeline
   const displayTimeline: TimelineItem[] = timeline.length > 0 
     ? timeline 
     : education
@@ -83,18 +77,22 @@ export function About({ profile }: AboutProps) {
           active: index === 0,
         }));
 
-  // Check if we have any content for the right panel
   const hasTimeline: boolean = displayTimeline.length > 0;
   const hasSummary: boolean = summaryParagraphs.length > 0;
   const hasValues: boolean = values.length > 0;
+  const hasContent = hasSummary || hasValues || hasTimeline;
+
+  // Don't render the entire section if no content
+  if (!hasContent && !name) {
+    return null;
+  }
 
   return (
     <section id="about" className="bg-[#E8E3DC] py-28 lg:py-40 px-6 lg:px-12">
       <div className="section-divider max-w-[1400px] mx-auto mb-20" />
 
       <div className="max-w-[1400px] mx-auto">
-        {/* Only show heading if we have a name */}
-        {name && (
+        {name && hasContent && (
           <h2
             className="font-serif mb-16"
             style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#3D3830', fontWeight: 400 }}
@@ -103,12 +101,9 @@ export function About({ profile }: AboutProps) {
           </h2>
         )}
 
-        {/* Only render grid if we have content */}
-        {(hasSummary || hasValues || hasTimeline) ? (
+        {hasContent ? (
           <div className={`grid ${hasTimeline ? 'lg:grid-cols-[55%_45%]' : 'lg:grid-cols-1'} gap-12 lg:gap-16`}>
-            {/* Left Content */}
             <div className="space-y-8">
-              {/* Summary Section - Only show if summary exists */}
               {hasSummary && (
                 <div className="space-y-6">
                   {summaryParagraphs.slice(0, 3).map((paragraph: string, idx: number) => (
@@ -119,14 +114,10 @@ export function About({ profile }: AboutProps) {
                 </div>
               )}
 
-              {/* Decorative Bar - Only show if we have content above */}
               {(hasSummary || hasValues) && (
-                <div
-                  className="w-20 h-1 rounded-full gradient-accent shadow-raised-sm"
-                />
+                <div className="w-20 h-1 rounded-full gradient-accent shadow-raised-sm" />
               )}
 
-              {/* Values Grid - Only show if we have soft skills */}
               {hasValues && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6">
                   {values.map(({ icon: Icon, title, desc }: ValueItem) => (
@@ -148,27 +139,18 @@ export function About({ profile }: AboutProps) {
               )}
             </div>
 
-            {/* Right Timeline Card - Only show if we have timeline data */}
             {hasTimeline && (
               <div className="p-10 rounded-[32px] bg-[#E8E3DC] shadow-raised-lg">
                 <div className="relative">
-                  {/* Vertical Rail */}
-                  <div
-                    className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#E8E3DC] shadow-raised-sm"
-                  />
-
-                  {/* Timeline Items */}
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#E8E3DC] shadow-raised-sm" />
                   <div className="space-y-10 relative pl-12">
                     {displayTimeline.map((item: TimelineItem, idx: number) => (
                       <div key={idx} className="relative">
-                        {/* Node */}
                         <div
                           className={`absolute -left-[51px] top-1 w-5 h-5 rounded-full ${
                             item.active ? 'gradient-accent shadow-accent' : 'bg-[#E8E3DC] shadow-raised-sm'
                           }`}
                         />
-
-                        {/* Content */}
                         <div className="space-y-1">
                           {item.year && (
                             <div className="font-mono" style={{ fontSize: '13px', color: '#D3A29D' }}>
@@ -198,12 +180,7 @@ export function About({ profile }: AboutProps) {
               </div>
             )}
           </div>
-        ) : (
-          /* Fallback if no content at all */
-          <div style={{ fontFamily: 'DM Sans', fontSize: '16px', color: '#7A7268', textAlign: 'center', padding: '40px' }}>
-            Add more details to your profile to see your about section.
-          </div>
-        )}
+        ) : null}
       </div>
     </section>
   );
@@ -213,16 +190,13 @@ export function Statistics({ profile }: AboutProps) {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Calculate real stats from profile data
   const workExperience: any[] = profile?.workExperience || [];
   const projects: any[] = profile?.projects || [];
   const skills: any = profile?.skills || { technical: [], tools: [], soft: [] };
   const allSkills: string[] = [...(skills.technical || []), ...(skills.tools || []), ...(skills.soft || [])];
   
-  // Calculate years of experience (only if work experience exists)
   const calculateYears = (): number => {
     if (workExperience.length === 0) return 0;
-    
     const years: number[] = workExperience
       .filter((exp: any) => exp.startDate || exp.endDate)
       .map((exp: any) => {
@@ -232,7 +206,6 @@ export function Statistics({ profile }: AboutProps) {
           : new Date(exp.endDate).getFullYear();
         return start && end ? Math.max(1, end - start) : 1;
       });
-    
     if (years.length === 0) return 0;
     return Math.round(years.reduce((a: number, b: number) => a + b, 0) / years.length) || 1;
   };
@@ -241,40 +214,19 @@ export function Statistics({ profile }: AboutProps) {
   const projectCount: number = projects.length || workExperience.length || 0;
   const skillCount: number = allSkills.length || 0;
   
-  // Build stats array - only include stats that have values > 0
   const stats: StatItem[] = [];
   
   if (yearsExp > 0) {
-    stats.push({ 
-      value: yearsExp, 
-      label: yearsExp === 1 ? 'Year' : 'Years', 
-      suffix: '+' 
-    });
+    stats.push({ value: yearsExp, label: yearsExp === 1 ? 'Year' : 'Years', suffix: '+' });
   }
-  
   if (projectCount > 0) {
-    stats.push({ 
-      value: projectCount, 
-      label: projectCount === 1 ? 'Project' : 'Projects', 
-      suffix: '' 
-    });
+    stats.push({ value: projectCount, label: projectCount === 1 ? 'Project' : 'Projects', suffix: '' });
   }
-  
   if (skillCount > 0) {
-    stats.push({ 
-      value: skillCount, 
-      label: skillCount === 1 ? 'Skill' : 'Skills', 
-      suffix: '+' 
-    });
+    stats.push({ value: skillCount, label: skillCount === 1 ? 'Skill' : 'Skills', suffix: '+' });
   }
-  
-  // Only add dedication if we have at least one other stat
   if (stats.length > 0) {
-    stats.push({ 
-      value: 100, 
-      label: 'Dedication', 
-      suffix: '%' 
-    });
+    stats.push({ value: 100, label: 'Dedication', suffix: '%' });
   }
 
   const [counts, setCounts] = useState<number[]>(new Array(stats.length).fill(0));
@@ -288,21 +240,15 @@ export function Statistics({ profile }: AboutProps) {
       },
       { threshold: 0.3 }
     );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, [isVisible]);
 
   useEffect(() => {
     if (!isVisible || stats.length === 0) return;
-
     const duration: number = 1400;
     const steps: number = 60;
     const interval: number = duration / steps;
-
     const timers: NodeJS.Timeout[] = stats.map((stat: StatItem, idx: number) => {
       return setInterval(() => {
         setCounts((prev: number[]) => {
@@ -318,11 +264,10 @@ export function Statistics({ profile }: AboutProps) {
         });
       }, interval);
     });
-
     return () => timers.forEach((timer: NodeJS.Timeout) => clearInterval(timer));
   }, [isVisible, stats.length]);
 
-  // Don't render anything if no stats to show
+  // Don't render if no stats
   if (stats.length === 0) {
     return null;
   }
@@ -330,7 +275,6 @@ export function Statistics({ profile }: AboutProps) {
   return (
     <section ref={sectionRef} className="bg-[#E8E3DC] py-20 lg:py-28 px-6 lg:px-12">
       <div className="max-w-[1400px] mx-auto">
-        {/* Inset Panel */}
         <div className="p-8 lg:p-16 rounded-[32px] bg-[#E8E3DC] shadow-inset-lg">
           <div 
             className="grid gap-6 lg:gap-8"
@@ -338,7 +282,6 @@ export function Statistics({ profile }: AboutProps) {
           >
             {stats.map((stat: StatItem, idx: number) => (
               <div key={idx} className="relative group">
-                {/* Stat Card - Raised inside inset */}
                 <div
                   className={`p-6 lg:p-8 rounded-2xl bg-[#E8E3DC] text-center transition-all duration-700 ${
                     counts[idx] >= stat.value ? 'shadow-inset' : 'shadow-raised'
@@ -368,8 +311,6 @@ export function Statistics({ profile }: AboutProps) {
                     {stat.label}
                   </div>
                 </div>
-
-                {/* Divider (except last) */}
                 {idx < stats.length - 1 && (
                   <div className="hidden lg:block absolute right-[-16px] top-1/2 -translate-y-1/2 w-px h-16 section-divider" />
                 )}
