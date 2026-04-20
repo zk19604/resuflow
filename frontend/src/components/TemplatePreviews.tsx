@@ -230,25 +230,140 @@ export function BentoPreview({ profile }: { profile: any }) {
   );
 }
 
-export function NeumorphismPreview({ profile }: { profile: any }) {
+export function NeumorphismPreview({ palette, profile }: { palette?: any; profile: any }) {
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
-  const skills = [...(profile?.skills?.technical || []), ...(profile?.skills?.tools || [])].slice(0, 3);
+  const company = profile?.workExperience?.[0]?.company || "";
+  const skills = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+
+  // Use the same colors as your Figma design
+  const bgColor = "#E8E3DC";
+  const accentColor = "#8B7355";
+  const textColor = "#3D3830";
+  const mutedColor = "#7A7268";
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#E4E9F2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Inter', sans-serif", padding: "16px" }}>
-      <div style={{ width: "100%", maxWidth: "280px", background: "#E4E9F2", borderRadius: "20px", padding: "16px", boxShadow: "6px 6px 12px rgba(163, 177, 198, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.7)" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: bgColor,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'DM Sans', sans-serif",
+        padding: "12px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "260px",
+          background: bgColor,
+          borderRadius: "16px",
+          padding: "16px",
+          boxShadow: `
+            -4px -4px 8px rgba(255, 252, 247, 0.8),
+            4px 4px 8px rgba(163, 156, 146, 0.4)
+          `,
+        }}
+      >
+        {/* Avatar Circle */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
-          <div style={{ width: "50px", height: "50px", borderRadius: "50%", background: "#E4E9F2", boxShadow: "4px 4px 8px rgba(163, 177, 198, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.8)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: "18px", fontWeight: 600, color: "#6B7B8D" }}>{name.charAt(0).toUpperCase()}</span>
+          <div
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              background: bgColor,
+              boxShadow: `
+                -3px -3px 6px rgba(255, 252, 247, 0.8),
+                3px 3px 6px rgba(163, 156, 146, 0.3)
+              `,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span style={{ 
+              fontSize: "18px", 
+              fontWeight: 600, 
+              color: accentColor,
+              fontFamily: "'DM Serif Display', serif"
+            }}>
+              {name.charAt(0).toUpperCase()}
+            </span>
           </div>
         </div>
-        <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#3A4151", textAlign: "center", margin: "0 0 4px" }}>{name.split(" ")[0]}</h3>
-        <p style={{ fontSize: "10px", color: "#6B7B8D", textAlign: "center", margin: "0 0 12px" }}>{role}</p>
+        
+        {/* Name */}
+        <h3 style={{ 
+          fontSize: "16px", 
+          fontWeight: 600, 
+          color: textColor, 
+          textAlign: "center", 
+          margin: "0 0 4px",
+          fontFamily: "'DM Sans', sans-serif"
+        }}>
+          {name.split(" ")[0]} {name.split(" ")[1]?.[0] || ""}.
+        </h3>
+        
+        {/* Role */}
+        <p style={{ 
+          fontSize: "10px", 
+          color: accentColor, 
+          textAlign: "center", 
+          margin: "0 0 2px",
+          textTransform: "uppercase",
+          letterSpacing: "1px",
+          fontFamily: "'DM Sans', sans-serif"
+        }}>
+          {role}
+        </p>
+        
+        {/* Company/Location */}
+        {company && (
+          <p style={{ 
+            fontSize: "8px", 
+            color: mutedColor, 
+            textAlign: "center", 
+            margin: "0 0 10px",
+            fontFamily: "'DM Sans', sans-serif"
+          }}>
+            {company}
+          </p>
+        )}
+        
+        {/* Skills */}
         {skills.length > 0 && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
+          <div style={{ 
+            display: "flex", 
+            flexWrap: "wrap", 
+            gap: "4px", 
+            justifyContent: "center",
+            marginTop: "8px"
+          }}>
             {skills.slice(0, 2).map((skill) => (
-              <span key={skill} style={{ padding: "4px 8px", fontSize: "8px", background: "#E4E9F2", borderRadius: "12px", color: "#5A6778", boxShadow: "2px 2px 4px rgba(163, 177, 198, 0.2), -2px -2px 4px rgba(255, 255, 255, 0.6)" }}>{skill}</span>
+              <span
+                key={skill}
+                style={{
+                  padding: "4px 8px",
+                  fontSize: "8px",
+                  background: bgColor,
+                  borderRadius: "12px",
+                  color: mutedColor,
+                  fontFamily: "'DM Sans', sans-serif",
+                  boxShadow: `
+                    -2px -2px 4px rgba(255, 252, 247, 0.6),
+                    2px 2px 4px rgba(163, 156, 146, 0.2)
+                  `,
+                }}
+              >
+                {skill}
+              </span>
             ))}
           </div>
         )}
