@@ -1083,3 +1083,68 @@ export function LuxuryHighEndPreview({ profile }: { profile: any }) {
     </div>
   );
 }
+
+export function MusicianPreview({ profile }: { profile: any }) {
+  const artistName = "Luna Vega";
+  const genres = ["Alternative", "Electronic", "Indie Rock"];
+ 
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "linear-gradient(135deg, #080B14 0%, #0A0D18 100%)",
+        position: "relative",
+        overflow: "hidden",
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      <div style={{ position: "absolute", top: "20%", right: "10%", width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle, rgba(194,24,91,0.4) 0%, transparent 70%)", filter: "blur(30px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "15%", left: "5%", width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle, rgba(106,27,154,0.35) 0%, transparent 70%)", filter: "blur(25px)", pointerEvents: "none" }} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", borderBottom: "1px solid rgba(194,24,91,0.12)", background: "rgba(8,11,20,0.85)" }}>
+        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          <span style={{ color: "#F0EEF5" }}>NOVA</span><span style={{ color: "#C2185B" }}> SOUNDS</span>
+        </span>
+        <div style={{ display: "flex", gap: 10 }}>
+          {["Music", "Events", "Gallery"].map((l) => (
+            <span key={l} style={{ fontSize: "5px", color: "rgba(158,155,176,0.7)", letterSpacing: "0.1em", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase" }}>{l}</span>
+          ))}
+        </div>
+        <div style={{ fontSize: "5px", padding: "3px 8px", border: "1px solid rgba(194,24,91,0.4)", color: "#F0EEF5", borderRadius: 2, fontFamily: "'Raleway', sans-serif", letterSpacing: "0.1em" }}>Book Now</div>
+      </div>
+      <div style={{ padding: "14px 14px 10px", position: "relative", zIndex: 2 }}>
+        <div style={{ display: "flex", gap: 5, marginBottom: 8 }}>
+          {genres.map((g) => (
+            <span key={g} style={{ padding: "2px 8px", border: "1px solid rgba(194,24,91,0.30)", background: "rgba(194,24,91,0.06)", borderRadius: 2, fontSize: "5px", color: "#9E9BB0", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'Raleway', sans-serif" }}>{g}</span>
+          ))}
+        </div>
+        <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(22px,5vw,32px)", fontWeight: 700, fontStyle: "italic", color: "#F0EEF5", lineHeight: 0.92, letterSpacing: "-0.02em", marginBottom: 8 }}>{artistName}</div>
+        <p style={{ fontSize: "6px", color: "#9E9BB0", lineHeight: 1.6, maxWidth: 160, marginBottom: 10 }}>Crafting sonic landscapes that blur the line between concert hall and conscience.</p>
+        <div style={{ display: "flex", gap: 16, marginBottom: 10 }}>
+          {[{ v: "4.2M", l: "Listeners" }, { v: "89", l: "Shows" }, { v: "6", l: "Albums" }].map((s, i) => (
+            <div key={i} style={{ position: "relative" }}>
+              {i > 0 && <div style={{ position: "absolute", left: -8, top: 0, bottom: 0, width: 1, background: "rgba(240,238,245,0.08)" }} />}
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: "#F0EEF5", lineHeight: 1 }}>{s.v}</div>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 5, color: "#9E9BB0", textTransform: "uppercase", marginTop: 2 }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+          <div style={{ padding: "5px 12px", borderRadius: 2, background: "linear-gradient(to right, #C2185B, #6A1B9A)", fontSize: "6px", fontWeight: 700, color: "#F0EEF5", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>▶ Listen Now</div>
+          <div style={{ padding: "5px 12px", borderRadius: 2, border: "1px solid rgba(194,24,91,0.40)", fontSize: "6px", color: "#9E9BB0", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>Tour Dates</div>
+        </div>
+      </div>
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 24, background: "rgba(8,11,20,0.85)", borderTop: "1px solid rgba(194,24,91,0.12)", display: "flex", alignItems: "center", padding: "0 10px", gap: 8, zIndex: 3 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "2px", height: 10 }}>
+          {[6, 10, 8, 4, 9].map((h, i) => (<div key={i} style={{ width: 2, height: h, borderRadius: 1, background: "linear-gradient(to top, #C2185B, #6A1B9A)" }} />))}
+        </div>
+        <div style={{ width: 16, height: 16, borderRadius: 2, background: "linear-gradient(135deg, rgba(194,24,91,0.4), rgba(106,27,154,0.4))", flexShrink: 0 }} />
+        <div>
+          <div style={{ fontSize: "6px", color: "#F0EEF5", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Midnight Echoes</div>
+          <div style={{ fontSize: "5px", color: "#9E9BB0", fontFamily: "'Inter', sans-serif" }}>Luna Vega</div>
+        </div>
+        <div style={{ marginLeft: "auto", fontFamily: "'Space Mono', monospace", fontSize: "5px", color: "#9E9BB0" }}>2:34 / 4:17</div>
+      </div>
+    </div>
+  );
+}

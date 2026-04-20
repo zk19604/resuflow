@@ -9,6 +9,8 @@ import {
   BentoPreview,
   NeumorphismPreview,
   LuxuryHighEndPreview,
+  MusicianPreview,
+  NeonVaultPreview
 } from "./TemplatePreviews";
 
 const paletteRows = [
@@ -28,7 +30,9 @@ type TemplateType =
   | "highendminimalist"
   | "editorial"
   | "bento"
-  | "neumorphism";
+  | "neumorphism"
+  | "neon-vault"
+  | "musician";
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism:     "Glassmorphism",
@@ -37,6 +41,8 @@ const templateLabels: Record<TemplateType, string> = {
   editorial:         "Editorial",
   bento:             "Bento",
   neumorphism:       "Neumorphism",
+  "neon-vault":      "Neon Vault",
+  musician:         "Musician",
 };
 
 const ALL_TEMPLATE_IDS: TemplateType[] = [
@@ -46,6 +52,8 @@ const ALL_TEMPLATE_IDS: TemplateType[] = [
   "editorial",
   "bento",
   "neumorphism",
+  "neon-vault",
+  "musician",
 ];
 
 /** Single place to render the correct preview component for any template id */
@@ -71,6 +79,10 @@ function TemplatePreviewRenderer({
       return <BentoPreview profile={profile} />;
     case "neumorphism":
       return <NeumorphismPreview profile={profile} />;
+    case "neon-vault":
+      return <NeonVaultPreview profile={profile} />;
+    case "musician":
+      return <MusicianPreview profile={profile} />;
     default:
       return null;
   }

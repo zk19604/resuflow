@@ -13,6 +13,7 @@ import {
   NeonVaultPreview,
   defaultPalette,
   LuxuryHighEndPreview,
+  MusicianPreview,
 } from "./TemplatePreviews";
 
 const templates = [
@@ -23,6 +24,7 @@ const templates = [
   { id: "neumorphism", label: "Neumorphism", desc: "Soft UI with subtle shadows and tactile feel." },
   { id: "neon-vault", label: "Neon Vault", desc: "Modern purple neon style for full-stack developers."},
   { id: "luxury-high-end", label: "Luxury High-End", desc: "Dark gold editorial — cinematic & premium." },
+  { id: "musician", label: "Musician", desc: "Creative, bold layout with music-inspired design." },
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];
@@ -311,6 +313,7 @@ export function ExtractionScreen() {
                       {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />} 
                       {t.id === "neon-vault" && <NeonVaultPreview profile={profile} />} 
                       {t.id === "luxury-high-end" && <LuxuryHighEndPreview profile={profile} />} 
+                      {t.id === "musician" && <MusicianPreview profile={profile} />}
                     </div>
                     <div style={{ padding: "12px" }}>
                       <div style={{ color: "#F4E1E0", fontSize: "13px", fontWeight: 600, marginBottom: "4px" }}>{t.label}</div>

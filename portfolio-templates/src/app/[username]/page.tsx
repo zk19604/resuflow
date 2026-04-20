@@ -12,7 +12,7 @@ import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Templa
 import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
 import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
-
+import { MusicianTemplate } from '@/components/musician/Template';
 
 
 interface PageProps {
@@ -84,6 +84,7 @@ export default async function PortfolioPage({ params }: PageProps) {
   if (config?.template === 'bento') {
     return <BentoTemplate profile={profile} config={config} />;
   }
+  
 
   const visible = config?.sectionsVisible || {};
   const isVisible = (section: string) => visible[section] !== false;
