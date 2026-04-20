@@ -1,35 +1,27 @@
-'use client';
-
-import { UserProfile, PortfolioConfig } from '@/types/userProfile';
-import Navigation from './Navigation';
-import Hero from './Hero';
-import About from './About';
-import BrandMarquee from './BrandMarquee';
-import Work from './Work';
-import Services from './Services';
-import Skills from './Skills';
-import Numbers from './Numbers';
-import Process from './Process';
-import Recognition from './Recognition';
-import Editorial from './Editorial';
-import Testimonials from './Testimonials';
-import Contact from './Contact';
-import Footer from './Footer';
+import { defaultUserProfile } from '@/types/userProfile';
+import Navigation from '../../components/luxuryhighend/Navigation';
+import Hero from '../../components/luxuryhighend/Hero';
+import About from '../../components/luxuryhighend/About';
+import BrandMarquee from '../../components/luxuryhighend/BrandMarquee';
+import Work from '../../components/luxuryhighend/Work';
+import Skills from '../../components/luxuryhighend/Skills';
+import Numbers from '../../components/luxuryhighend/Numbers';
+import Services from '../../components/luxuryhighend/Services';
+import Process from '../../components/luxuryhighend/Process';
+import Recognition from '../../components/luxuryhighend/Recognition';
+import Editorial from '../../components/luxuryhighend/Editorial';
+import Testimonials from '../../components/luxuryhighend/Testimonials';
+import Contact from '../../components/luxuryhighend/Contact';
+import Footer from '../../components/luxuryhighend/Footer';
 import {
   AvailabilityBadge,
   BackToTop,
   ScrollProgress,
   NoiseTexture,
-} from './UIComponents';
+} from '../../components/luxuryhighend/UIComponents';
 
-interface LuxuryHighEndTemplateProps {
-  profile: UserProfile;
-  config: PortfolioConfig;
-}
-
-export function LuxuryHighEndTemplate({ profile, config }: LuxuryHighEndTemplateProps) {
-  const visible = config?.sectionsVisible || {};
-  const isVisible = (section: string) => visible[section.toLowerCase()] !== false;
+export default function LuxuryHighEndPage() {
+  const profile = defaultUserProfile;
 
   return (
     <>
@@ -58,9 +50,7 @@ export function LuxuryHighEndTemplate({ profile, config }: LuxuryHighEndTemplate
           padding: 0;
         }
 
-        .lhe-root {
-          scroll-behavior: smooth;
-        }
+        .lhe-root { scroll-behavior: smooth; }
 
         .lhe-root ::-webkit-scrollbar { width: 4px; }
         .lhe-root ::-webkit-scrollbar-track { background: #0C0C0E; }
@@ -90,39 +80,25 @@ export function LuxuryHighEndTemplate({ profile, config }: LuxuryHighEndTemplate
           color: 'var(--text-primary)',
         }}
       >
-        {/* ── Global UI overlays ── */}
         <NoiseTexture />
         <ScrollProgress />
         <AvailabilityBadge profile={profile} />
         <BackToTop />
 
-        {/* ── Navigation ── */}
         <Navigation profile={profile} />
 
-        {/* ── Sections ── */}
         <main>
           <Hero profile={profile} />
-
-          {isVisible('about') && <About profile={profile} />}
-
+          <About profile={profile} />
           <BrandMarquee profile={profile} />
-
-          {isVisible('work') && <Work profile={profile} />}
-
-          {isVisible('skills') && <Skills profile={profile} />}
-
+          <Work profile={profile} />
+          <Skills profile={profile} />
           <Numbers profile={profile} />
-
-          {isVisible('services') && <Services profile={profile} />}
-
+          <Services profile={profile} />
           <Process />
-
-          {isVisible('recognition') && <Recognition profile={profile} />}
-
-          {isVisible('achievements') && <Editorial profile={profile} />}
-
-          {isVisible('experience') && <Testimonials profile={profile} />}
-
+          <Recognition profile={profile} />
+          <Editorial profile={profile} />
+          <Testimonials profile={profile} />
           <Contact profile={profile} />
         </main>
 

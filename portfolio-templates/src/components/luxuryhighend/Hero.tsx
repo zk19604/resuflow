@@ -1,521 +1,119 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
 import { UserProfile } from '@/types/userProfile';
 
-interface HeroProps {
-  profile: UserProfile;
-}
-
-export default function Hero({ profile }: HeroProps) {
+export default function Hero({ profile }: { profile: UserProfile }) {
   const [isVisible, setIsVisible] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
+  useEffect(() => { setIsVisible(true); }, []);
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  // Derive years of experience from earliest work experience start date
   const yearsOfExperience = (() => {
-    if (!profile.workExperience.length) return null;
-    const dates = profile.workExperience
-      .map((w) => parseInt(w.startDate?.slice(0, 4)))
-      .filter((y) => !isNaN(y));
+    const dates = profile.workExperience.map((w) => parseInt(w.startDate?.slice(0, 4))).filter((y) => !isNaN(y));
     if (!dates.length) return null;
     return new Date().getFullYear() - Math.min(...dates);
   })();
 
-  // Derive total projects from projects array length (fallback: count work entries)
   const totalProjects = profile.projects.length || profile.workExperience.length;
-
-  // Derive skills as display tags (technical skills)
   const skillTags = profile.skills.technical.slice(0, 4);
+  const currentRole = profile.workExperience[0]?.role || profile.personalInfo.title || 'Professional';
+  const initials = profile.personalInfo.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
 
-  // Current role from most recent work experience
-  const currentRole =
-    profile.workExperience[0]?.role ||
-    profile.personalInfo.title ||
-    'Creative Professional';
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.14,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.9,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
-  };
-
-  // Generate initials from name
-  const initials = profile.personalInfo.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+  const fade = { opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.9s ease, transform 0.9s ease' };
 
   return (
-    <section
-      ref={heroRef}
-      className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ background: 'var(--bg-base)' }}
-    >
-      {/* Ambient Orbs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full blur-[120px] animate-float-1"
-          style={{
-            left: '20%',
-            top: '50%',
-            background: 'radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 60%)',
-          }}
-        />
-        <div
-          className="absolute w-[500px] h-[500px] rounded-full blur-[100px] animate-float-2"
-          style={{
-            right: '20%',
-            top: '20%',
-            background: 'radial-gradient(circle, rgba(142,154,171,0.05) 0%, transparent 60%)',
-          }}
-        />
-        <div
-          className="absolute w-[400px] h-[400px] rounded-full blur-[90px] animate-float-3"
-          style={{
-            left: '60%',
-            bottom: '20%',
-            background: 'radial-gradient(circle, rgba(155,123,123,0.04) 0%, transparent 55%)',
-          }}
-        />
+    <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: 'var(--bg-base)', position: 'relative', paddingTop: 80 }}>
+      {/* Ambient orbs */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', left: '20%', top: '50%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 60%)', filter: 'blur(120px)' }} />
+        <div style={{ position: 'absolute', right: '20%', top: '20%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,154,171,0.05) 0%, transparent 60%)', filter: 'blur(100px)' }} />
       </div>
 
-      {/* Gold Dust Particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(50)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full animate-dust-float"
-            style={{
-              width: Math.random() * 2 + 1 + 'px',
-              height: Math.random() * 2 + 1 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              background: 'var(--gold-primary)',
-              opacity: Math.random() * 0.15 + 0.15,
-              animationDelay: Math.random() * 20 + 's',
-              animationDuration: Math.random() * 15 + 15 + 's',
-            }}
-          />
-        ))}
-      </div>
+      <div style={{ maxWidth: 1600, margin: '0 auto', padding: '80px 48px', width: '100%', position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
 
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-20 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left Content */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={isVisible ? 'visible' : 'hidden'}
-            className="space-y-8"
-          >
-            <motion.div variants={itemVariants}>
-              <div
-                className="inline-flex items-center gap-2 px-3 py-2 border"
-                style={{
-                  borderColor: 'rgba(201, 169, 110, 0.25)',
-                  background: 'rgba(201, 169, 110, 0.04)',
-                  borderRadius: '2px',
-                }}
-              >
-                <div
-                  className="w-[5px] h-[5px] rounded-full relative"
-                  style={{ background: '#6B9E6B' }}
-                >
-                  <div
-                    className="absolute inset-0 rounded-full animate-ping"
-                    style={{
-                      background: '#6B9E6B',
-                      animationDuration: '2s',
-                    }}
-                  />
-                </div>
-                <span
-                  className="text-xs"
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  Currently accepting projects
-                </span>
+          {/* LEFT */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28, ...fade }}>
+            {/* Badge */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', border: '1px solid rgba(201,169,110,0.25)', background: 'rgba(201,169,110,0.04)', borderRadius: 2, width: 'fit-content' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#6B9E6B', boxShadow: '0 0 0 3px rgba(107,158,107,0.25)' }} />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-secondary)' }}>Currently accepting projects</span>
+            </div>
+
+            {/* Role */}
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.20em', textTransform: 'uppercase', color: 'var(--gold-primary)', margin: 0 }}>{currentRole}</p>
+
+            {/* Name */}
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(48px,5.5vw,80px)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 0.95, color: 'var(--text-primary)' }}>
+                {profile.personalInfo.name || 'Your Name'}
               </div>
-            </motion.div>
-
-            <motion.div variants={itemVariants}>
-              <p
-                className="text-xs tracking-[0.20em] uppercase mb-4"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  color: 'var(--gold-primary)',
-                }}
-              >
-                {currentRole}
-              </p>
-
-              <h1 className="space-y-2">
-                <div
-                  className="text-5xl md:text-7xl lg:text-8xl"
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 300,
-                    letterSpacing: '-0.02em',
-                    lineHeight: 0.95,
-                    color: 'var(--text-primary)',
-                  }}
-                >
-                  {profile.personalInfo.name || 'Your Name'}
-                </div>
-                {/* Subtitle: use personalInfo.title or first skill domain as stylistic second line */}
-                {(profile.personalInfo.title || profile.skills.domain[0]) && (
-                  <div
-                    className="text-5xl md:text-7xl lg:text-8xl"
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontWeight: 300,
-                      letterSpacing: '-0.02em',
-                      lineHeight: 0.95,
-                      color: 'transparent',
-                      WebkitTextStroke: '1px rgba(201, 169, 110, 0.5)',
-                    }}
-                  >
-                    {profile.personalInfo.title || profile.skills.domain[0]}
-                  </div>
-                )}
-              </h1>
-            </motion.div>
-
-            {/* Skill tags */}
-            {skillTags.length > 0 && (
-              <motion.div variants={itemVariants}>
-                <p
-                  className="text-base"
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontWeight: 300,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  {skillTags.map((skill, i) => (
-                    <span key={skill}>
-                      <span style={{ color: 'var(--gold-primary)' }}>{skill}</span>
-                      {i < skillTags.length - 1 && ' · '}
-                    </span>
-                  ))}
-                </p>
-              </motion.div>
-            )}
-
-            <motion.div variants={itemVariants}>
-              <p
-                className="max-w-[440px] text-[15px] leading-[1.75]"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  color: 'var(--text-secondary)',
-                }}
-              >
-                {profile.summary || 'Crafting exceptional experiences that connect, inspire, and deliver results.'}
-              </p>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="flex gap-4 flex-wrap">
-              <a
-                href="#work"
-                className="px-8 py-3.5 transition-all duration-300"
-                style={{
-                  background: 'var(--gold-primary)',
-                  color: 'var(--bg-base)',
-                  borderRadius: '2px',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--gold-light)';
-                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(201, 169, 110, 0.25)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'var(--gold-primary)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                View Work
-              </a>
-              <a
-                href="#contact"
-                className="px-8 py-3.5 border transition-all duration-300"
-                style={{
-                  borderColor: 'rgba(201, 169, 110, 0.25)',
-                  borderRadius: '2px',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: 'var(--text-secondary)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(201, 169, 110, 0.50)';
-                  e.currentTarget.style.color = 'var(--text-primary)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(201, 169, 110, 0.25)';
-                  e.currentTarget.style.color = 'var(--text-secondary)';
-                }}
-              >
-                Get in Touch
-              </a>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="flex items-center gap-3">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="w-7 h-7 rounded-full border-2"
-                    style={{
-                      background: `linear-gradient(135deg, rgba(201,169,110,${0.3 + i * 0.1}) 0%, rgba(142,154,171,${0.2 + i * 0.1}) 100%)`,
-                      borderColor: 'var(--bg-base)',
-                    }}
-                  />
-                ))}
-              </div>
-              <span
-                className="text-xs"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  color: 'var(--text-tertiary)',
-                }}
-              >
-                {profile.workExperience.length > 0
-                  ? `${profile.workExperience.length}+ companies worked with`
-                  : 'Available for opportunities'}
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Visual */}
-          <motion.div
-            initial={{ opacity: 0, clipPath: 'inset(0 100% 0 0)' }}
-            animate={{
-              opacity: isVisible ? 1 : 0,
-              clipPath: isVisible ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
-            }}
-            transition={{
-              duration: 1.2,
-              ease: [0.77, 0, 0.18, 1],
-              delay: 0.3,
-            }}
-            className="relative hidden lg:block"
-          >
-            <div className="relative">
-              {/* Main Portrait / Initials Placeholder */}
-              <div
-                className="relative w-full h-[560px] rounded overflow-hidden border flex items-center justify-center"
-                style={{
-                  borderColor: 'rgba(201, 169, 110, 0.12)',
-                  background: 'rgba(20, 20, 24, 0.6)',
-                }}
-              >
-                {/* Decorative initials as portrait placeholder */}
-                <div
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '180px',
-                    fontWeight: 300,
-                    color: 'var(--gold-primary)',
-                    opacity: 0.08,
-                    lineHeight: 1,
-                    userSelect: 'none',
-                  }}
-                >
-                  {initials}
-                </div>
-
-                {/* Corner Accents */}
-                {['top-0 left-0', 'top-0 right-0', 'bottom-0 left-0', 'bottom-0 right-0'].map(
-                  (pos, i) => (
-                    <div
-                      key={i}
-                      className={`absolute ${pos} w-5 h-5`}
-                      style={{
-                        borderColor: 'rgba(201, 169, 110, 0.4)',
-                        ...(pos.includes('top') &&
-                          pos.includes('left') && {
-                            borderTop: '1px solid',
-                            borderLeft: '1px solid',
-                          }),
-                        ...(pos.includes('top') &&
-                          pos.includes('right') && {
-                            borderTop: '1px solid',
-                            borderRight: '1px solid',
-                          }),
-                        ...(pos.includes('bottom') &&
-                          pos.includes('left') && {
-                            borderBottom: '1px solid',
-                            borderLeft: '1px solid',
-                          }),
-                        ...(pos.includes('bottom') &&
-                          pos.includes('right') && {
-                            borderBottom: '1px solid',
-                            borderRight: '1px solid',
-                          }),
-                      }}
-                    />
-                  )
-                )}
-              </div>
-
-              {/* Floating Stats Cards */}
-              {yearsOfExperience !== null && (
-                <div
-                  className="absolute -top-4 -left-4 px-4 py-3 border animate-float-gentle"
-                  style={{
-                    background: 'rgba(20, 20, 24, 0.90)',
-                    backdropFilter: 'blur(20px)',
-                    borderColor: 'rgba(201, 169, 110, 0.15)',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <div
-                    className="text-3xl mb-1"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontWeight: 300,
-                      color: 'var(--gold-primary)',
-                    }}
-                  >
-                    {String(yearsOfExperience).padStart(2, '0')}
-                  </div>
-                  <div
-                    className="text-xs"
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    Years of craft
-                  </div>
-                </div>
-              )}
-
-              {totalProjects > 0 && (
-                <div
-                  className="absolute -bottom-4 -right-4 px-4 py-3 border animate-float-gentle-delayed"
-                  style={{
-                    background: 'rgba(20, 20, 24, 0.90)',
-                    backdropFilter: 'blur(20px)',
-                    borderColor: 'rgba(201, 169, 110, 0.15)',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <div
-                    className="text-3xl mb-1"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontWeight: 300,
-                      color: 'var(--gold-primary)',
-                    }}
-                  >
-                    {totalProjects}+
-                  </div>
-                  <div
-                    className="text-xs"
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    Projects delivered
-                  </div>
+              {(profile.personalInfo.title || profile.skills.domain[0]) && (
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(40px,4.5vw,68px)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 0.95, color: 'transparent', WebkitTextStroke: '1px rgba(201,169,110,0.5)', marginTop: 4 }}>
+                  {profile.personalInfo.title || profile.skills.domain[0]}
                 </div>
               )}
             </div>
-          </motion.div>
+
+            {/* Skill tags */}
+            {skillTags.length > 0 && (
+              <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, color: 'var(--text-secondary)', fontSize: 15, margin: 0 }}>
+                {skillTags.map((s, i) => <span key={s}><span style={{ color: 'var(--gold-primary)' }}>{s}</span>{i < skillTags.length - 1 && ' · '}</span>)}
+              </p>
+            )}
+
+            {/* Summary */}
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.75, color: 'var(--text-secondary)', maxWidth: 440, margin: 0 }}>
+              {profile.summary || 'Crafting exceptional experiences that connect, inspire, and deliver results.'}
+            </p>
+
+            {/* CTAs */}
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              <a href="#work" style={{ padding: '12px 32px', background: 'var(--gold-primary)', color: 'var(--bg-base)', borderRadius: 2, fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}>View Work</a>
+              <a href="#contact" style={{ padding: '12px 32px', border: '1px solid rgba(201,169,110,0.25)', borderRadius: 2, fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-secondary)', textDecoration: 'none' }}>Get in Touch</a>
+            </div>
+
+            {/* Companies */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ display: 'flex' }}>
+                {[1,2,3,4,5].map((i) => <div key={i} style={{ width: 28, height: 28, borderRadius: '50%', border: '2px solid var(--bg-base)', background: `linear-gradient(135deg,rgba(201,169,110,${0.2+i*0.1}),rgba(142,154,171,${0.15+i*0.1}))`, marginLeft: i===1?0:-8 }} />)}
+              </div>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-tertiary)' }}>
+                {profile.workExperience.length > 0 ? `${profile.workExperience.length}+ companies worked with` : 'Available for opportunities'}
+              </span>
+            </div>
+          </div>
+
+          {/* RIGHT — portrait card */}
+          <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 1.2s ease 0.3s' }}>
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', width: '100%', height: 560, border: '1px solid rgba(201,169,110,0.12)', borderRadius: 4, background: 'rgba(20,20,24,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 180, fontWeight: 300, color: 'var(--gold-primary)', opacity: 0.08, lineHeight: 1, userSelect: 'none' }}>{initials}</div>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: 20, height: 20, borderTop: '1px solid rgba(201,169,110,0.4)', borderLeft: '1px solid rgba(201,169,110,0.4)' }} />
+                <div style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderTop: '1px solid rgba(201,169,110,0.4)', borderRight: '1px solid rgba(201,169,110,0.4)' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, width: 20, height: 20, borderBottom: '1px solid rgba(201,169,110,0.4)', borderLeft: '1px solid rgba(201,169,110,0.4)' }} />
+                <div style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20, borderBottom: '1px solid rgba(201,169,110,0.4)', borderRight: '1px solid rgba(201,169,110,0.4)' }} />
+              </div>
+              {yearsOfExperience !== null && (
+                <div style={{ position: 'absolute', top: -16, left: -16, padding: '12px 16px', background: 'rgba(20,20,24,0.9)', backdropFilter: 'blur(20px)', border: '1px solid rgba(201,169,110,0.15)', borderRadius: 4 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 300, color: 'var(--gold-primary)' }}>{String(yearsOfExperience).padStart(2,'0')}</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-secondary)' }}>Years of craft</div>
+                </div>
+              )}
+              {totalProjects > 0 && (
+                <div style={{ position: 'absolute', bottom: -16, right: -16, padding: '12px 16px', background: 'rgba(20,20,24,0.9)', backdropFilter: 'blur(20px)', border: '1px solid rgba(201,169,110,0.15)', borderRadius: 4 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 300, color: 'var(--gold-primary)' }}>{totalProjects}+</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--text-secondary)' }}>Projects delivered</div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <span
-          className="text-[10px] tracking-[0.15em] uppercase"
-          style={{
-            fontFamily: 'var(--font-body)',
-            color: 'var(--text-tertiary)',
-          }}
-        >
-          Scroll
-        </span>
-        <div
-          className="w-[1px] h-10 relative"
-          style={{ background: 'rgba(201, 169, 110, 0.3)' }}
-        >
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full animate-scroll-indicator"
-            style={{ background: 'var(--gold-primary)' }}
-          />
-        </div>
+      {/* Scroll indicator */}
+      <div style={{ position: 'absolute', bottom: 48, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-tertiary)' }}>Scroll</span>
+        <div style={{ width: 1, height: 40, background: 'rgba(201,169,110,0.3)' }} />
       </div>
-
-      <style>{`
-        @keyframes float-1 {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(-40px, -30px); }
-        }
-        @keyframes float-2 {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(30px, 40px); }
-        }
-        @keyframes float-3 {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(-30px, 30px); }
-        }
-        @keyframes dust-float {
-          0% { transform: translateY(0) translateX(0); opacity: 0.15; }
-          50% { opacity: 0.3; }
-          100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
-        }
-        @keyframes float-gentle {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-        }
-        @keyframes float-gentle-delayed {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-        }
-        @keyframes scroll-indicator {
-          0% { transform: translate(-50%, 0); opacity: 1; }
-          100% { transform: translate(-50%, 40px); opacity: 0; }
-        }
-        .animate-float-1 { animation: float-1 20s ease-in-out infinite; }
-        .animate-float-2 { animation: float-2 24s ease-in-out infinite; }
-        .animate-float-3 { animation: float-3 16s ease-in-out infinite; }
-        .animate-float-gentle { animation: float-gentle 4s ease-in-out infinite; }
-        .animate-float-gentle-delayed { animation: float-gentle-delayed 4s ease-in-out infinite 1.5s; }
-        .animate-scroll-indicator { animation: scroll-indicator 1.8s ease-in-out infinite; }
-        .animate-dust-float { animation: dust-float linear infinite; }
-      `}</style>
     </section>
   );
 }

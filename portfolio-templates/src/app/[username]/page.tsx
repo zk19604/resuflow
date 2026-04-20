@@ -13,6 +13,8 @@ import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
 import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
 
+
+
 interface PageProps {
   params: Promise<{ username: string }>;
 }

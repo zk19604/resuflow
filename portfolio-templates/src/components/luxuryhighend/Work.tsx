@@ -1,14 +1,8 @@
+'use client';
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'motion/react';
-import { Play, ArrowRight } from 'lucide-react';
 import { UserProfile } from '@/types/userProfile';
 
-interface WorkProps {
-  profile: UserProfile;
-}
-
-// Placeholder images cycled when projects have no image
-const PLACEHOLDER_IMAGES = [
+const IMAGES = [
   'https://images.unsplash.com/photo-1638961837480-5aee8a8f90cd?auto=format&fit=crop&w=1080&q=80',
   'https://images.unsplash.com/photo-1759308553474-ce2c768a6b7c?auto=format&fit=crop&w=1080&q=80',
   'https://images.unsplash.com/photo-1593527658229-95d536591c83?auto=format&fit=crop&w=1080&q=80',
@@ -16,323 +10,90 @@ const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1763121379638-8839d20e7551?auto=format&fit=crop&w=1080&q=80',
 ];
 
-interface ProjectItem {
-  title: string;
-  category: string;
-  client: string;
-  metric: string;
-  type: string;
-  image: string;
-  link: string;
-}
-
-export default function Work({ profile }: WorkProps) {
-  const [activeFilter, setActiveFilter] = useState('All');
+export default function Work({ profile }: { profile: UserProfile }) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.15 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    const o = new IntersectionObserver(([e]) => { if (e.isIntersecting) setIsVisible(true); }, { threshold: 0.1 });
+    if (sectionRef.current) o.observe(sectionRef.current);
+    return () => o.disconnect();
   }, []);
 
-  // Build projects from profile.projects
-  const projects: ProjectItem[] = profile.projects.map((proj, i) => ({
-    title: proj.name || 'Untitled Project',
-    category: proj.type || 'Project',
-    client: '', // projects schema has no client field
-    metric: proj.tools.length > 0 ? proj.tools.slice(0, 3).join(' · ') : '',
-    type: proj.type || 'Project',
-    image: PLACEHOLDER_IMAGES[i % PLACEHOLDER_IMAGES.length],
-    link: proj.link || '#',
-  }));
+  const projects = profile.projects.length > 0
+    ? profile.projects.map((p, i) => ({ title: p.name || 'Project', type: p.type || 'Project', client: '', metric: p.tools.slice(0, 3).join(' · '), image: IMAGES[i % IMAGES.length], link: p.link || '#' }))
+    : profile.workExperience.slice(0, 5).map((e, i) => ({ title: e.role || 'Role', type: e.company || 'Work', client: e.company || '', metric: Array.isArray(e.achievements) && e.achievements.length > 0 ? String(e.achievements[0]).slice(0, 60) : '', image: IMAGES[i % IMAGES.length], link: '#' }));
 
-  // If no projects, fall back to work experience entries
-  const displayProjects: ProjectItem[] =
-    projects.length > 0
-      ? projects
-      : profile.workExperience.slice(0, 5).map((exp, i) => ({
-          title: exp.role || 'Role',
-          category: 'Experience',
-          client: exp.company || '',
-          metric:
-            Array.isArray(exp.achievements) && exp.achievements.length > 0
-              ? exp.achievements[0].slice(0, 60)
-              : exp.description?.slice(0, 60) || '',
-          type: exp.company || 'Work',
-          image: PLACEHOLDER_IMAGES[i % PLACEHOLDER_IMAGES.length],
-          link: '#',
-        }));
-
-  // Derive unique filter categories from the data
-  const categories = ['All', ...Array.from(new Set(displayProjects.map((p) => p.category)))];
-
-  const filteredProjects =
-    activeFilter === 'All'
-      ? displayProjects
-      : displayProjects.filter((p) => p.category === activeFilter);
-
-  if (displayProjects.length === 0) return null;
+  if (projects.length === 0) return null;
 
   return (
-    <section
-      id="work"
-      ref={sectionRef}
-      className="relative py-32 md:py-40"
-      style={{ background: 'var(--bg-base)' }}
-    >
-      {/* Section Number */}
-      <div
-        className="absolute top-20 right-12 text-[200px] pointer-events-none select-none"
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontWeight: 300,
-          color: 'var(--gold-primary)',
-          opacity: 0.04,
-        }}
-      >
-        02
-      </div>
-
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12">
+    <section id="work" ref={sectionRef} style={{ position: 'relative', padding: '160px 0', background: 'var(--bg-base)' }}>
+      <div style={{ position: 'absolute', top: 80, right: 48, fontSize: 200, fontFamily: 'var(--font-mono)', fontWeight: 300, color: 'var(--gold-primary)', opacity: 0.04, pointerEvents: 'none', userSelect: 'none', lineHeight: 1 }}>02</div>
+      <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 48px' }}>
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-8"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-[1px]" style={{ background: 'var(--gold-primary)' }} />
-            <h2
-              className="text-4xl md:text-5xl"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 300,
-                color: 'var(--text-primary)',
-              }}
-            >
-              Selected Work
-            </h2>
-          </div>
-
-          {/* Filters — only show if more than one category */}
-          {categories.length > 2 && (
-            <div className="flex gap-6 flex-wrap">
-              {categories.map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className="relative text-sm transition-colors duration-300 filter-tab"
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    color: activeFilter === filter ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                  }}
-                >
-                  {filter}
-                  {activeFilter === filter && (
-                    <motion.div
-                      layoutId="activeFilter"
-                      className="absolute -bottom-1 left-0 right-0 h-[1px]"
-                      style={{ background: 'var(--gold-primary)' }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
-        {/* Projects Grid */}
-        <div className="space-y-8">
-          {filteredProjects[0] && (
-            <ProjectCard
-              project={filteredProjects[0]}
-              index={0}
-              isVisible={isVisible}
-              featured
-            />
-          )}
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {filteredProjects.slice(1, 3).map((project, index) => (
-              <ProjectCard
-                key={index}
-                project={project}
-                index={index + 1}
-                isVisible={isVisible}
-              />
-            ))}
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {filteredProjects.slice(3).map((project, index) => (
-              <ProjectCard
-                key={index}
-                project={project}
-                index={index + 3}
-                isVisible={isVisible}
-                compact
-              />
-            ))}
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 64, opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
+          <div style={{ width: 40, height: 1, background: 'var(--gold-primary)' }} />
+          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 300, fontSize: 'clamp(32px,3.5vw,48px)', color: 'var(--text-primary)', margin: 0 }}>Selected Work</h2>
         </div>
-      </div>
 
-      <style>{`
-        .filter-tab:hover { color: var(--text-secondary); }
-      `}</style>
+        {/* Featured */}
+        {projects[0] && <ProjectCard project={projects[0]} index={0} isVisible={isVisible} featured />}
+
+        {/* 2-col grid */}
+        {projects.length > 1 && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, marginTop: 32 }}>
+            {projects.slice(1, 3).map((p, i) => <ProjectCard key={i} project={p} index={i+1} isVisible={isVisible} />)}
+          </div>
+        )}
+
+        {/* 3-col grid */}
+        {projects.length > 3 && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 32, marginTop: 32 }}>
+            {projects.slice(3).map((p, i) => <ProjectCard key={i} project={p} index={i+3} isVisible={isVisible} compact />)}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
 
-function ProjectCard({
-  project,
-  index,
-  isVisible,
-  featured = false,
-  compact = false,
-}: {
-  project: ProjectItem;
-  index: number;
-  isVisible: boolean;
-  featured?: boolean;
-  compact?: boolean;
-}) {
-  const [isHovered, setIsHovered] = useState(false);
-
+function ProjectCard({ project, index, isVisible, featured = false, compact = false }: any) {
+  const [hovered, setHovered] = useState(false);
+  const height = featured ? 520 : compact ? 300 : 380;
+  const imgHeight = featured ? '100%' : compact ? '60%' : '65%';
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="group relative overflow-hidden border transition-all duration-500 hover:-translate-y-1"
-      style={{
-        background: 'var(--bg-card)',
-        borderColor: isHovered ? 'rgba(201, 169, 110, 0.20)' : 'rgba(201, 169, 110, 0.08)',
-        borderRadius: '4px',
-        height: featured ? '520px' : compact ? '300px' : '380px',
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative', overflow: 'hidden', border: `1px solid ${hovered ? 'rgba(201,169,110,0.20)' : 'rgba(201,169,110,0.08)'}`, borderRadius: 4, height, background: 'var(--bg-card)', transition: 'all 0.5s ease, transform 0.5s ease', transform: hovered ? 'translateY(-4px)' : 'translateY(0)', opacity: isVisible ? 1 : 0, transitionDelay: `${index * 0.1}s` }}>
       {/* Image */}
-      <div
-        className={`relative overflow-hidden ${
-          featured ? 'h-full' : compact ? 'h-[60%]' : 'h-[65%]'
-        }`}
-      >
-        <img
-          src={project.image}
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-700"
-          style={{ transform: isHovered ? 'scale(1.04)' : 'scale(1)' }}
-        />
-
-        {/* Hover Overlay */}
-        <div
-          className="absolute inset-0 transition-opacity duration-500 flex items-center justify-center"
-          style={{ background: 'rgba(12, 12, 14, 0.5)', opacity: isHovered ? 1 : 0 }}
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="w-9 h-9 rounded-full border flex items-center justify-center"
-            style={{ borderColor: 'var(--text-primary)' }}
-          >
-            <Play className="w-4 h-4 ml-0.5" style={{ color: 'var(--text-primary)' }} />
-          </motion.div>
+      <div style={{ position: 'relative', overflow: 'hidden', height: imgHeight }}>
+        <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.04)' : 'scale(1)', transition: 'transform 0.7s ease' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(12,12,14,0.5)', opacity: hovered ? 1 : 0, transition: 'opacity 0.5s ease', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: hovered ? 'scale(1)' : 'scale(0)', transition: 'transform 0.4s ease' }}>
+            <span style={{ color: 'var(--text-primary)', fontSize: 12 }}>▶</span>
+          </div>
         </div>
-
-        {/* Category Pill on featured */}
         {featured && (
-          <div
-            className="absolute top-6 left-6 px-3 py-1.5 border"
-            style={{
-              borderColor: 'rgba(201, 169, 110, 0.25)',
-              background: 'rgba(12, 12, 14, 0.8)',
-              backdropFilter: 'blur(8px)',
-              borderRadius: '2px',
-            }}
-          >
-            <span
-              className="text-xs tracking-[0.08em] uppercase"
-              style={{ fontFamily: 'var(--font-body)', color: 'var(--gold-primary)' }}
-            >
-              {project.type}
-            </span>
+          <div style={{ position: 'absolute', top: 24, left: 24, padding: '6px 12px', border: '1px solid rgba(201,169,110,0.25)', background: 'rgba(12,12,14,0.8)', backdropFilter: 'blur(8px)', borderRadius: 2 }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--gold-primary)' }}>{project.type}</span>
           </div>
         )}
       </div>
-
       {/* Content */}
-      <div className={`${featured ? 'absolute bottom-0 left-0 right-0 p-8' : 'p-6'}`}>
-        {featured && (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(to top, rgba(12,12,14,0.95) 0%, transparent 100%)',
-            }}
-          />
-        )}
-
-        <div className="relative">
+      <div style={{ ...(featured ? { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 32 } : { padding: 24 }) }}>
+        {featured && <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(12,12,14,0.95) 0%, transparent 100%)' }} />}
+        <div style={{ position: 'relative' }}>
           {!featured && (
-            <div
-              className="inline-block px-2 py-1 border mb-3"
-              style={{ borderColor: 'rgba(201, 169, 110, 0.15)', borderRadius: '2px' }}
-            >
-              <span
-                className="text-[10px] tracking-[0.08em] uppercase"
-                style={{ fontFamily: 'var(--font-body)', color: 'var(--gold-primary)' }}
-              >
-                {project.type}
-              </span>
+            <div style={{ display: 'inline-block', padding: '4px 8px', border: '1px solid rgba(201,169,110,0.15)', borderRadius: 2, marginBottom: 12 }}>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--gold-primary)' }}>{project.type}</span>
             </div>
           )}
-
-          <h3
-            className={`mb-2 ${featured ? 'text-4xl' : compact ? 'text-2xl' : 'text-3xl'}`}
-            style={{ fontFamily: 'var(--font-display)', fontWeight: 300, color: 'var(--text-primary)' }}
-          >
-            {project.title}
-          </h3>
-
-          {project.client && (
-            <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-body)', color: 'var(--text-secondary)' }}>
-              {project.client}
-            </p>
-          )}
-
-          {project.metric && (
-            <p className="text-sm mb-4" style={{ fontFamily: 'var(--font-body)', color: 'var(--gold-primary)' }}>
-              {project.metric}
-            </p>
-          )}
-
-          <a
-            href={project.link}
-            target={project.link !== '#' ? '_blank' : undefined}
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs transition-all duration-300"
-            style={{ fontFamily: 'var(--font-body)', color: 'var(--text-secondary)' }}
-          >
-            View Project
-            <ArrowRight
-              className="w-3 h-3 transition-transform duration-300"
-              style={{ transform: isHovered ? 'translateX(4px)' : 'translateX(0)' }}
-            />
+          <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 300, fontSize: featured ? 36 : compact ? 22 : 28, color: 'var(--text-primary)', marginBottom: 8 }}>{project.title}</h3>
+          {project.client && <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--text-secondary)', marginBottom: 8 }}>{project.client}</p>}
+          {project.metric && <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--gold-primary)', marginBottom: 16 }}>{project.metric}</p>}
+          <a href={project.link} target={project.link !== '#' ? '_blank' : undefined} rel="noopener noreferrer" style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            View Project <span style={{ transform: hovered ? 'translateX(4px)' : 'translateX(0)', transition: 'transform 0.3s ease', display: 'inline-block' }}>→</span>
           </a>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
