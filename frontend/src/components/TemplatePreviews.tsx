@@ -542,3 +542,41 @@ export function BentoPreview({ profile }: { profile: any }) {
     </div>
   );
 }
+export function NeonVaultPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || "Professional";
+  const summary = profile?.summary || "";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+    ...(profile?.skills?.soft || []),
+  ].slice(0, 5);
+
+  return (
+    <div style={{ width: "100%", height: "100%", background: "#0f0f1a", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "Inter, sans-serif" }}>
+      <div style={{ position: "absolute", top: "10%", left: "20%", width: "150px", height: "150px", borderRadius: "50%", background: "radial-gradient(circle, #7c3aed70 0%, transparent 70%)", filter: "blur(40px)" }} />
+      <div style={{ position: "absolute", bottom: "10%", right: "15%", width: "120px", height: "120px", borderRadius: "50%", background: "radial-gradient(circle, #06b6d470 0%, transparent 70%)", filter: "blur(35px)" }} />
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 24px" }}>
+        <div style={{ fontSize: "8px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#7c3aed", marginBottom: "10px", fontWeight: 600 }}>◆ Portfolio</div>
+        <div style={{ fontSize: "clamp(20px, 4vw, 34px)", fontWeight: 900, background: "linear-gradient(135deg, #a78bfa, #06b6d4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: "8px" }}>
+          {name}
+        </div>
+        <div style={{ fontSize: "9px", color: "#94a3b8", marginBottom: "12px", fontStyle: "italic" }}>{role}</div>
+        {summary && (
+          <div style={{ fontSize: "8px", color: "#64748b", lineHeight: 1.6, maxWidth: "260px", margin: "0 auto 14px" }}>
+            {summary.slice(0, 90)}{summary.length > 90 ? "…" : ""}
+          </div>
+        )}
+        <div style={{ display: "flex", gap: "6px", justifyContent: "center", flexWrap: "wrap", maxWidth: "280px", margin: "0 auto 14px" }}>
+          {skills.slice(0, 4).map((s) => (
+            <div key={s} style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.4)", borderRadius: "100px", padding: "3px 10px", fontSize: "7px", color: "#a78bfa" }}>{s}</div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+          <div style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", borderRadius: "100px", padding: "6px 16px", fontSize: "8px", color: "#fff", fontWeight: 700 }}>View Work</div>
+          <div style={{ border: "1px solid rgba(124,58,237,0.5)", borderRadius: "100px", padding: "6px 16px", fontSize: "8px", color: "#a78bfa" }}>Contact</div>
+        </div>
+      </div>
+    </div>
+  );
+}

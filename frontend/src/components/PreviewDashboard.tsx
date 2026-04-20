@@ -7,6 +7,7 @@ import {
   HighEndMinimalistPreview,
   EditorialPreview,
   BentoPreview,
+  NeonVaultPreview,
 } from "./TemplatePreviews";
 
 const paletteRows = [
@@ -20,13 +21,15 @@ const paletteRows = [
 const sections = ["About", "Skills", "Experience", "Education", "Projects", "Achievements"];
 const fontOptions = ["Modern Sans", "Serif Editorial"];
 
-type TemplateType = "glassmorphism" | "highendminimalist" | "editorial" | "bento";
+type TemplateType = "glassmorphism" | "highendminimalist" | "editorial" | "bento"| "neon-vault";
+
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism: "Glassmorphism",
   highendminimalist: "High-End Minimalist",
   editorial: "Editorial",
   bento: "Bento",
+ "neon-vault": "Neon Vault",
 };
 export function PreviewDashboard() {
   const navigate = useNavigate();
@@ -57,7 +60,7 @@ export function PreviewDashboard() {
     if (vibe) {
       try {
         const { template, tone } = JSON.parse(vibe);
-        if (["glassmorphism", "highendminimalist", "editorial", "bento"].includes(template)) {
+        if (["glassmorphism", "highendminimalist", "editorial", "bento","neon-vault"].includes(template)) {
           setSelectedTemplate(template);
         }
         const toneIdx = ["Professional", "Friendly", "Creative"].indexOf(tone);
@@ -127,6 +130,7 @@ export function PreviewDashboard() {
     { id: "highendminimalist", label: "High-End Minimalist" },
     { id: "editorial", label: "Editorial" },
     { id: "bento", label: "Bento" },
+    { id: "neon-vault", label: "Neon Vault" },
   ];
 
   return (
@@ -228,6 +232,7 @@ export function PreviewDashboard() {
                 {selectedTemplate === "bento" && (
                   <BentoPreview profile={profile} />
                 )}
+                {selectedTemplate === "neon-vault" && <NeonVaultPreview profile={profile} />}
               </div>
             </div>
           </div>
@@ -290,6 +295,7 @@ export function PreviewDashboard() {
                         {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
                         {t.id === "editorial" && <EditorialPreview profile={profile} />}
                         {t.id === "bento" && <BentoPreview profile={profile} />}
+                        {t.id === "neon-vault" && <NeonVaultPreview profile={profile} />}
                       </div>
                       <div
                         style={{
