@@ -951,3 +951,135 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
     </div>
   );
 }
+
+export function LuxuryHighEndPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || "Creative Professional";
+  const summary = profile?.summary || "";
+  const skills: string[] = (profile?.skills?.technical || []).slice(0, 3);
+ 
+  // Derive years of experience
+  const yearsOfExperience = (() => {
+    const dates = (profile?.workExperience || [])
+      .map((w: any) => parseInt(w.startDate?.slice(0, 4)))
+      .filter((y: number) => !isNaN(y));
+    if (!dates.length) return null;
+    return new Date().getFullYear() - Math.min(...dates);
+  })();
+ 
+  const initials = name
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+ 
+  // Gold palette
+  const gold = "#C9A96E";
+  const bg = "#0C0C0E";
+  const bgAlt = "#111114";
+ 
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: bg,
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "'DM Sans', sans-serif",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      {/* Ambient glow */}
+      <div style={{ position: "absolute", top: "30%", left: "20%", width: "120px", height: "120px", borderRadius: "50%", background: `radial-gradient(circle, ${gold}18 0%, transparent 70%)`, filter: "blur(30px)", pointerEvents: "none" }} />
+ 
+      {/* Nav bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", borderBottom: `1px solid ${gold}14`, flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ width: "18px", height: "18px", borderRadius: "50%", border: `1px solid ${gold}60`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: "5px", color: gold, fontWeight: 300, letterSpacing: "0.02em" }}>{initials}</span>
+          </div>
+          <span style={{ fontSize: "6px", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)" }}>{name}</span>
+        </div>
+        <div style={{ display: "flex", gap: "8px" }}>
+          {["Work", "About", "Contact"].map((l) => (
+            <span key={l} style={{ fontSize: "5px", letterSpacing: "0.06em", color: "rgba(255,255,255,0.3)" }}>{l}</span>
+          ))}
+        </div>
+      </div>
+ 
+      {/* Hero area */}
+      <div style={{ flex: 1, display: "flex", alignItems: "center", padding: "10px 14px", gap: "10px", overflow: "hidden" }}>
+        {/* Left — text */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "5px" }}>
+          {/* Availability badge */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", border: `1px solid ${gold}30`, background: `${gold}08`, borderRadius: "2px", padding: "2px 6px", width: "fit-content" }}>
+            <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#6B9E6B" }} />
+            <span style={{ fontSize: "5px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.06em" }}>Open for work</span>
+          </div>
+ 
+          {/* Role label */}
+          <p style={{ fontSize: "5px", letterSpacing: "0.18em", textTransform: "uppercase", color: gold, margin: 0 }}>{role}</p>
+ 
+          {/* Name — solid line */}
+          <div style={{ fontSize: "clamp(16px, 3.5vw, 26px)", fontWeight: 300, color: "#FFFFFF", letterSpacing: "-0.02em", lineHeight: 0.95, fontFamily: "Georgia, serif" }}>
+            {name.split(" ")[0]}
+          </div>
+          {/* Outline second line */}
+          <div style={{ fontSize: "clamp(14px, 3vw, 22px)", fontWeight: 300, color: "transparent", WebkitTextStroke: `1px ${gold}70`, letterSpacing: "-0.02em", lineHeight: 0.95, fontFamily: "Georgia, serif" }}>
+            {name.split(" ").slice(1).join(" ") || role}
+          </div>
+ 
+          {/* Skill dots */}
+          {skills.length > 0 && (
+            <div style={{ display: "flex", gap: "4px", marginTop: "2px", flexWrap: "wrap" }}>
+              {skills.map((s, i) => (
+                <span key={i} style={{ fontSize: "5px", color: i === 0 ? gold : `${gold}80` }}>{s}{i < skills.length - 1 ? " ·" : ""}</span>
+              ))}
+            </div>
+          )}
+ 
+          {/* Summary snippet */}
+          {summary && (
+            <p style={{ fontSize: "5px", color: "rgba(255,255,255,0.35)", lineHeight: 1.6, maxWidth: "160px", margin: "2px 0 0" }}>
+              {summary.slice(0, 80)}{summary.length > 80 ? "…" : ""}
+            </p>
+          )}
+ 
+          {/* CTA row */}
+          <div style={{ display: "flex", gap: "5px", marginTop: "4px" }}>
+            <div style={{ background: gold, color: bg, fontSize: "5px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 8px", borderRadius: "2px" }}>View Work</div>
+            <div style={{ border: `1px solid ${gold}40`, color: "rgba(255,255,255,0.5)", fontSize: "5px", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 8px", borderRadius: "2px" }}>Contact</div>
+          </div>
+        </div>
+ 
+        {/* Right — portrait placeholder card */}
+        <div style={{ width: "38%", flexShrink: 0, alignSelf: "stretch", border: `1px solid ${gold}18`, borderRadius: "2px", background: bgAlt, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", position: "relative", overflow: "hidden" }}>
+          {/* Huge faint initials */}
+          <span style={{ fontSize: "48px", fontWeight: 300, color: gold, opacity: 0.06, fontFamily: "Georgia, serif", lineHeight: 1, userSelect: "none", position: "absolute" }}>{initials}</span>
+ 
+          {/* Corner accents */}
+          {[["top:0;left:0", "borderTop", "borderLeft"], ["top:0;right:0", "borderTop", "borderRight"], ["bottom:0;left:0", "borderBottom", "borderLeft"], ["bottom:0;right:0", "borderBottom", "borderRight"]].map(([pos], i) => (
+            <div key={i} style={{ position: "absolute", width: "8px", height: "8px", ...(i === 0 ? { top: 0, left: 0, borderTop: `1px solid ${gold}60`, borderLeft: `1px solid ${gold}60` } : i === 1 ? { top: 0, right: 0, borderTop: `1px solid ${gold}60`, borderRight: `1px solid ${gold}60` } : i === 2 ? { bottom: 0, left: 0, borderBottom: `1px solid ${gold}60`, borderLeft: `1px solid ${gold}60` } : { bottom: 0, right: 0, borderBottom: `1px solid ${gold}60`, borderRight: `1px solid ${gold}60` }) }} />
+          ))}
+ 
+          {/* Stats floating cards */}
+          {yearsOfExperience !== null && (
+            <div style={{ position: "absolute", top: "8px", left: "-8px", background: "rgba(12,12,14,0.9)", border: `1px solid ${gold}20`, borderRadius: "3px", padding: "4px 6px" }}>
+              <div style={{ fontSize: "10px", fontWeight: 300, color: gold, fontFamily: "monospace" }}>{String(yearsOfExperience).padStart(2, "0")}</div>
+              <div style={{ fontSize: "4px", color: "rgba(255,255,255,0.35)" }}>Yrs exp</div>
+            </div>
+          )}
+        </div>
+      </div>
+ 
+      {/* Scroll indicator */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "3px", paddingBottom: "6px", opacity: 0.3 }}>
+        <div style={{ width: "1px", height: "12px", background: `${gold}60` }} />
+        <span style={{ fontSize: "4px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>Scroll</span>
+      </div>
+    </div>
+  );
+}
