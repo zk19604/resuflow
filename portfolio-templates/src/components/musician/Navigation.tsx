@@ -1,7 +1,38 @@
 'use client';
-import { Instagram, Music, Youtube } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Equalizer } from "./Equalizer";
+
+// Inline SVG icons — avoids lucide-react version dependency
+function InstagramIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+  );
+}
+
+function MusicIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
+  );
+}
+
+function YoutubeIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+    </svg>
+  );
+}
+
+const socialIcons = [InstagramIcon, MusicIcon, YoutubeIcon];
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -42,20 +73,12 @@ export function Navigation() {
         }}
       >
         {/* Logo */}
-        <div
-          style={{
-            fontFamily: "'Raleway', sans-serif",
-            fontSize: 18,
-            fontWeight: 800,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-          }}
-        >
+        <div style={{ fontFamily: "'Raleway', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase" }}>
           <span style={{ color: "#F0EEF5" }}>NOVA</span>
           <span style={{ color: "#C2185B" }}> SOUNDS</span>
         </div>
 
-        {/* Center Nav Links */}
+        {/* Nav Links */}
         <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
           {navLinks.map((link) => (
             <div key={link} style={{ position: "relative" }}>
@@ -85,9 +108,9 @@ export function Navigation() {
           ))}
         </div>
 
-        {/* Right - Social Icons + CTA */}
+        {/* Social Icons + CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {[Instagram, Music, Youtube].map((Icon, i) => (
+          {socialIcons.map((Icon, i) => (
             <a
               key={i}
               href="#"
@@ -112,7 +135,7 @@ export function Navigation() {
                 (e.currentTarget as HTMLElement).style.color = "#9E9BB0";
               }}
             >
-              <Icon style={{ width: 14, height: 14 }} />
+              <Icon />
             </a>
           ))}
           <button
@@ -130,12 +153,8 @@ export function Navigation() {
               cursor: "pointer",
               transition: "all 0.3s ease",
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "linear-gradient(to right, #C2185B, #6A1B9A)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "transparent";
-            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "linear-gradient(to right, #C2185B, #6A1B9A)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
           >
             Book Now
           </button>

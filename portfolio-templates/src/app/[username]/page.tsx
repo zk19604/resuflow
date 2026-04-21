@@ -90,6 +90,10 @@ export default async function PortfolioPage({ params }: PageProps) {
     return <NeumorphismTemplate profile={profile} config={config} />;
   }
 
+  if (config?.template === 'musician') {
+    return <MusicianTemplate profile={profile} config={config} />;
+  }
+
   const visible = config?.sectionsVisible || {};
   const isVisible = (section: string) => visible[section] !== false;
 

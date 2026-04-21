@@ -1,5 +1,6 @@
 'use client';
 
+import { UserProfile, PortfolioConfig } from '@/types/userProfile';
 import { Navigation } from './Navigation';
 import { Hero } from './Hero';
 import { FeaturedRelease } from './FeaturedRelease';
@@ -8,7 +9,12 @@ import { Gallery } from './Gallery';
 import { Newsletter } from './Newsletter';
 import { Footer } from './Footer';
 
-export function MusicianTemplate() {
+interface MusicianTemplateProps {
+  profile: UserProfile;
+  config: PortfolioConfig;
+}
+
+export function MusicianTemplate({ profile, config }: MusicianTemplateProps) {
   return (
     <>
       <style>{`
@@ -20,9 +26,7 @@ export function MusicianTemplate() {
           padding: 0;
         }
 
-        .musician-root {
-          scroll-behavior: smooth;
-        }
+        .musician-root { scroll-behavior: smooth; }
 
         .musician-root ::-webkit-scrollbar { width: 6px; }
         .musician-root ::-webkit-scrollbar-track { background: #080B14; }
@@ -50,7 +54,6 @@ export function MusicianTemplate() {
         }}
       >
         <Navigation />
-
         <main>
           <Hero />
           <FeaturedRelease />
@@ -58,7 +61,6 @@ export function MusicianTemplate() {
           <Gallery />
           <Newsletter />
         </main>
-
         <Footer />
       </div>
     </>

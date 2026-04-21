@@ -1,5 +1,4 @@
 'use client';
-import { Instagram, Music, Youtube } from "lucide-react";
 
 const quickLinks = ["Music", "Events", "Gallery", "Press", "Shop", "Contact"];
 const platforms = [
@@ -8,6 +7,38 @@ const platforms = [
   { name: "YouTube Music", color: "#FF0033" },
   { name: "SoundCloud",    color: "#FF5500" },
 ];
+
+// Inline SVG icons — avoids lucide-react version dependency
+function InstagramIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+  );
+}
+
+function MusicIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
+  );
+}
+
+function YoutubeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+    </svg>
+  );
+}
+
+const socialIcons = [InstagramIcon, MusicIcon, YoutubeIcon];
 
 export function Footer() {
   return (
@@ -24,7 +55,7 @@ export function Footer() {
               Crafting sonic landscapes that blur the line between concert hall and conscience.
             </p>
             <div style={{ display: "flex", gap: 12 }}>
-              {[Instagram, Music, Youtube].map((Icon, i) => (
+              {socialIcons.map((Icon, i) => (
                 <a
                   key={i}
                   href="#"
@@ -40,10 +71,16 @@ export function Footer() {
                     textDecoration: "none",
                     transition: "all 0.3s ease",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#C2185B"; (e.currentTarget as HTMLElement).style.color = "#F0EEF5"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(240,238,245,0.10)"; (e.currentTarget as HTMLElement).style.color = "#9E9BB0"; }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.borderColor = "#C2185B";
+                    (e.currentTarget as HTMLElement).style.color = "#F0EEF5";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(240,238,245,0.10)";
+                    (e.currentTarget as HTMLElement).style.color = "#9E9BB0";
+                  }}
                 >
-                  <Icon style={{ width: 16, height: 16 }} />
+                  <Icon />
                 </a>
               ))}
             </div>
@@ -75,7 +112,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Right — Streaming Links */}
+          {/* Right — Streaming */}
           <div>
             <h4 style={{ fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#C2185B", marginBottom: 24 }}>Listen On</h4>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -83,13 +120,7 @@ export function Footer() {
                 <a
                   key={platform.name}
                   href="#"
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: 14,
-                    color: platform.color,
-                    textDecoration: "none",
-                    transition: "opacity 0.2s ease",
-                  }}
+                  style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: platform.color, textDecoration: "none", transition: "opacity 0.2s ease" }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
                 >
