@@ -1,12 +1,12 @@
 'use client';
 
 import { UserProfile, PortfolioConfig } from '@/types/userProfile';
-import { Navigation } from '@/components/neumorphism/Navigation';
-import { Hero } from '@/components/neumorphism/Hero';
-import { About , Statistics } from '@/components/neumorphism/AboutAndStats';
-import { Skills } from '@/components/neumorphism/ServicesAndSkills';
-import { Portfolio } from '@/components/neumorphism/Portfolio';
-import '@/components/neumorphism/neumorphism.css';
+import { Navigation } from './Navigation';
+import { Hero } from './Hero';
+import { About, Statistics } from './AboutAndStats';
+import { Skills } from './ServicesAndSkills';
+import { Portfolio } from './Portfolio';
+import './neumorphism.css';
 
 interface NeumorphismTemplateProps {
   profile: UserProfile;

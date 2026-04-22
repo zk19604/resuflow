@@ -5,11 +5,16 @@ import { ExtractionScreen } from "./components/ExtractionScreen";
 import { PreviewDashboard } from "./components/PreviewDashboard";
 import { DeploymentScreen } from "./components/DeploymentScreen";
 // Add these exact lines
+import { TemplateGallery } from "./components/TemplateGallery";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: LandingPage,
+  },
+  {
+    path: "/templates",
+    Component: TemplateGallery,
   },
   {
     path: "/upload",

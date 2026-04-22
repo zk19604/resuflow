@@ -2,19 +2,15 @@
 'use client';
  
 import NeonBackground from './NeonBackground';
-import NeonNavbar from './NeonNavbar';
+import { NeonNavbar } from './NeonNavbar';
 import NeonHero from './NeonHero';
 import NeonSkills from './NeonSkills';
 import NeonWork from './NeonWork';
 import NeonContact from './NeonContact';
- 
-export interface PortfolioConfig {
-  sectionsVisible?: Record<string, boolean>;
-  colorScheme?: string;
-}
+import type { PortfolioConfig, UserProfile } from '@/types/userProfile';
  
 interface NeonVaultTemplateProps {
-  profile: any;
+  profile?: Partial<UserProfile>;
   config?: PortfolioConfig;
 }
  
@@ -22,22 +18,28 @@ export default function NeonVaultTemplate({ profile, config }: NeonVaultTemplate
   const visible = config?.sectionsVisible || {};
   const isVisible = (s: string) => visible[s] !== false;
  
-  // Normalise profile so every sub-component gets consistent shape
-  const summary =
-    profile?.personalInfo?.summary ||
-    profile?.summary ||
-    '';
- 
-  const normProfile = {
-    ...profile,
-    personalInfo: {
-      ...(profile?.personalInfo || {}),
-      summary,
-    },
-    // hero also needs top-level counts
-    experienceYears: profile?.workExperience?.length || profile?.experienceYears || 4,
-    projectsCount:   profile?.projects?.length       || profile?.projectsCount   || 0,
-  };
+  const summary = profile?.summary || '';
+  const heroTitle = profile?.personalInfo?.location || (summary ? summary.slice(0, 60) : 'Professional portfolio');
+  const fullName = profile?.personalInfo?.name || 'Anonymous';
+
+  const flatSkills = Array.from(
+    new Set(
+      [
+        ...(profile?.skills?.technical || []),
+        ...(profile?.skills?.tools || []),
+        ...(profile?.skills?.soft || []),
+        ...(profile?.skills?.domain || []),
+        ...(profile?.skills?.languages || []),
+      ].filter(Boolean)
+    )
+  );
+
+  const workExperience = (profile?.workExperience || []).map((item) => ({
+    role: item.role || '',
+    company: item.company || '',
+    duration: [item.startDate, item.endDate || 'Present'].filter(Boolean).join(' — '),
+    description: [item.description, ...(item.achievements || [])].filter(Boolean).join(' • '),
+  }));
  
   return (
     <div
@@ -61,23 +63,22 @@ export default function NeonVaultTemplate({ profile, config }: NeonVaultTemplate
       <NeonBackground />
  
       {/* Fixed top navbar */}
-      <NeonNavbar profile={{ personalInfo: profile?.personalInfo }} />
+      <NeonNavbar />
  
       {/* Page sections */}
       <main>
         {/* Hero — always visible */}
-        <NeonHero profile={normProfile} />
+        <NeonHero name={fullName} title={heroTitle} />
  
         {/* Skills */}
         {isVisible('skills') && (
-          <NeonSkills skills={profile?.skills} />
+          <NeonSkills skills={flatSkills} />
         )}
  
         {/* Work / Experience + Projects */}
         {isVisible('experience') && (
           <NeonWork
-            experience={profile?.workExperience}
-            projects={profile?.projects}
+            experience={workExperience}
           />
         )}
  

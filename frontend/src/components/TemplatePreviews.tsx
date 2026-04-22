@@ -699,7 +699,7 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
     ...(profile?.skills?.tools || []),
   ].slice(0, 6);
   const exp = profile?.workExperience || [];
- 
+
   return (
     <div
       style={{
@@ -926,7 +926,7 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
         {/* skills pills */}
         {skills.length > 0 && (
           <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center", maxWidth: "240px" }}>
-            {skills.slice(0, 5).map((sk) => (
+            {skills.slice(0, 5).map((sk: string) => (
               <div
                 key={sk}
                 style={{
@@ -999,6 +999,28 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
           opacity: 0.4,
         }}
       />
+    </div>
+  );
+}
+
+export function GlassDarkPreview({ profile }: { profile: any }) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#0f172a",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "Inter, sans-serif",
+        color: "white",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: "32px", fontWeight: 700, marginBottom: "16px" }}>Glass Dark</div>
+        <div style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>Template Preview</div>
+      </div>
     </div>
   );
 }

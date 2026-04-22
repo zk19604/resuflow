@@ -13,7 +13,9 @@ import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
 import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
 import { MusicianTemplate } from '@/components/musician/Template';
+import { GlassDarkTemplate } from '@/components/glassDark/Template';
 import { NeumorphismTemplate } from '@/components/neumorphism/Template';
+import NeonVaultTemplate from '@/components/neon-vault/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -92,6 +94,13 @@ export default async function PortfolioPage({ params }: PageProps) {
 
   if (config?.template === 'musician') {
     return <MusicianTemplate profile={profile} config={config} />;
+  }
+
+  if (config?.template === 'glassdark') {
+    return <GlassDarkTemplate profile={profile} config={config} />;
+  }
+  if (config?.template === 'neon-vault') {
+    return <NeonVaultTemplate profile={profile} config={config} />;
   }
 
   const visible = config?.sectionsVisible || {};

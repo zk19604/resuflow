@@ -10,7 +10,8 @@ import {
   NeumorphismPreview,
   LuxuryHighEndPreview,
   MusicianPreview,
-  NeonVaultPreview
+  NeonVaultPreview,
+  GlassDarkPreview,
 } from "./TemplatePreviews";
 
 const paletteRows = [
@@ -32,7 +33,8 @@ type TemplateType =
   | "bento"
   | "neumorphism"
   | "neon-vault"
-  | "musician";
+  | "musician"
+  | "glassdark";
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism:     "Glassmorphism",
@@ -42,7 +44,8 @@ const templateLabels: Record<TemplateType, string> = {
   bento:             "Bento",
   neumorphism:       "Neumorphism",
   "neon-vault":      "Neon Vault",
-  musician:         "Musician",
+  musician:          "Musician",
+  glassdark:         "Glass Dark",
 };
 
 const ALL_TEMPLATE_IDS: TemplateType[] = [
@@ -54,6 +57,7 @@ const ALL_TEMPLATE_IDS: TemplateType[] = [
   "neumorphism",
   "neon-vault",
   "musician",
+  "glassdark",
 ];
 
 /** Single place to render the correct preview component for any template id */
@@ -83,6 +87,8 @@ function TemplatePreviewRenderer({
       return <NeonVaultPreview profile={profile} />;
     case "musician":
       return <MusicianPreview profile={profile} />;
+    case "glassdark":
+      return <GlassDarkPreview profile={profile} />;
     default:
       return null;
   }
@@ -222,6 +228,7 @@ export function PreviewDashboard() {
                   palette={paletteRows[selectedPalette]}
                   profile={profile}
                 />
+
               </div>
             </div>
           </div>
@@ -247,6 +254,12 @@ export function PreviewDashboard() {
                     >
                       <div style={{ width: "100%", height: "80px", overflow: "hidden", pointerEvents: "none" }}>
                         <TemplatePreviewRenderer templateId={t.id} palette={paletteRows[selectedPalette]} profile={profile} />
+                        {t.id === "glassmorphism" && <GlassmorphismPreview palette={paletteRows[selectedPalette]} profile={profile} />}
+                        {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
+                        {t.id === "editorial" && <EditorialPreview profile={profile} />}
+                        {t.id === "bento" && <BentoPreview profile={profile} />}
+                        {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />}
+                        {t.id === "glassdark" && <GlassDarkPreview profile={profile} />}
                       </div>
                       <div style={{ padding: "8px 10px", fontSize: "11px", fontWeight: selectedTemplate === t.id ? 600 : 500, color: selectedTemplate === t.id ? "#F4E1E0" : "#BDB8B9", textAlign: "center" }}>
                         {t.label}

@@ -2,16 +2,25 @@
 interface ExperienceItem {
   role: string;
   company: string;
-  duration: string;
+  duration?: string;
+  startDate?: string;
+  endDate?: string;
   description: string;
+  achievements?: string[];
 }
 
 // 2. Define the props for the component
 interface NeonWorkProps {
-  experience: ExperienceItem[];
+  experience?: ExperienceItem[];
 }
 
 export default function NeonWork({ experience }: NeonWorkProps) {
+  const entries = (experience || []).map((exp: ExperienceItem) => ({
+    ...exp,
+    duration: exp.duration || [exp.startDate, exp.endDate || 'Present'].filter(Boolean).join(' — '),
+    description: [exp.description, ...(exp.achievements || [])].filter(Boolean).join(' • '),
+  }));
+
   return (
     <section className="py-12">
       <h2 className="font-syne text-2xl font-bold uppercase tracking-widest text-slate-400 mb-8">
@@ -19,10 +28,10 @@ export default function NeonWork({ experience }: NeonWorkProps) {
       </h2>
       <div className="grid gap-6">
         {/* 3. Explicitly type 'exp' and 'index' in the map function */}
-        {experience.map((exp: ExperienceItem, index: number) => (
+        {entries.map((exp: ExperienceItem, index: number) => (
           <div 
             key={index}
-            className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-8 backdrop-blur-xl transition-all hover:border-cyan-500/50"
+            className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 p-8 transition-all hover:border-cyan-500/50"
           >
             <div className="flex justify-between items-start">
               <div>
