@@ -5,7 +5,6 @@ interface HeroProps {
   profile: any;
 }
 
-// Simple SVG Icon Components (no external dependencies)
 const LinkedinIcon = ({ size = 18, color = '#E8B29B' }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
@@ -41,7 +40,6 @@ export function Hero({ profile }: HeroProps) {
   const [projectsCount, setProjectsCount] = useState(0);
   const [skillsCount, setSkillsCount] = useState(0);
 
-  // Get real data from profile
   const personalInfo = profile?.personalInfo || {};
   const name = personalInfo.name || 'Your Name';
   const firstName = name.split(' ')[0];
@@ -53,17 +51,14 @@ export function Hero({ profile }: HeroProps) {
   const company = currentRole.company || '';
   
   const summary = profile?.summary || personalInfo.summary || '';
-  const tagline = summary.slice(0, 80) + (summary.length > 80 ? '...' : '') || 
-    `Creating meaningful digital experiences with purpose and precision.`;
+  const tagline = summary || `Creating meaningful digital experiences with purpose and precision.`;
   
   const projects = profile?.projects || [];
   const skills = profile?.skills || { technical: [], tools: [], soft: [] };
   const allSkills = [...(skills.technical || []), ...(skills.tools || []), ...(skills.soft || [])];
   
-  // Calculate years of experience
   const calculateYears = (): number => {
     if (workExperience.length === 0) return 0;
-    
     const years: number[] = workExperience
       .filter((exp: any) => exp.startDate || exp.endDate)
       .map((exp: any) => {
@@ -73,7 +68,6 @@ export function Hero({ profile }: HeroProps) {
           : new Date(exp.endDate).getFullYear();
         return start && end ? Math.max(1, end - start) : 1;
       });
-    
     if (years.length === 0) return 0;
     return Math.round(years.reduce((a: number, b: number) => a + b, 0) / years.length) || 1;
   };
@@ -82,26 +76,13 @@ export function Hero({ profile }: HeroProps) {
   const projectCount = projects.length || workExperience.length || 0;
   const skillCount = allSkills.length || 0;
   
-  // Build social links array
   const socialLinks: { Icon: any; href: string; label: string }[] = [];
-  if (personalInfo.linkedin) {
-    socialLinks.push({ Icon: LinkedinIcon, href: personalInfo.linkedin, label: 'LinkedIn' });
-  }
-  if (personalInfo.github) {
-    socialLinks.push({ Icon: GithubIcon, href: personalInfo.github, label: 'GitHub' });
-  }
-  if (personalInfo.website || personalInfo.portfolio) {
-    socialLinks.push({ Icon: GlobeIcon, href: personalInfo.website || personalInfo.portfolio, label: 'Website' });
-  }
-  if (personalInfo.email) {
-    socialLinks.push({ Icon: MailIcon, href: `mailto:${personalInfo.email}`, label: 'Email' });
-  }
+  if (personalInfo.linkedin) socialLinks.push({ Icon: LinkedinIcon, href: personalInfo.linkedin, label: 'LinkedIn' });
+  if (personalInfo.github) socialLinks.push({ Icon: GithubIcon, href: personalInfo.github, label: 'GitHub' });
+  if (personalInfo.website || personalInfo.portfolio) socialLinks.push({ Icon: GlobeIcon, href: personalInfo.website || personalInfo.portfolio, label: 'Website' });
+  if (personalInfo.email) socialLinks.push({ Icon: MailIcon, href: `mailto:${personalInfo.email}`, label: 'Email' });
 
-  // Check if currently employed
-  const currentlyEmployed = workExperience.some((exp: any) => 
-    exp.endDate === 'Present' || !exp.endDate
-  );
-  
+  const currentlyEmployed = workExperience.some((exp: any) => exp.endDate === 'Present' || !exp.endDate);
   const availabilityText = currentlyEmployed ? 'Currently working' : 'Available for opportunities';
 
   useEffect(() => {
@@ -112,33 +93,15 @@ export function Hero({ profile }: HeroProps) {
     const interval = duration / steps;
 
     const yearTimer = setInterval(() => {
-      setYearsCount((prev) => {
-        if (prev >= yearsExp) {
-          clearInterval(yearTimer);
-          return yearsExp;
-        }
-        return prev + Math.ceil(yearsExp / steps);
-      });
+      setYearsCount((prev) => prev >= yearsExp ? yearsExp : prev + Math.ceil(yearsExp / steps));
     }, interval);
 
     const projectTimer = setInterval(() => {
-      setProjectsCount((prev) => {
-        if (prev >= projectCount) {
-          clearInterval(projectTimer);
-          return projectCount;
-        }
-        return prev + Math.ceil(projectCount / steps);
-      });
+      setProjectsCount((prev) => prev >= projectCount ? projectCount : prev + Math.ceil(projectCount / steps));
     }, interval);
 
     const skillsTimer = setInterval(() => {
-      setSkillsCount((prev) => {
-        if (prev >= skillCount) {
-          clearInterval(skillsTimer);
-          return skillCount;
-        }
-        return prev + Math.ceil(skillCount / steps);
-      });
+      setSkillsCount((prev) => prev >= skillCount ? skillCount : prev + Math.ceil(skillCount / steps));
     }, interval);
 
     return () => {
@@ -149,34 +112,38 @@ export function Hero({ profile }: HeroProps) {
   }, [yearsExp, projectCount, skillCount]);
 
   const scrollToWork = () => {
-    const workSection = document.getElementById('work') || document.getElementById('portfolio');
+    const workSection = document.getElementById('work');
     if (workSection) {
-      workSection.scrollIntoView({ behavior: 'smooth' });
+      const offset = 90;
+      const elementPosition = workSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
     }
   };
 
-  const handleDownloadCV = () => {
-    // Trigger CV download if available, or scroll to contact
+  const handleContactClick = () => {
     const contactSection = document.getElementById('contact');
     if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
+      const offset = 90;
+      const elementPosition = contactSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    } else if (personalInfo.email) {
+      window.location.href = `mailto:${personalInfo.email}?subject=Hello ${firstName}`;
     }
   };
 
-  // Generate initials for avatar fallback
   const initials = name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
-  
-  // Generate a consistent color for avatar background
   const avatarColor = `hsl(${name.length * 10 % 360}, 40%, 70%)`;
 
   return (
-    <section id="home" className="min-h-screen bg-[#E8E3DC] pt-[90px] px-6 lg:px-12 flex items-center relative">
-      <div className="max-w-[1400px] mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <section id="home" className="min-h-screen bg-[#E8E3DC] pt-[90px] px-6 lg:px-12 flex items-center relative overflow-visible">
+      <div className="max-w-[1400px] mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-16 lg:py-24">
         {/* Left Content */}
-        <div className="space-y-8 animate-rise-in">
+        <div className="space-y-6 lg:space-y-8">
           {/* Status Chip */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8E3DC] shadow-raised-sm">
-            <div className={`w-1.5 h-1.5 rounded-full ${currentlyEmployed ? 'gradient-active animate-pulse-glow' : 'bg-[#8B7355]'}`} />
+            <div className={`w-2 h-2 rounded-full ${currentlyEmployed ? 'bg-green-500 animate-pulse' : 'bg-[#8B7355]'}`} />
             <span style={{ fontFamily: 'DM Sans', fontSize: '12px', color: '#7A7268' }}>
               {availabilityText}
             </span>
@@ -193,62 +160,59 @@ export function Hero({ profile }: HeroProps) {
               fontWeight: 600,
             }}
           >
-            {role}
-            {company ? ` · ${company}` : ''}
+            {role}{company ? ` · ${company}` : ''}
           </div>
 
           {/* Main Headline */}
-          <div>
-            <h1
-              className="font-serif leading-[0.92]"
-              style={{
-                fontSize: 'clamp(48px, 8vw, 80px)',
-                color: '#3D3830',
-                fontWeight: 400,
-                letterSpacing: '-0.02em',
-              }}
-            >
-              {firstName}
-              <br />
-              {lastName || ''}
-            </h1>
-          </div>
+          <h1
+            className="font-serif leading-[1.1]"
+            style={{
+              fontSize: 'clamp(44px, 7vw, 72px)',
+              color: '#3D3830',
+              fontWeight: 400,
+              letterSpacing: '-0.02em',
+              marginBottom: '0',
+            }}
+          >
+            {firstName}<br />{lastName || ''}
+          </h1>
 
-          {/* Tagline */}
+          {/* Tagline - Full text with no truncation */}
           <p
             style={{
               fontFamily: 'DM Sans',
-              fontSize: '17px',
+              fontSize: '16px',
               color: '#7A7268',
               fontWeight: 300,
-              lineHeight: 1.75,
-              maxWidth: '400px',
+              lineHeight: 1.8,
+              maxWidth: '500px',
+              wordBreak: 'break-word',
             }}
           >
             {tagline}
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 pt-2">
             <button
               onClick={scrollToWork}
-              className="px-8 py-3.5 rounded-xl gradient-accent text-white shadow-accent transition-shadow hover-lift active-press"
+              className="px-7 py-3 rounded-xl gradient-accent text-white shadow-accent transition-all hover:shadow-accent-lg hover:-translate-y-0.5 active:translate-y-0.5"
               style={{ fontFamily: 'DM Sans', fontSize: '14px', fontWeight: 600 }}
             >
               View My Work
             </button>
             <button
-              onClick={handleDownloadCV}
-              className="px-8 py-3.5 rounded-xl bg-[#E8E3DC] shadow-raised transition-shadow hover-lift active-press"
+              onClick={handleContactClick}
+              className="px-7 py-3 rounded-xl bg-[#E8E3DC] shadow-raised transition-all hover:shadow-raised-lg hover:-translate-y-0.5 active:translate-y-0.5"
               style={{ fontFamily: 'DM Sans', fontSize: '14px', fontWeight: 600, color: '#3D3830' }}
             >
               Contact Me
             </button>
           </div>
 
-          {/* Social Icons - Only show if there are links */}
+          {/* Social Icons */}
           {socialLinks.length > 0 && (
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-3 pt-4">
               {socialLinks.map(({ Icon, href, label }, idx) => (
                 <a
                   key={idx}
@@ -256,31 +220,29 @@ export function Hero({ profile }: HeroProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-10 h-10 rounded-full bg-[#E8E3DC] shadow-raised-sm flex items-center justify-center transition-shadow hover-lift active-press"
+                  className="w-9 h-9 rounded-full bg-[#E8E3DC] shadow-raised-sm flex items-center justify-center transition-all hover:shadow-raised hover:-translate-y-0.5"
                 >
-                  <Icon size={18} color="#E8B29B" />
+                  <Icon size={16} color="#E8B29B" />
                 </a>
               ))}
             </div>
           )}
         </div>
 
-        {/* Right Visual */}
-        <div className="relative flex items-center justify-center">
+        {/* Right Visual - With proper spacing */}
+        <div className="relative flex items-center justify-center lg:justify-end min-h-[450px] lg:min-h-[500px]">
           {/* Profile Circle */}
           <div
-            className="w-[300px] h-[300px] lg:w-[400px] lg:h-[400px] rounded-full bg-[#E8E3DC] animate-breathe relative overflow-hidden flex items-center justify-center"
+            className="w-[260px] h-[260px] lg:w-[350px] lg:h-[350px] rounded-full animate-breathe relative overflow-hidden flex items-center justify-center"
             style={{
-              boxShadow:
-                '-20px -20px 50px rgba(255,252,247,0.85), 20px 20px 50px rgba(163,156,146,0.60), inset 0 0 0 8px rgba(163,156,146,0.10)',
+              boxShadow: '-20px -20px 50px rgba(255,252,247,0.85), 20px 20px 50px rgba(163,156,146,0.60), inset 0 0 0 8px rgba(163,156,146,0.10)',
               background: avatarColor,
             }}
           >
-            {/* Avatar Initials Fallback */}
             <span
               className="font-serif"
               style={{
-                fontSize: 'clamp(80px, 15vw, 120px)',
+                fontSize: 'clamp(60px, 10vw, 90px)',
                 color: '#FFFFFF',
                 fontWeight: 300,
                 opacity: 0.9,
@@ -291,66 +253,69 @@ export function Hero({ profile }: HeroProps) {
             </span>
           </div>
 
-          {/* Floating Stat Cards - Only show if there's data */}
+          {/* Floating Cards - With better positioning */}
           {yearsExp > 0 && (
             <div
-              className="absolute top-0 left-0 lg:left-[-40px] p-4 rounded-2xl bg-[#E8E3DC] shadow-raised animate-float"
+              className="absolute top-0 left-0 lg:-left-8 p-4 rounded-2xl bg-[#E8E3DC] shadow-raised animate-float z-10"
               style={{ animationDelay: '0s' }}
             >
-              <div className="font-mono" style={{ fontSize: '32px', color: '#3D3830', fontWeight: 300 }}>
+              <div className="font-mono" style={{ fontSize: '26px', color: '#3D3830', fontWeight: 300 }}>
                 {yearsCount}{yearsExp > 0 ? '+' : ''}
               </div>
               <div
                 style={{
                   fontFamily: 'DM Sans',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#7A7268',
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                {yearsExp === 1 ? 'Year' : 'Years'} Experience
+                Years Exp
               </div>
             </div>
           )}
 
           {projectCount > 0 && (
             <div
-              className="absolute top-0 right-0 lg:right-[-40px] p-4 rounded-2xl bg-[#E8E3DC] shadow-raised animate-float"
+              className="absolute top-12 right-0 lg:-right-8 p-4 rounded-2xl bg-[#E8E3DC] shadow-raised animate-float z-10"
               style={{ animationDelay: '1.5s' }}
             >
-              <div className="font-mono" style={{ fontSize: '32px', color: '#3D3830', fontWeight: 300 }}>
+              <div className="font-mono" style={{ fontSize: '26px', color: '#3D3830', fontWeight: 300 }}>
                 {projectsCount}
               </div>
               <div
                 style={{
                   fontFamily: 'DM Sans',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#7A7268',
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                {projectCount === 1 ? 'Project' : 'Projects'} Done
+                Projects
               </div>
             </div>
           )}
 
           {skillCount > 0 && (
             <div
-              className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 p-4 rounded-2xl bg-[#E8E3DC] shadow-raised animate-float"
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 p-4 rounded-2xl bg-[#E8E3DC] shadow-raised animate-float z-20"
               style={{ animationDelay: '3s' }}
             >
-              <div className="font-mono" style={{ fontSize: '32px', color: '#3D3830', fontWeight: 300 }}>
+              <div className="font-mono" style={{ fontSize: '26px', color: '#3D3830', fontWeight: 300 }}>
                 {skillsCount}
               </div>
               <div
                 style={{
                   fontFamily: 'DM Sans',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#7A7268',
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Core Skills
@@ -361,8 +326,8 @@ export function Hero({ profile }: HeroProps) {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <div
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span
           className="px-3 py-1 rounded-full bg-[#E8E3DC] shadow-raised-sm"
           style={{
             fontFamily: 'DM Sans',
@@ -372,23 +337,16 @@ export function Hero({ profile }: HeroProps) {
           }}
         >
           Scroll
-        </div>
+        </span>
         <div className="w-6 h-6 rounded-full bg-[#E8E3DC] shadow-raised-sm flex items-center justify-center animate-scroll-bounce">
           <ChevronDown size={14} color="#A09890" />
         </div>
       </div>
 
       <style>{`
-        @keyframes rise-in {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-rise-in {
-          animation: rise-in 0.8s ease forwards;
-        }
         @keyframes float {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          50% { transform: translateY(-8px); }
         }
         .animate-float {
           animation: float 4s ease-in-out infinite;
@@ -407,12 +365,23 @@ export function Hero({ profile }: HeroProps) {
         .animate-scroll-bounce {
           animation: scroll-bounce 2s ease infinite;
         }
-        @keyframes pulse-glow {
-          0%, 100% { opacity: 1; box-shadow: 0 0 5px #8B7355; }
-          50% { opacity: 0.6; box-shadow: 0 0 15px #8B7355; }
+        .gradient-accent {
+          background: linear-gradient(135deg, #8B7355 0%, #D3A29D 100%);
         }
-        .animate-pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
+        .shadow-raised {
+          box-shadow: -6px -6px 12px rgba(255,252,247,0.8), 6px 6px 12px rgba(163,156,146,0.4);
+        }
+        .shadow-raised-sm {
+          box-shadow: -3px -3px 6px rgba(255,252,247,0.6), 3px 3px 6px rgba(163,156,146,0.3);
+        }
+        .shadow-raised-lg {
+          box-shadow: -8px -8px 16px rgba(255,252,247,0.9), 8px 8px 16px rgba(163,156,146,0.5);
+        }
+        .shadow-accent {
+          box-shadow: 0 4px 12px rgba(139,115,85,0.3);
+        }
+        .shadow-accent-lg {
+          box-shadow: 0 6px 18px rgba(139,115,85,0.4);
         }
       `}</style>
     </section>
