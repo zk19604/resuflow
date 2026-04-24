@@ -58,14 +58,14 @@ export function Navbar({ currentStep }: NavbarProps) {
           { label: "Features", href: "#features" },
           { label: "Examples", href: "#examples" },
         ].map(({ label, href }) => (
-          <a
+          <Link
             key={label}
-            href={href}
+            to={`/${href}`}
             style={{ color: "#BDB8B9", fontSize: "14px", textDecoration: "none" }}
             className="hover:opacity-80 transition-opacity"
           >
             {label}
-          </a>
+          </Link>
         ))}
       </div>
 

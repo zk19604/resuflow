@@ -1,24 +1,25 @@
-import { useNavigate } from "react-router";
-import { Upload, Wand2, Link2, Cpu, Palette, Globe, QrCode, ShieldCheck, Code2 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { Upload, Wand2, Link2, Cpu, Palette, Globe, QrCode, ShieldCheck, Code2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navbar } from "./Navbar";
 
 import bentoImg from "../assets/examples/bento.png";
 import editorialImg from "../assets/editorial.png";
 import glassDarkImg from "../assets/glassDark.png";
-import glassmorphismImg from "../assets/glassmorphism.png";
+import glassmorphismImg from "../assets/examples/glassmorphism.png";
 import highendMinimalistImg from "../assets/highendminimalist.png";
-import luxuryHighEndImg from "../assets/luxuryhighend.png";
+import luxuryHighEndImg from "../assets/examples/luxuryhighend.png";
 import musicianImg from "../assets/musician.png";
 import neonVaultImg from "../assets/neon-vault-thumb.png";
 import neumorphismImg from "../assets/neumorphism.png";
 
 const templates = [
-  { label: "Glassmorphism", img: glassmorphismImg },
+  { label: "Glassmorphism", img: glassmorphismImg, link :"http://localhost:3000/zainab-khalil-jhirc" },
   { label: "Bento Grid", img: bentoImg, link: "http://localhost:3000/zainab-khalil-oa6z7" },
   { label: "Editorial", img: editorialImg },
   { label: "Neon Vault", img: neonVaultImg },
   { label: "Neumorphism", img: neumorphismImg },
-  { label: "Luxury High End", img: luxuryHighEndImg },
+  { label: "Luxury High End", img: luxuryHighEndImg, link :"http://localhost:3000/zainab-khalil-eh69e" },
   { label: "High End Minimalist", img: highendMinimalistImg },
   { label: "Glass Dark", img: glassDarkImg },
   { label: "Musician", img: musicianImg },
@@ -207,8 +208,142 @@ function HeroMockup() {
   );
 }
 
+function VibeSection({
+  templates,
+  onSelect,
+}: {
+  templates: { label: string; img: string; link?: string }[];
+  onSelect: () => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === "right" ? 300 : -300, behavior: "smooth" });
+  };
+
+  return (
+    <section style={{ backgroundColor: "#0E1627" }} className="py-24">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <h2
+              style={{
+                fontFamily: "'DM Serif Display', serif",
+                fontSize: "36px",
+                color: "#F4E1E0",
+                marginBottom: "8px",
+              }}
+            >
+              Pick Your Vibe.
+            </h2>
+            <p style={{ color: "#BDB8B9", fontSize: "15px" }}>Same data. Totally different energy.</p>
+          </div>
+
+          {/* Arrow controls */}
+          <div className="flex gap-2 flex-shrink-0">
+            {(["left", "right"] as const).map((dir) => (
+              <button
+                key={dir}
+                onClick={() => scroll(dir)}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  border: "1px solid rgba(189,184,185,0.3)",
+                  backgroundColor: "rgba(189,184,185,0.07)",
+                  color: "#BDB8B9",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+                className="hover:border-[#7F6269] hover:text-[#F4E1E0] transition-colors"
+              >
+                {dir === "left" ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto pb-4"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {templates.map((t) => (
+            <button
+              key={t.label}
+              onClick={onSelect}
+              style={{
+                minWidth: "260px",
+                flexShrink: 0,
+                borderRadius: "16px",
+                overflow: "hidden",
+                border: "1px solid rgba(189,184,185,0.2)",
+                backgroundColor: "#080f1a",
+                cursor: "pointer",
+                padding: 0,
+                textAlign: "left",
+                transition: "border-color 0.2s",
+              }}
+              className="hover:border-[#7F6269]"
+            >
+              <div style={{ height: "200px", overflow: "hidden" }}>
+                <img
+                  src={t.img}
+                  alt={t.label}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "top",
+                    transition: "transform 0.3s",
+                  }}
+                  className="group-hover:scale-105"
+                />
+              </div>
+              <div
+                style={{
+                  padding: "14px 20px",
+                  borderTop: "1px solid rgba(189,184,185,0.12)",
+                  color: "#BDB8B9",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {t.label}
+                <ChevronRight size={14} style={{ color: "#7F6269" }} />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function LandingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== "/" || !location.hash) return;
+
+    const targetId = location.hash.slice(1);
+    const targetElement = document.getElementById(targetId);
+
+    if (!targetElement) return;
+
+    window.requestAnimationFrame(() => {
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [location.hash, location.pathname]);
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -445,60 +580,7 @@ export function LandingPage() {
       </section>
 
       {/* ── PICK YOUR VIBE ── */}
-      <section style={{ backgroundColor: "#0E1627" }} className="py-24">
-        <div className="max-w-7xl mx-auto px-8">
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display', serif",
-              fontSize: "36px",
-              color: "#F4E1E0",
-              marginBottom: "8px",
-            }}
-          >
-            Pick Your Vibe.
-          </h2>
-          <p style={{ color: "#BDB8B9", fontSize: "15px", marginBottom: "40px" }}>
-            Same data. Totally different energy.
-          </p>
-
-          <div className="flex gap-6 overflow-x-auto pb-4" style={{ scrollbarWidth: "none" }}>
-            {templates.map((t) => (
-              <div
-                key={t.label}
-                style={{
-                  minWidth: "260px",
-                  flexShrink: 0,
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  border: "1px solid rgba(189,184,185,0.2)",
-                  backgroundColor: "#080f1a",
-                }}
-              >
-                <div style={{ height: "200px", overflow: "hidden" }}>
-                  <img
-                    src={t.img}
-                    alt={t.label}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
-                  />
-                </div>
-                <div
-                  style={{
-                    padding: "14px 20px",
-                    borderTop: "1px solid rgba(189,184,185,0.12)",
-                    color: "#BDB8B9",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    letterSpacing: "0.06em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {t.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <VibeSection templates={templates} onSelect={() => navigate("/upload")} />
 
       {/* ── EXAMPLES ── */}
       <section
