@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const CV_SCHEMA_PROMPT = `
@@ -114,9 +115,32 @@ Rules:
 CV Text:
 `;
 
+async function callGeminiWithRetry(model, prompt, maxRetries = 3) {
+  let lastError;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const apiCall = model.generateContent(prompt);
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini API timed out after 60s')), 60000)
+      );
+      return await Promise.race([apiCall, timeout]);
+    } catch (err) {
+      lastError = err;
+      const is503 = err.status === 503 || (err.message && err.message.includes('503'));
+      if (is503 && attempt < maxRetries - 1) {
+        const delay = 1000 * Math.pow(2, attempt);
+        console.warn(`Gemini 503, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
+
 async function extractCVData(rawText) {
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
   const prompt = CV_SCHEMA_PROMPT + rawText;
 
   let lastError;
@@ -131,7 +155,8 @@ async function extractCVData(rawText) {
         setTimeout(() => reject(new Error('Gemini API timed out after 60s')), 60000)
       );
       const result = await Promise.race([apiCall, timeout]);
-          const cleaned = responseText
+      const responseText = result.response.text();
+      const cleaned = responseText
         .replace(/```json/g, '')
         .replace(/```/g, '')
         .trim();

@@ -1,5 +1,5 @@
 const mammoth = require('mammoth');
-const pdfParse = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 
 function withTimeout(promise, ms, label) {
   return Promise.race([
@@ -12,7 +12,9 @@ function withTimeout(promise, ms, label) {
 
 async function extractTextFromFile(buffer, mimeType) {
   if (mimeType === 'application/pdf') {
-    const data = await withTimeout(pdfParse(buffer), 30000, 'PDF parsing');
+    const parser = new PDFParse({ data: buffer });
+    const data = await withTimeout(parser.getText(), 30000, 'PDF parsing');
+    await parser.destroy();
     return data.text;
   } else if (mimeType.includes('word') || mimeType.includes('docx')) {
     const result = await withTimeout(mammoth.extractRawText({ buffer }), 30000, 'DOCX parsing');

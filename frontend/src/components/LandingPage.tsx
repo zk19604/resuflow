@@ -2,12 +2,26 @@ import { useNavigate } from "react-router";
 import { Upload, Wand2, Link2, Cpu, Palette, Globe, QrCode, ShieldCheck, Code2 } from "lucide-react";
 import { Navbar } from "./Navbar";
 
-const avatars = [
-  "https://images.unsplash.com/photo-1655249493799-9cee4fe983bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=80",
-  "https://images.unsplash.com/photo-1672685667592-0392f458f46f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=80",
-  "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=80",
-  "https://images.unsplash.com/photo-1766066014773-0074bf4911de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=80",
-  "https://images.unsplash.com/photo-1770363757711-aa4db84d308d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=80",
+import bentoImg from "../assets/examples/bento.png";
+import editorialImg from "../assets/editorial.png";
+import glassDarkImg from "../assets/glassDark.png";
+import glassmorphismImg from "../assets/glassmorphism.png";
+import highendMinimalistImg from "../assets/highendminimalist.png";
+import luxuryHighEndImg from "../assets/luxuryhighend.png";
+import musicianImg from "../assets/musician.png";
+import neonVaultImg from "../assets/neon-vault-thumb.png";
+import neumorphismImg from "../assets/neumorphism.png";
+
+const templates = [
+  { label: "Glassmorphism", img: glassmorphismImg },
+  { label: "Bento Grid", img: bentoImg, link: "http://localhost:3000/zainab-khalil-oa6z7" },
+  { label: "Editorial", img: editorialImg },
+  { label: "Neon Vault", img: neonVaultImg },
+  { label: "Neumorphism", img: neumorphismImg },
+  { label: "Luxury High End", img: luxuryHighEndImg },
+  { label: "High End Minimalist", img: highendMinimalistImg },
+  { label: "Glass Dark", img: glassDarkImg },
+  { label: "Musician", img: musicianImg },
 ];
 
 const features = [
@@ -42,141 +56,6 @@ const features = [
     desc: "From upload to live in under 2 minutes. No developer, no designer required.",
   },
 ];
-
-const portfolioStyles = [
-  {
-    label: "Minimal",
-    accent: "#F4E1E0",
-    bg: "#0E1627",
-    bar: "#BDB8B9",
-  },
-  {
-    label: "Editorial",
-    accent: "#7F6269",
-    bg: "#0E1627",
-    bar: "#F4E1E0",
-  },
-  {
-    label: "Bold",
-    accent: "#0E1627",
-    bg: "#7F6269",
-    bar: "#F4E1E0",
-  },
-];
-
-function PortfolioMockupCard({
-  style,
-}: {
-  style: { label: string; accent: string; bg: string; bar: string };
-}) {
-  return (
-    <div
-      style={{
-        minWidth: "320px",
-        backgroundColor: style.bg,
-        borderRadius: "16px",
-        border: "1px solid rgba(189,184,185,0.3)",
-        overflow: "hidden",
-        flexShrink: 0,
-      }}
-    >
-      {/* Colored top bar */}
-      <div style={{ backgroundColor: style.bar, height: "6px" }} />
-      <div style={{ padding: "24px" }}>
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "50%",
-              backgroundColor: style.accent,
-              opacity: 0.8,
-            }}
-          />
-          <div>
-            <div
-              style={{
-                width: "120px",
-                height: "12px",
-                backgroundColor: style.accent,
-                borderRadius: "4px",
-                opacity: 0.7,
-                marginBottom: "6px",
-              }}
-            />
-            <div
-              style={{
-                width: "80px",
-                height: "8px",
-                backgroundColor: style.accent,
-                borderRadius: "4px",
-                opacity: 0.35,
-              }}
-            />
-          </div>
-        </div>
-        {/* Skill tags */}
-        <div className="flex gap-2 mb-4 flex-wrap">
-          {["Design", "Strategy", "UX"].map((tag) => (
-            <div
-              key={tag}
-              style={{
-                backgroundColor: style.accent,
-                opacity: 0.15,
-                borderRadius: "999px",
-                padding: "4px 12px",
-                fontSize: "10px",
-                color: style.accent,
-              }}
-            >
-              <span style={{ opacity: 1, color: style.accent }}>{tag}</span>
-            </div>
-          ))}
-        </div>
-        {/* Experience lines */}
-        {[1, 2].map((i) => (
-          <div key={i} className="mb-3">
-            <div
-              style={{
-                width: i === 1 ? "90%" : "65%",
-                height: "9px",
-                backgroundColor: style.accent,
-                borderRadius: "4px",
-                opacity: 0.5,
-                marginBottom: "4px",
-              }}
-            />
-            <div
-              style={{
-                width: "50%",
-                height: "7px",
-                backgroundColor: style.accent,
-                borderRadius: "4px",
-                opacity: 0.25,
-              }}
-            />
-          </div>
-        ))}
-      </div>
-      {/* Label */}
-      <div
-        style={{
-          padding: "14px 24px",
-          borderTop: "1px solid rgba(189,184,185,0.2)",
-          color: "#BDB8B9",
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        {style.label}
-      </div>
-    </div>
-  );
-}
 
 function HeroMockup() {
   return (
@@ -334,8 +213,10 @@ export function LandingPage() {
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <Navbar />
+
       {/* ── HERO ── */}
       <section
+        id="home"
         style={{ backgroundColor: "#0E1627", minHeight: "90vh" }}
         className="flex items-center"
       >
@@ -369,7 +250,7 @@ export function LandingPage() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3 mb-8">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => navigate("/upload")}
                 style={{
@@ -406,30 +287,6 @@ export function LandingPage() {
                 See Example Portfolio
               </button>
             </div>
-
-            {/* Social Proof */}
-            <div className="flex items-center gap-3">
-              <div className="flex">
-                {avatars.map((src, i) => (
-                  <img
-                    key={i}
-                    src={src}
-                    alt=""
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "50%",
-                      border: "2px solid #0E1627",
-                      marginLeft: i === 0 ? "0" : "-10px",
-                      objectFit: "cover",
-                    }}
-                  />
-                ))}
-              </div>
-              <span style={{ color: "#BDB8B9", fontSize: "13px" }}>
-                Trusted by <strong style={{ color: "#F4E1E0" }}>2,400+</strong> professionals
-              </span>
-            </div>
           </div>
 
           {/* Right — Mockup */}
@@ -440,7 +297,7 @@ export function LandingPage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section style={{ backgroundColor: "#0E1627" }} className="py-24">
+      <section id="how-it-works" style={{ backgroundColor: "#0E1627" }} className="py-24">
         <div className="max-w-7xl mx-auto px-8">
           <h2
             style={{
@@ -455,17 +312,6 @@ export function LandingPage() {
           </h2>
 
           <div className="relative flex flex-col md:flex-row gap-6">
-            {/* Dotted connector */}
-            <div
-              className="hidden md:block absolute top-1/3 left-1/3 right-1/3"
-              style={{
-                height: "1px",
-                borderTop: "2px dashed rgba(189,184,185,0.3)",
-                top: "80px",
-                left: "calc(33% - 12px)",
-                right: "calc(33% - 12px)",
-              }}
-            />
 
             {[
               {
@@ -486,7 +332,7 @@ export function LandingPage() {
                 title: "Go Live Instantly",
                 desc: "Choose your style, hit publish, and share your live URL or QR code in seconds.",
               },
-            ].map((step, i) => (
+            ].map((step) => (
               <div
                 key={step.num}
                 style={{
@@ -530,7 +376,15 @@ export function LandingPage() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section style={{ backgroundColor: "#080f1a", borderTop: "1px solid rgba(189,184,185,0.1)", borderBottom: "1px solid rgba(189,184,185,0.1)" }} className="py-24">
+      <section
+        id="features"
+        style={{
+          backgroundColor: "#080f1a",
+          borderTop: "1px solid rgba(189,184,185,0.1)",
+          borderBottom: "1px solid rgba(189,184,185,0.1)",
+        }}
+        className="py-24"
+      >
         <div className="max-w-7xl mx-auto px-8">
           <h2
             style={{
@@ -590,7 +444,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* ── PORTFOLIO STYLES ── */}
+      {/* ── PICK YOUR VIBE ── */}
       <section style={{ backgroundColor: "#0E1627" }} className="py-24">
         <div className="max-w-7xl mx-auto px-8">
           <h2
@@ -608,8 +462,146 @@ export function LandingPage() {
           </p>
 
           <div className="flex gap-6 overflow-x-auto pb-4" style={{ scrollbarWidth: "none" }}>
-            {portfolioStyles.map((s) => (
-              <PortfolioMockupCard key={s.label} style={s} />
+            {templates.map((t) => (
+              <div
+                key={t.label}
+                style={{
+                  minWidth: "260px",
+                  flexShrink: 0,
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  border: "1px solid rgba(189,184,185,0.2)",
+                  backgroundColor: "#080f1a",
+                }}
+              >
+                <div style={{ height: "200px", overflow: "hidden" }}>
+                  <img
+                    src={t.img}
+                    alt={t.label}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+                  />
+                </div>
+                <div
+                  style={{
+                    padding: "14px 20px",
+                    borderTop: "1px solid rgba(189,184,185,0.12)",
+                    color: "#BDB8B9",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {t.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── EXAMPLES ── */}
+      <section
+        id="examples"
+        style={{
+          backgroundColor: "#080f1a",
+          borderTop: "1px solid rgba(189,184,185,0.1)",
+        }}
+        className="py-24"
+      >
+        <div className="max-w-7xl mx-auto px-8">
+          <h2
+            style={{
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: "36px",
+              color: "#F4E1E0",
+              textAlign: "center",
+              marginBottom: "12px",
+            }}
+          >
+            Real Portfolios, Real Templates.
+          </h2>
+          <p
+            style={{
+              color: "#BDB8B9",
+              textAlign: "center",
+              fontSize: "15px",
+              marginBottom: "52px",
+            }}
+          >
+            Browse what's possible — then make it yours.
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+              gap: "24px",
+            }}
+          >
+            {templates.filter((t) => t.link).map((t) => (
+              <a
+                key={t.label}
+                href={t.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none", display: "block" }}
+                className="group"
+              >
+                <div
+                  style={{
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    border: "1px solid rgba(189,184,185,0.2)",
+                    backgroundColor: "#0E1627",
+                    transition: "border-color 0.2s",
+                  }}
+                >
+                  <div style={{ height: "220px", overflow: "hidden", position: "relative" }}>
+                    <img
+                      src={t.img}
+                      alt={t.label}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "top",
+                        transition: "transform 0.3s",
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "rgba(0,0,0,0)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      padding: "16px 20px",
+                      borderTop: "1px solid rgba(189,184,185,0.12)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "#F4E1E0",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {t.label}
+                    </span>
+                    <span style={{ color: "#7F6269", fontSize: "14px" }}>→</span>
+                  </div>
+                </div>
+              </a>
             ))}
           </div>
         </div>
@@ -669,51 +661,7 @@ export function LandingPage() {
               </p>
             </div>
 
-            {/* Links */}
-            <div className="flex gap-16">
-              <div>
-                <div
-                  style={{
-                    color: "#F4E1E0",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    marginBottom: "16px",
-                  }}
-                >
-                  Product
-                </div>
-                {["Features", "Examples", "Pricing", "Changelog"].map((l) => (
-                  <div key={l} style={{ marginBottom: "10px" }}>
-                    <a href="#" style={{ color: "#BDB8B9", fontSize: "14px", textDecoration: "none" }}>
-                      {l}
-                    </a>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div
-                  style={{
-                    color: "#F4E1E0",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    marginBottom: "16px",
-                  }}
-                >
-                  Company
-                </div>
-                {["About", "Blog", "Careers", "Contact"].map((l) => (
-                  <div key={l} style={{ marginBottom: "10px" }}>
-                    <a href="#" style={{ color: "#BDB8B9", fontSize: "14px", textDecoration: "none" }}>
-                      {l}
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
+          
 
             {/* CTA */}
             <div>
@@ -743,7 +691,7 @@ export function LandingPage() {
                 }}
                 className="hover:opacity-90 transition-opacity"
               >
-                Get Started Free →
+                Upload Your CV →
               </button>
             </div>
           </div>
