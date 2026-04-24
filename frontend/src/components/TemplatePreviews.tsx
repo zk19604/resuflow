@@ -1221,3 +1221,174 @@ export function MusicianPreview({ profile: _profile }: { profile: any }) {
     </div>
   );
 }
+// Add this function to your TemplatePreviews.tsx file
+
+export function SkeuomorphismPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || "Professional";
+  const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+  const skills = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+  const projectCount = profile?.projects?.length || 0;
+  const expCount = profile?.workExperience?.length || 0;
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#0E0A04",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'DM Sans', sans-serif",
+        padding: "12px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "280px",
+          background: "linear-gradient(to bottom, #C9A96E, #7A4E1E, #C9A96E)",
+          borderRadius: "16px",
+          padding: "16px",
+          boxShadow: "0 16px 40px rgba(0,0,0,0.6)",
+          border: "1px solid rgba(255,255,255,0.25)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Grid lines texture */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0,0,0,0.04) 19px, rgba(0,0,0,0.04) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0,0,0,0.04) 19px, rgba(0,0,0,0.04) 20px)",
+            pointerEvents: "none",
+          }}
+        />
+        
+        {/* Leather grain */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0.05,
+            backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.5) 1px, rgba(0,0,0,0.5) 2px)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Content */}
+        <div style={{ position: "relative", zIndex: 2 }}>
+          {/* Monogram */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                background: "#1A1004",
+                border: "2px solid rgba(200, 160, 80, 0.4)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span style={{ 
+                fontSize: "18px", 
+                fontWeight: 700, 
+                color: "#C9A96E",
+                fontFamily: "'Playfair Display', serif"
+              }}>
+                {initials}
+              </span>
+            </div>
+          </div>
+
+          {/* Name */}
+          <h3 style={{ 
+            fontSize: "14px", 
+            fontWeight: 700, 
+            color: "#1A1004", 
+            textAlign: "center", 
+            margin: "0 0 2px",
+            fontFamily: "'Playfair Display', serif"
+          }}>
+            {name}
+          </h3>
+
+          {/* Role */}
+          <p style={{ 
+            fontSize: "8px", 
+            color: "#1A1004", 
+            opacity: 0.65,
+            textAlign: "center", 
+            margin: "0 0 10px",
+            fontFamily: "'DM Sans', sans-serif"
+          }}>
+            {role}
+          </p>
+
+          {/* Stats */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-around",
+            borderTop: "1px solid rgba(0,0,0,0.15)",
+            borderBottom: "1px solid rgba(0,0,0,0.15)",
+            padding: "10px 0",
+            marginBottom: "10px"
+          }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1004", fontFamily: "'Playfair Display', serif" }}>
+                {projectCount || 3}+
+              </div>
+              <div style={{ fontSize: "6px", color: "#1A1004", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                Projects
+              </div>
+            </div>
+            <div style={{ width: "1px", background: "rgba(0,0,0,0.15)" }} />
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1004", fontFamily: "'Playfair Display', serif" }}>
+                {expCount || 2}+
+              </div>
+              <div style={{ fontSize: "6px", color: "#1A1004", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                Years Exp
+              </div>
+            </div>
+          </div>
+
+          {/* Skills */}
+          {skills.length > 0 && (
+            <div style={{ 
+              display: "flex", 
+              flexWrap: "wrap", 
+              gap: "4px", 
+              justifyContent: "center"
+            }}>
+              {skills.slice(0, 3).map((skill) => (
+                <span
+                  key={skill}
+                  style={{
+                    padding: "3px 8px",
+                    fontSize: "7px",
+                    background: "rgba(0,0,0,0.15)",
+                    borderRadius: "12px",
+                    color: "#1A1004",
+                    fontFamily: "'DM Sans', sans-serif",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

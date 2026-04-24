@@ -29,17 +29,14 @@ export function Navigation({ profile }: NavigationProps) {
   const email = personalInfo.email || '';
   const phone = personalInfo.phone || '';
   const location = personalInfo.location || '';
-  const hasContact = email || phone || location;
+  const linkedin = personalInfo.linkedin || '';
+  const github = personalInfo.github || '';
+  const hasContact = email || phone || location || linkedin || github;
 
   const buildNavLinks = () => {
     const links = ['About'];
     if (hasSkills) links.push('Skills');
     if (hasProjects) links.push('Work');
-    // Only add Education if it exists
-    // (Education is shown in About section, so no separate nav needed unless you have an Education section)
-    // if (hasEducation) links.push('Education');
-    // if (hasAchievements) links.push('Achievements');
-    // Only add Contact if contact info exists
     if (hasContact) links.push('Contact');
     return links;
   };
@@ -49,13 +46,15 @@ export function Navigation({ profile }: NavigationProps) {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 80);
-      const sections = navLinks.map(link => link.toLowerCase());
+      const sections = ['home', ...navLinks.map(link => link.toLowerCase())];
       const scrollPosition = window.scrollY + 100;
-      for (const section of sections) {
+      
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
         const element = document.getElementById(section);
         if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+          const { offsetTop } = element;
+          if (scrollPosition >= offsetTop) {
             setActiveSection(section);
             break;
           }
@@ -66,27 +65,36 @@ export function Navigation({ profile }: NavigationProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [navLinks]);
 
-  const handleContactClick = () => {
-    if (email) {
-      window.location.href = `mailto:${email}?subject=Opportunity for ${firstName}`;
-    } else {
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: 'smooth' });
-        setMobileMenuOpen(false);
-      }
+  const handleContactClick = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      const offset = 90;
+      const elementPosition = contactSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      setActiveSection('contact');
+      setMobileMenuOpen(false);
     }
   };
 
   const handleNavClick = (link: string, e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     const sectionId = link.toLowerCase();
+    
+    if (sectionId === 'contact') {
+      handleContactClick(e);
+      return;
+    }
+    
     const element = document.getElementById(sectionId);
     if (element) {
       const offset = 90;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
       window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    } else if (sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     setActiveSection(sectionId);
     setMobileMenuOpen(false);
@@ -148,14 +156,13 @@ export function Navigation({ profile }: NavigationProps) {
               ))}
             </div>
 
-            {/* Only show Contact button if contact info exists */}
             {hasContact && (
               <button
                 onClick={handleContactClick}
                 className="hidden lg:block px-6 py-3 rounded-xl gradient-accent text-white shadow-accent transition-shadow hover:shadow-accent-lg active:shadow-accent-sm"
                 style={{ fontFamily: 'DM Sans', fontSize: '13px', fontWeight: 600 }}
               >
-                {email ? 'Contact Me' : 'Get In Touch'}
+                Contact Me
               </button>
             )}
 
@@ -176,6 +183,18 @@ export function Navigation({ profile }: NavigationProps) {
           style={{ animation: 'slideDown 0.3s ease' }}
         >
           <div className="flex flex-col gap-4 pb-8">
+            <button
+              onClick={() => handleNavClick('home')}
+              className="p-6 rounded-2xl bg-[#E8E3DC] shadow-raised transition-all hover:shadow-raised-lg active:shadow-inset text-left"
+              style={{
+                fontFamily: 'DM Sans',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: '#3D3830',
+              }}
+            >
+              Home
+            </button>
             {navLinks.map((link, idx) => (
               <button
                 key={link}
@@ -203,7 +222,7 @@ export function Navigation({ profile }: NavigationProps) {
                   animation: 'slideIn 0.3s ease 0.3s both',
                 }}
               >
-                {email ? 'Contact Me' : 'Get In Touch'}
+                Contact Me
               </button>
             )}
           </div>
