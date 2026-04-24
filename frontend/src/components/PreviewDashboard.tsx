@@ -65,26 +65,28 @@ function TemplatePreviewRenderer({
   templateId,
   palette,
   profile,
+  sectionVisibility,
 }: {
   templateId: TemplateType;
   palette: typeof paletteRows[number];
   profile: any;
+  sectionVisibility?: Record<string, boolean>;
 }) {
   switch (templateId) {
     case "glassmorphism":
-      return <GlassmorphismPreview palette={palette} profile={profile} />;
+      return <GlassmorphismPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "luxuryhighend":
-      return <LuxuryHighEndPreview profile={profile} />;
+      return <LuxuryHighEndPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "highendminimalist":
-      return <HighEndMinimalistPreview profile={profile} />;
+      return <HighEndMinimalistPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "editorial":
-      return <EditorialPreview profile={profile} />;
+      return <EditorialPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "bento":
-      return <BentoPreview profile={profile} />;
+      return <BentoPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "neumorphism":
-      return <NeumorphismPreview profile={profile} />;
+      return <NeumorphismPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "neon-vault":
-      return <NeonVaultPreview profile={profile} />;
+      return <NeonVaultPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "musician":
       return <MusicianPreview profile={profile} />;
     case "glassdark":
@@ -227,6 +229,7 @@ export function PreviewDashboard() {
                   templateId={selectedTemplate}
                   palette={paletteRows[selectedPalette]}
                   profile={profile}
+                  sectionVisibility={sectionVisibility}
                 />
 
               </div>
@@ -265,58 +268,6 @@ export function PreviewDashboard() {
                         {t.label}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CustomSection>
-
-              {/* Color Palette */}
-              <CustomSection title="Color Scheme" icon="🎨">
-                <div className="flex flex-col gap-3">
-                  {paletteRows.map((row, i) => (
-                    <div
-                      key={row.name}
-                      onClick={() => setSelectedPalette(i)}
-                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderRadius: "12px", cursor: "pointer", backgroundColor: selectedPalette === i ? "rgba(127,98,105,0.15)" : "rgba(244,225,224,0.03)", border: selectedPalette === i ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.1)", transition: "all 0.2s ease" }}
-                    >
-                      <span style={{ color: selectedPalette === i ? "#F4E1E0" : "#BDB8B9", fontSize: "13px", fontWeight: selectedPalette === i ? 600 : 500 }}>{row.name}</span>
-                      <div className="flex gap-1.5">
-                        {row.colors.map((c) => (
-                          <div key={c} style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: c, border: "1px solid rgba(255,255,255,0.1)" }} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CustomSection>
-
-              {/* Typography */}
-              <CustomSection title="Typography" icon="✍️">
-                <div className="flex gap-3">
-                  {fontOptions.map((f, i) => (
-                    <button
-                      key={f}
-                      onClick={() => setSelectedFont(i)}
-                      style={{ flex: 1, backgroundColor: selectedFont === i ? "rgba(127,98,105,0.2)" : "rgba(244,225,224,0.04)", border: selectedFont === i ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)", borderRadius: "12px", padding: "16px 12px", cursor: "pointer", fontFamily: i === 1 ? "'DM Serif Display', serif" : "'DM Sans', sans-serif", transition: "all 0.2s ease" }}
-                    >
-                      <div style={{ color: selectedFont === i ? "#F4E1E0" : "#BDB8B9", fontSize: "14px", fontWeight: selectedFont === i ? 600 : 500, marginBottom: "4px" }}>{f}</div>
-                      <div style={{ color: "#BDB8B9", fontSize: "10px", opacity: 0.5 }}>{i === 0 ? "Clean & Modern" : "Classic & Elegant"}</div>
-                    </button>
-                  ))}
-                </div>
-              </CustomSection>
-
-              {/* Voice & Tone */}
-              <CustomSection title="Voice & Tone" icon="💬">
-                <div className="flex gap-2">
-                  {[{ label: "Professional", desc: "Formal" }, { label: "Friendly", desc: "Casual" }, { label: "Creative", desc: "Bold" }].map((t, i) => (
-                    <button
-                      key={t.label}
-                      onClick={() => setSelectedTone(i)}
-                      style={{ flex: 1, backgroundColor: selectedTone === i ? "#7F6269" : "rgba(244,225,224,0.04)", color: selectedTone === i ? "#F4E1E0" : "#BDB8B9", fontSize: "12px", fontWeight: selectedTone === i ? 600 : 500, padding: "10px 8px", borderRadius: "999px", border: selectedTone === i ? "none" : "1px solid rgba(189,184,185,0.25)", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s ease", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}
-                    >
-                      <span>{t.label}</span>
-                      <span style={{ fontSize: "9px", opacity: 0.6 }}>{t.desc}</span>
-                    </button>
                   ))}
                 </div>
               </CustomSection>

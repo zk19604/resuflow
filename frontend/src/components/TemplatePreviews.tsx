@@ -1,3 +1,5 @@
+import glassDarkImg from "../assets/glassDark.png";
+
 export type PaletteRow = {
   name: string;
   colors: string[];
@@ -11,18 +13,21 @@ export const defaultPalette: PaletteRow = {
 export function GlassmorphismPreview({
   palette = defaultPalette,
   profile,
+  sectionVisibility,
 }: {
   palette?: PaletteRow;
   profile: any;
+  sectionVisibility?: Record<string, boolean>;
 }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
-  const summary = profile?.summary || "";
-  const skills: string[] = [
+  const summary = vis("About") ? (profile?.summary || "") : "";
+  const skills: string[] = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
     ...(profile?.skills?.soft || []),
-  ].slice(0, 5);
+  ].slice(0, 5) : [];
 
   const bg = palette.colors[0];
   const accent = palette.colors[1];
@@ -193,12 +198,13 @@ export function GlassmorphismPreview({
   );
 }
 
-export function HighEndMinimalistPreview({ profile }: { profile: any }) {
+export function HighEndMinimalistPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
-  const role = profile?.workExperience?.[0]?.role || "Professional";
-  const company = profile?.workExperience?.[0]?.company || "";
+  const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
+  const company = vis("Experience") ? (profile?.workExperience?.[0]?.company || "") : "";
   const location = profile?.personalInfo?.location || "";
-  const summary = profile?.summary || "";
+  const summary = vis("About") ? (profile?.summary || "") : "";
 
   return (
     <div
@@ -262,9 +268,10 @@ export function HighEndMinimalistPreview({ profile }: { profile: any }) {
   );
 }
 
-export function EditorialPreview({ profile }: { profile: any }) {
+export function EditorialPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
-  const role = profile?.workExperience?.[0]?.role || "Professional";
+  const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
   const location = profile?.personalInfo?.location || "";
   const nameParts = name.toUpperCase().split(" ");
   const firstName = nameParts[0] || "";
@@ -310,18 +317,20 @@ export function EditorialPreview({ profile }: { profile: any }) {
             padding: "10px 12px",
           }}
         >
-          <div
-            style={{
-              background: "rgba(242,237,228,0.9)",
-              border: "1px solid rgba(0,0,0,0.12)",
-              padding: "3px 8px",
-              fontSize: "6px",
-              letterSpacing: "0.15em",
-              color: "#333",
-            }}
-          >
-            {role.toUpperCase()}
-          </div>
+          {role && (
+            <div
+              style={{
+                background: "rgba(242,237,228,0.9)",
+                border: "1px solid rgba(0,0,0,0.12)",
+                padding: "3px 8px",
+                fontSize: "6px",
+                letterSpacing: "0.15em",
+                color: "#333",
+              }}
+            >
+              {role.toUpperCase()}
+            </div>
+          )}
         </div>
         <div
           style={{
@@ -354,7 +363,7 @@ export function EditorialPreview({ profile }: { profile: any }) {
             )}
           </div>
           <div style={{ width: "24px", height: "1px", background: "#C8B89A", margin: "2px 0" }} />
-          <span style={{ fontSize: "7px", color: "#444", fontStyle: "italic" }}>{role}</span>
+          {role && <span style={{ fontSize: "7px", color: "#444", fontStyle: "italic" }}>{role}</span>}
           {location && <span style={{ fontSize: "6px", color: "#888" }}>{location} — Open to Opportunities</span>}
           <div
             style={{
@@ -392,18 +401,20 @@ export function EditorialPreview({ profile }: { profile: any }) {
   );
 }
 
-export function BentoPreview({ profile }: { profile: any }) {
+export function BentoPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
   const location = profile?.personalInfo?.location || "";
-  const summary = profile?.summary || "";
+  const summary = vis("About") ? (profile?.summary || "") : "";
   const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
-  const topSkills: string[] = [
+  const topSkills: string[] = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
-  ].slice(0, 5);
-  const projectCount = profile?.projects?.length || 0;
-  const expCount = profile?.workExperience?.length || 0;
+  ].slice(0, 5) : [];
+  const projectCount = vis("Projects") ? (profile?.projects?.length || 0) : null;
+  const expCount = vis("Experience") ? (profile?.workExperience?.length || 0) : null;
 
   return (
     <div
@@ -468,9 +479,11 @@ export function BentoPreview({ profile }: { profile: any }) {
           overflow: "hidden",
         }}
       >
-        <div style={{ width: "34px", height: "34px", borderRadius: "50%", border: "2px solid #E8E8E8", display: "flex", alignItems: "center", justifyContent: "center", background: "#F5F5F5" }}>
-          <span style={{ fontSize: "9px", fontWeight: 700, color: "#333" }}>{initials}</span>
-        </div>
+        {hasPhoto && (
+          <div style={{ width: "34px", height: "34px", borderRadius: "50%", border: "2px solid #E8E8E8", display: "flex", alignItems: "center", justifyContent: "center", background: "#F5F5F5" }}>
+            <img src={profile.personalInfo.photo} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
+          </div>
+        )}
         <div style={{ fontSize: "7px", fontWeight: 700, color: "#1A1A2E", textAlign: "center" }}>{name.toUpperCase()}</div>
         <div style={{ fontSize: "6px", color: "#666", textAlign: "center" }}>{role}</div>
         <div style={{ background: "#E8F8EE", border: "1px solid #4ade80", borderRadius: "999px", padding: "2px 8px", fontSize: "5px", color: "#16a34a", fontWeight: 600, display: "flex", alignItems: "center", gap: "3px" }}>
@@ -492,9 +505,9 @@ export function BentoPreview({ profile }: { profile: any }) {
       >
         <div style={{ fontSize: "5px", letterSpacing: "0.15em", color: "rgba(0,0,0,0.5)", textTransform: "uppercase" }}>By The Numbers</div>
         {[
-          { val: `${projectCount || 3}+`, label: "Projects Shipped" },
-          { val: `${expCount || 2}+`, label: "Years Experience" },
-        ].map((s) => (
+          projectCount !== null && { val: `${projectCount || 3}+`, label: "Projects Shipped" },
+          expCount !== null && { val: `${expCount || 2}+`, label: "Years Experience" },
+        ].filter(Boolean).map((s: any) => (
           <div key={s.label}>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#1A1A2E", lineHeight: 1 }}>{s.val}</div>
             <div style={{ fontSize: "5px", color: "rgba(0,0,0,0.5)" }}>{s.label}</div>
@@ -543,14 +556,16 @@ export function BentoPreview({ profile }: { profile: any }) {
   );
 }
 
-export function NeumorphismPreview({ palette, profile }: { palette?: any; profile: any }) {
+export function NeumorphismPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
-  const role = profile?.workExperience?.[0]?.role || "Professional";
-  const company = profile?.workExperience?.[0]?.company || "";
-  const skills = [
+  const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
+  const company = vis("Experience") ? (profile?.workExperience?.[0]?.company || "") : "";
+  const skills = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
-  ].slice(0, 3);
+  ].slice(0, 3) : [];
 
   // Use the same colors as your Figma design
   const bgColor = "#E8E3DC";
@@ -585,32 +600,25 @@ export function NeumorphismPreview({ palette, profile }: { palette?: any; profil
         }}
       >
         {/* Avatar Circle */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              background: bgColor,
-              boxShadow: `
-                -3px -3px 6px rgba(255, 252, 247, 0.8),
-                3px 3px 6px rgba(163, 156, 146, 0.3)
-              `,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span style={{ 
-              fontSize: "18px", 
-              fontWeight: 600, 
-              color: accentColor,
-              fontFamily: "'DM Serif Display', serif"
-            }}>
-              {name.charAt(0).toUpperCase()}
-            </span>
+        {hasPhoto && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                background: bgColor,
+                boxShadow: `
+                  -3px -3px 6px rgba(255, 252, 247, 0.8),
+                  3px 3px 6px rgba(163, 156, 146, 0.3)
+                `,
+                overflow: "hidden",
+              }}
+            >
+              <img src={profile.personalInfo.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Name */}
         <h3 style={{ 
@@ -625,24 +633,26 @@ export function NeumorphismPreview({ palette, profile }: { palette?: any; profil
         </h3>
         
         {/* Role */}
-        <p style={{ 
-          fontSize: "10px", 
-          color: accentColor, 
-          textAlign: "center", 
-          margin: "0 0 2px",
-          textTransform: "uppercase",
-          letterSpacing: "1px",
-          fontFamily: "'DM Sans', sans-serif"
-        }}>
-          {role}
-        </p>
-        
+        {role && (
+          <p style={{
+            fontSize: "10px",
+            color: accentColor,
+            textAlign: "center",
+            margin: "0 0 2px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            fontFamily: "'DM Sans', sans-serif"
+          }}>
+            {role}
+          </p>
+        )}
+
         {/* Company/Location */}
         {company && (
-          <p style={{ 
-            fontSize: "8px", 
-            color: mutedColor, 
-            textAlign: "center", 
+          <p style={{
+            fontSize: "8px",
+            color: mutedColor,
+            textAlign: "center",
             margin: "0 0 10px",
             fontFamily: "'DM Sans', sans-serif"
           }}>
@@ -685,20 +695,22 @@ export function NeumorphismPreview({ palette, profile }: { palette?: any; profil
   );
 }
 
-export function NeonVaultPreview({ profile }: { profile: any }) {
+export function NeonVaultPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const title =
     profile?.personalInfo?.title ||
     profile?.workExperience?.[0]?.role ||
     "Creative Developer";
   const location = profile?.personalInfo?.location || "Remote";
-  const summary =
-    profile?.personalInfo?.summary || profile?.summary || "";
-  const skills: string[] = [
+  const summary = vis("About")
+    ? (profile?.personalInfo?.summary || profile?.summary || "")
+    : "";
+  const skills: string[] = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
-  ].slice(0, 6);
-  const exp = profile?.workExperience || [];
+  ].slice(0, 6) : [];
+  const exp = vis("Experience") ? (profile?.workExperience || []) : [];
 
   return (
     <div
@@ -882,17 +894,19 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
         )}
  
         {/* stats */}
-        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-          {[
-            { val: `${exp.length || 4}+`, label: "Yrs Exp" },
-            { val: `${profile?.projects?.length || 12}+`, label: "Projects" },
-          ].map((s) => (
-            <div key={s.label} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "16px", fontWeight: 800, color: "#22d3ee", lineHeight: 1 }}>{s.val}</div>
-              <div style={{ fontSize: "5.5px", color: "rgba(148,163,184,0.6)" }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
+        {(vis("Experience") || vis("Projects")) && (
+          <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            {[
+              vis("Experience") && { val: `${exp.length || 4}+`, label: "Yrs Exp" },
+              vis("Projects") && { val: `${profile?.projects?.length || 12}+`, label: "Projects" },
+            ].filter(Boolean).map((s: any) => (
+              <div key={s.label} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "16px", fontWeight: 800, color: "#22d3ee", lineHeight: 1 }}>{s.val}</div>
+                <div style={{ fontSize: "5.5px", color: "rgba(148,163,184,0.6)" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
  
         {/* CTA */}
         <div style={{ display: "flex", gap: "6px", marginBottom: "10px" }}>
@@ -1005,40 +1019,32 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
 
 export function GlassDarkPreview({ profile }: { profile: any }) {
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        background: "#0f172a",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "Inter, sans-serif",
-        color: "white",
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: "32px", fontWeight: 700, marginBottom: "16px" }}>Glass Dark</div>
-        <div style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>Template Preview</div>
-      </div>
+    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+      <img
+        src={glassDarkImg}
+        alt="Glass Dark template preview"
+        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+      />
     </div>
   );
 }
 
-export function LuxuryHighEndPreview({ profile }: { profile: any }) {
+export function LuxuryHighEndPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Creative Professional";
-  const summary = profile?.summary || "";
-  const skills: string[] = (profile?.skills?.technical || []).slice(0, 3);
- 
+  const summary = vis("About") ? (profile?.summary || "") : "";
+  const skills: string[] = vis("Skills") ? (profile?.skills?.technical || []).slice(0, 3) : [];
+
   // Derive years of experience
-  const yearsOfExperience = (() => {
+  const yearsOfExperience = vis("Experience") ? (() => {
     const dates = (profile?.workExperience || [])
       .map((w: any) => parseInt(w.startDate?.slice(0, 4)))
       .filter((y: number) => !isNaN(y));
     if (!dates.length) return null;
     return new Date().getFullYear() - Math.min(...dates);
-  })();
+  })() : null;
  
   const initials = name
     .split(" ")
@@ -1128,24 +1134,18 @@ export function LuxuryHighEndPreview({ profile }: { profile: any }) {
           </div>
         </div>
  
-        {/* Right — portrait placeholder card */}
-        <div style={{ width: "38%", flexShrink: 0, alignSelf: "stretch", border: `1px solid ${gold}18`, borderRadius: "2px", background: bgAlt, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", position: "relative", overflow: "hidden" }}>
-          {/* Huge faint initials */}
-          <span style={{ fontSize: "48px", fontWeight: 300, color: gold, opacity: 0.06, fontFamily: "Georgia, serif", lineHeight: 1, userSelect: "none", position: "absolute" }}>{initials}</span>
- 
-          {/* Corner accents */}
-          {[["top:0;left:0", "borderTop", "borderLeft"], ["top:0;right:0", "borderTop", "borderRight"], ["bottom:0;left:0", "borderBottom", "borderLeft"], ["bottom:0;right:0", "borderBottom", "borderRight"]].map(([pos], i) => (
-            <div key={i} style={{ position: "absolute", width: "8px", height: "8px", ...(i === 0 ? { top: 0, left: 0, borderTop: `1px solid ${gold}60`, borderLeft: `1px solid ${gold}60` } : i === 1 ? { top: 0, right: 0, borderTop: `1px solid ${gold}60`, borderRight: `1px solid ${gold}60` } : i === 2 ? { bottom: 0, left: 0, borderBottom: `1px solid ${gold}60`, borderLeft: `1px solid ${gold}60` } : { bottom: 0, right: 0, borderBottom: `1px solid ${gold}60`, borderRight: `1px solid ${gold}60` }) }} />
-          ))}
- 
-          {/* Stats floating cards */}
-          {yearsOfExperience !== null && (
-            <div style={{ position: "absolute", top: "8px", left: "-8px", background: "rgba(12,12,14,0.9)", border: `1px solid ${gold}20`, borderRadius: "3px", padding: "4px 6px" }}>
-              <div style={{ fontSize: "10px", fontWeight: 300, color: gold, fontFamily: "monospace" }}>{String(yearsOfExperience).padStart(2, "0")}</div>
-              <div style={{ fontSize: "4px", color: "rgba(255,255,255,0.35)" }}>Yrs exp</div>
-            </div>
-          )}
-        </div>
+        {/* Right — portrait card (only when photo provided) */}
+        {hasPhoto && (
+          <div style={{ width: "38%", flexShrink: 0, alignSelf: "stretch", border: `1px solid ${gold}18`, borderRadius: "2px", background: bgAlt, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", position: "relative", overflow: "hidden" }}>
+            <img src={profile.personalInfo.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+            {yearsOfExperience !== null && (
+              <div style={{ position: "absolute", top: "8px", left: "-8px", background: "rgba(12,12,14,0.9)", border: `1px solid ${gold}20`, borderRadius: "3px", padding: "4px 6px" }}>
+                <div style={{ fontSize: "10px", fontWeight: 300, color: gold, fontFamily: "monospace" }}>{String(yearsOfExperience).padStart(2, "0")}</div>
+                <div style={{ fontSize: "4px", color: "rgba(255,255,255,0.35)" }}>Yrs exp</div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
  
       {/* Scroll indicator */}
@@ -1157,7 +1157,7 @@ export function LuxuryHighEndPreview({ profile }: { profile: any }) {
   );
 }
 
-export function MusicianPreview({ profile }: { profile: any }) {
+export function MusicianPreview({ profile: _profile }: { profile: any }) {
   const artistName = "Luna Vega";
   const genres = ["Alternative", "Electronic", "Indie Rock"];
  
