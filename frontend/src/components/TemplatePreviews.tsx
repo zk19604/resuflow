@@ -1221,7 +1221,94 @@ export function MusicianPreview({ profile: _profile }: { profile: any }) {
     </div>
   );
 }
-// Add this function to your TemplatePreviews.tsx file
+export function RetroPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const name = profile?.personalInfo?.name || 'Your Name';
+  const nameParts = name.split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+  const role = vis('Experience') ? (profile?.workExperience?.[0]?.role || 'Professional') : 'Professional';
+  const location = profile?.personalInfo?.location || '';
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#F5EDD8',
+        backgroundImage: 'radial-gradient(circle, rgba(80,40,0,0.08) 2px, transparent 2px)',
+        backgroundSize: '10px 10px',
+        display: 'flex',
+        fontFamily: "'DM Sans', sans-serif",
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* Left content area */}
+      <div style={{ flex: '0 0 62%', display: 'flex', flexDirection: 'column', padding: '14px 18px', justifyContent: 'center', gap: '6px' }}>
+        {/* Top banner */}
+        <div style={{ backgroundColor: '#1A1208', height: '18px', borderBottom: '2px solid #C9340A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '4px' }}>
+          <span style={{ fontFamily: 'serif', fontSize: '6px', color: '#F5EDD8', letterSpacing: '0.3em' }}>RESUFLOW PRESENTS</span>
+        </div>
+
+        {/* Headline */}
+        <div style={{ fontFamily: 'serif', fontSize: 'clamp(14px, 3vw, 22px)', color: '#1A1208', lineHeight: 0.85, fontWeight: 900, textTransform: 'uppercase' }}>
+          THE ONE &
+        </div>
+        <div style={{ fontFamily: 'serif', fontSize: 'clamp(18px, 4vw, 30px)', color: '#C9340A', lineHeight: 0.85, fontWeight: 900, textTransform: 'uppercase' }}>
+          ONLY
+        </div>
+        <div style={{ fontFamily: 'serif', fontSize: 'clamp(12px, 2.5vw, 18px)', color: '#1A1208', lineHeight: 0.9, fontWeight: 900, textTransform: 'uppercase' }}>
+          {firstName.toUpperCase()}
+        </div>
+        {lastName && (
+          <div style={{ fontFamily: 'serif', fontSize: 'clamp(12px, 2.5vw, 18px)', color: '#F5EDD8', backgroundColor: '#1A1208', lineHeight: 0.9, fontWeight: 900, display: 'inline-block', padding: '0 4px', textTransform: 'uppercase', alignSelf: 'flex-start' }}>
+            {lastName.toUpperCase()}
+          </div>
+        )}
+
+        {/* Ribbon */}
+        <div style={{ backgroundColor: '#C9340A', height: '16px', borderTop: '1px solid #1A1208', borderBottom: '1px solid #1A1208', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
+          <span style={{ fontFamily: 'serif', fontSize: '5px', color: '#F5EDD8', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+            {[role, location].filter(Boolean).join(' · ').toUpperCase()}
+          </span>
+        </div>
+
+        {/* Buttons */}
+        <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+          <div style={{ backgroundColor: '#C9340A', border: '1px solid #1A1208', boxShadow: '2px 2px 0 #1A1208', padding: '3px 8px', fontFamily: 'serif', fontSize: '5px', color: '#F5EDD8', textTransform: 'uppercase' }}>
+            READ PROFILE
+          </div>
+          <div style={{ border: '1px solid #1A1208', boxShadow: '2px 2px 0 #1A1208', padding: '3px 8px', fontFamily: 'serif', fontSize: '5px', color: '#1A1208', textTransform: 'uppercase', backgroundColor: '#F5EDD8' }}>
+            GET IN TOUCH
+          </div>
+        </div>
+      </div>
+
+      {/* Right dark panel */}
+      <div style={{ flex: '0 0 38%', backgroundColor: '#1A1208', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', gap: '10px' }}>
+        {/* Seal */}
+        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#C9340A', border: '2px solid #F5EDD8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontFamily: 'serif', fontSize: '8px', color: '#F5EDD8', fontWeight: 900 }}>№001</span>
+        </div>
+
+        <div style={{ width: '100%', height: '1px', backgroundColor: 'rgba(245,237,216,0.2)' }} />
+
+        {/* Stats */}
+        {[
+          { n: profile?.workExperience?.length ? `${profile.workExperience.length}+` : '5+', l: 'YEARS' },
+          { n: profile?.projects?.length ? `${profile.projects.length}+` : '10+', l: 'PROJECTS' },
+        ].map((s, i) => (
+          <div key={i} style={{ textAlign: 'center', width: '100%' }}>
+            <div style={{ fontFamily: 'serif', fontSize: '22px', color: '#C9340A', fontWeight: 900, lineHeight: 1 }}>{s.n}</div>
+            <div style={{ fontFamily: 'sans-serif', fontSize: '5px', color: '#9A8060', textTransform: 'uppercase', letterSpacing: '0.2em' }}>{s.l}</div>
+            {i === 0 && <div style={{ width: '100%', height: '1px', backgroundColor: 'rgba(245,237,216,0.15)', marginTop: '6px' }} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function SkeuomorphismPreview({ profile }: { profile: any }) {
   const name = profile?.personalInfo?.name || "Your Name";

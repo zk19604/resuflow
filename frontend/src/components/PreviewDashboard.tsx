@@ -13,6 +13,7 @@ import {
   NeonVaultPreview,
   GlassDarkPreview,
   SkeuomorphismPreview,
+  RetroPreview,
 } from "./TemplatePreviews";
 
 const paletteRows = [
@@ -36,7 +37,8 @@ type TemplateType =
   | "neon-vault"
   | "musician"
   | "glassdark"
-  | "skeuomorphism";
+  | "skeuomorphism"
+  | "retro";
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism:     "Glassmorphism",
@@ -49,6 +51,7 @@ const templateLabels: Record<TemplateType, string> = {
   musician:          "Musician",
   glassdark:         "Glass Dark",
   skeuomorphism:     "Skeuomorphism",
+  retro:             "Retro Press",
 };
 
 const ALL_TEMPLATE_IDS: TemplateType[] = [
@@ -62,6 +65,7 @@ const ALL_TEMPLATE_IDS: TemplateType[] = [
   "musician",
   "glassdark",
   "skeuomorphism",
+  "retro",
 ];
 
 /** Single place to render the correct preview component for any template id */
@@ -97,6 +101,8 @@ function TemplatePreviewRenderer({
       return <GlassDarkPreview profile={profile} />;
     case "skeuomorphism":
       return <SkeuomorphismPreview profile={profile} />;
+    case "retro":
+      return <RetroPreview profile={profile} sectionVisibility={sectionVisibility} />;
     default:
       return null;
   }

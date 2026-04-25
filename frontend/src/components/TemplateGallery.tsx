@@ -18,9 +18,25 @@ const templateGradients: Record<number, string> = {
   9: "linear-gradient(135deg, #0a1828 0%, #1b3a5c 50%, #2e5a8a 100%)",
   10: "linear-gradient(135deg, #000000 0%, #111111 50%, #002222 100%)",
   11: "linear-gradient(135deg, #0f172a 0%, #581c87 50%, #7c3aed 100%)", // Purple and Slate Neon
+  12: "linear-gradient(135deg, #F5EDD8 0%, #EDE4C8 40%, #C9340A 100%)", // Retro warm cream/red
 };
 
 const categories = ["All", "Minimal", "Bold", "Creative", "Corporate", "Academic"];
+
+const templateIdMap: Record<number, string> = {
+  1: "editorial",
+  2: "luxuryhighend",
+  3: "glassmorphism",
+  4: "bento",
+  5: "highendminimalist",
+  6: "neon-vault",
+  7: "neumorphism",
+  8: "glassdark",
+  9: "skeuomorphism",
+  10: "skeuomorphism",
+  11: "neon-vault",
+  12: "retro",
+};
 
 const templates = [
   { id: 1, name: "Morgan Hayes", category: "Bold", desc: "Dramatic book-themed design with rich typography and editorial flair.", rating: 5 },
@@ -34,6 +50,7 @@ const templates = [
   { id: 9, name: "Alexandra Whitmore", category: "Academic", desc: "Traditional clean layout with navy accents for corporate professionals.", rating: 4 },
   { id: 10, name: "Taylor Sheeran", category: "Bold", desc: "High-contrast black design with cyan and orange accent colors.", rating: 5 }, 
   { id: 11,  name: "neon-vault", category: "Creative",  desc: "Cyberpunk aesthetic with glowing purple accents and slate backgrounds.", rating: 5 },
+  { id: 12,  name: "Retro Press", category: "Bold",  desc: "Vintage newspaper-inspired layout with bold Bebas Neue typography and red editorial accents.", rating: 5 },
 ];
 
 
@@ -404,6 +421,12 @@ export function TemplateGallery() {
               const tmpl = templates.find((t) => t.id === selectedId);
               if (tmpl) {
                 localStorage.setItem("resuflow_template", JSON.stringify({ id: tmpl.id, name: tmpl.name, category: tmpl.category }));
+                const previewId = templateIdMap[tmpl.id];
+                if (previewId) {
+                  const existingVibe = localStorage.getItem("resuflow_vibe");
+                  const vibeData = existingVibe ? JSON.parse(existingVibe) : {};
+                  localStorage.setItem("resuflow_vibe", JSON.stringify({ ...vibeData, template: previewId }));
+                }
               }
               navigate("/preview");
             }}

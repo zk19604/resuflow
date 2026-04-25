@@ -13,6 +13,7 @@ import musicianImg from "../assets/musician.png";
 import neonVaultImg from "../assets/neon-vault-thumb.png";
 import neumorphismImg from "../assets/neumorphism.png";
 import skeumorphism from "../assets/examples/skeumorphism.png";
+import retro from "../assets/retro.png";
 
 const templates = [
   { label: "Glassmorphism", img: glassmorphismImg, link :"http://localhost:3000/zainab-khalil-jhirc" },
@@ -25,6 +26,7 @@ const templates = [
   { label: "Glass Dark", img: glassDarkImg },
   { label: "Musician", img: musicianImg },
   { label: "Skeuomorphism", img: skeumorphism, link :"http://localhost:3000/zainab-khalil-qdvcc" },
+  {label : "Retro", img: retro},
 ];
 
 const features = [

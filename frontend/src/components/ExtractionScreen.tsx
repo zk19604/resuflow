@@ -25,6 +25,7 @@ const templates = [
   { id: "neon-vault", label: "Neon Vault", desc: "Modern purple neon style for full-stack developers."},
   { id: "luxury-high-end", label: "Luxury High-End", desc: "Dark gold editorial — cinematic & premium." },
   { id: "musician", label: "Musician", desc: "Creative, bold layout with music-inspired design." },
+  { id: "retro", label: "Retro Press", desc: "Vintage newspaper-inspired layout with bold editorial typography." },
 ];
 
 const toneOptions = ["Professional", "Friendly", "Creative"];

@@ -17,6 +17,7 @@ import { GlassDarkTemplate } from '@/components/glassDark/Template';
 import { NeumorphismTemplate } from '@/components/neumorphism/Template';
 import NeonVaultTemplate from '@/components/neon-vault/Template';
 import { SkeuomorphismTemplate } from '@/components/skeumorphism/Template';
+import { RetroTemplate } from '@/components/retro/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -71,6 +72,10 @@ export default async function PortfolioPage({ params }: PageProps) {
   }
 
   const { profile, config } = data;
+
+  if (config?.template === 'retro') {
+    return <RetroTemplate profile={profile} config={config} />;
+  }
 
   // Skeuomorphism Template
   if (config?.template === 'skeuomorphism') {
