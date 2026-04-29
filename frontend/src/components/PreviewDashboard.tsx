@@ -13,6 +13,17 @@ import {
   SkeuomorphismPreview,
   RetroPreview,
 } from "./TemplatePreviews";
+import {
+  GlassmorphismFullPage,
+  HighEndMinimalistFullPage,
+  EditorialFullPage,
+  BentoFullPage,
+  NeumorphismFullPage,
+  NeonVaultFullPage,
+  GlassDarkFullPage,
+  SkeuomorphismFullPage,
+  RetroFullPage,
+} from "./FullPagePreviews";
 
 const paletteRows = [
   { name: "Rose Navy",   colors: ["#0E1627", "#7F6269", "#F4E1E0", "#BDB8B9", "#E5C5C1"] },
@@ -91,6 +102,42 @@ function TemplatePreviewRenderer({
       return <SkeuomorphismPreview profile={profile} />;
     case "retro":
       return <RetroPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    default:
+      return null;
+  }
+}
+
+/** Full-page scrollable preview for the main preview pane */
+function FullPagePreviewRenderer({
+  templateId,
+  palette,
+  profile,
+  sectionVisibility,
+}: {
+  templateId: TemplateType;
+  palette: typeof paletteRows[number];
+  profile: any;
+  sectionVisibility?: Record<string, boolean>;
+}) {
+  switch (templateId) {
+    case "glassmorphism":
+      return <GlassmorphismFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
+    case "highendminimalist":
+      return <HighEndMinimalistFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "editorial":
+      return <EditorialFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "bento":
+      return <BentoFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "neumorphism":
+      return <NeumorphismFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "neon-vault":
+      return <NeonVaultFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "glassdark":
+      return <GlassDarkFullPage profile={profile} />;
+    case "skeuomorphism":
+      return <SkeuomorphismFullPage profile={profile} />;
+    case "retro":
+      return <RetroFullPage profile={profile} sectionVisibility={sectionVisibility} />;
     default:
       return null;
   }
@@ -257,16 +304,14 @@ export function PreviewDashboard() {
                 </div>
               </div>
 
-              {/* Template Preview */}
+              {/* Full Page Template Preview */}
               <div style={{ flex: 1, overflow: "auto", minHeight: 0 }}>
-                <div style={{ width: "100%", height: "100%", minHeight: "500px" }}>
-                  <TemplatePreviewRenderer
-                    templateId={selectedTemplate}
-                    palette={paletteRows[selectedPalette]}
-                    profile={profile}
-                    sectionVisibility={sectionVisibility}
-                  />
-                </div>
+                <FullPagePreviewRenderer
+                  templateId={selectedTemplate}
+                  palette={paletteRows[selectedPalette]}
+                  profile={profile}
+                  sectionVisibility={sectionVisibility}
+                />
               </div>
             </div>
           </div>
