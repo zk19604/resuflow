@@ -55,10 +55,10 @@ function UploadTab({ onSuccess }: { onSuccess: (profile: any) => void }) {
     const formData = new FormData();
     formData.append("cv", selectedFile);
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/api/cv/upload`, {
-        method: "POST",
-        body: formData,
-      });
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/cv/upload`, {
+  method: "POST",
+  body: formData,
+});
       const data = await response.json();
       if (!data.profile) {
         throw new Error(data.message || "No profile returned from extraction");
