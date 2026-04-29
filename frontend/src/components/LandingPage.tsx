@@ -13,7 +13,7 @@ import neumorphismImg from "../assets/neumorphism.png";
 import skeumorphism from "../assets/examples/skeumorphism.png";
 import retro from "../assets/examples/retro.png";
 
-const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "http://localhost:3000";
+const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "https://portfolio-templates-delta.vercel.app";
 
 const templates = [
   { label: "Glassmorphism", img: glassmorphismImg, link: `${PORTFOLIO_BASE}/zainab-khalil-jhirc` },

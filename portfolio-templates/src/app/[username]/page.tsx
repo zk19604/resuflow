@@ -30,14 +30,11 @@ interface ProfileResponse {
 
 async function getPortfolioData(username: string): Promise<ProfileResponse | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://portfolio-templates-delta.vercel.app';
     const res = await fetch(`${baseUrl}/api/profile/${username}`, {
       next: { revalidate: 60 }
     });
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error('Failed to fetch profile');
-    }
+    if (!res.ok) return null;
     return res.json();
   } catch (error) {
     console.error('Error fetching profile:', error);
