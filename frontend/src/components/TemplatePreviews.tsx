@@ -30,6 +30,7 @@ export function ScaledIframe({ templateId }: { templateId: string }) {
     return () => ro.disconnect();
   }, []);
 
+  const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "https://portfolio-templates-delta.vercel.app";
   const route = TEMPLATE_ROUTE_MAP[templateId] || templateId;
   const scale = containerSize.width > 0 ? containerSize.width / 1440 : 0;
   const iframeHeight = scale > 0 ? containerSize.height / scale : 900;
@@ -38,7 +39,7 @@ export function ScaledIframe({ templateId }: { templateId: string }) {
     <div ref={containerRef} style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
       {scale > 0 && (
         <iframe
-          src={`http://localhost:3000/${route}`}
+          src={`${PORTFOLIO_BASE}/${route}`}
           style={{
             width: "1440px",
             height: `${iframeHeight}px`,
