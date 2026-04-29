@@ -16,6 +16,8 @@ import { MusicianTemplate } from '@/components/musician/Template';
 import { GlassDarkTemplate } from '@/components/glassDark/Template';
 import { NeumorphismTemplate } from '@/components/neumorphism/Template';
 import NeonVaultTemplate from '@/components/neon-vault/Template';
+import { SkeuomorphismTemplate } from '@/components/skeumorphism/Template';
+import { RetroTemplate } from '@/components/retro/Template';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -71,6 +73,15 @@ export default async function PortfolioPage({ params }: PageProps) {
 
   const { profile, config } = data;
 
+  if (config?.template === 'retro') {
+    return <RetroTemplate profile={profile} config={config} />;
+  }
+
+  // Skeuomorphism Template
+  if (config?.template === 'skeuomorphism') {
+    return <SkeuomorphismTemplate profile={profile} config={config} />;
+  }
+
   if (config?.template === 'luxuryhighend') {
     return <LuxuryHighEndTemplate profile={profile} config={config} />;
   }
@@ -87,7 +98,6 @@ export default async function PortfolioPage({ params }: PageProps) {
     return <BentoTemplate profile={profile} config={config} />;
   }
   
-
   if (config?.template === 'neumorphism') {
     return <NeumorphismTemplate profile={profile} config={config} />;
   }
@@ -99,6 +109,7 @@ export default async function PortfolioPage({ params }: PageProps) {
   if (config?.template === 'glassdark') {
     return <GlassDarkTemplate profile={profile} config={config} />;
   }
+  
   if (config?.template === 'neon-vault') {
     return <NeonVaultTemplate profile={profile} config={config} />;
   }
@@ -183,7 +194,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         {isVisible('about') && <AboutSection profile={profile} />}
         {isVisible('skills') && profile?.skills && <SkillsSection skills={profile.skills} />}
         {isVisible('experience') && profile?.workExperience && <WorkSection experience={profile.workExperience} />}
-        <TestimonialsSection />
+        {(profile?.references?.length ?? 0) > 0 && <TestimonialsSection profile={profile} />}
         <ContactSection profile={profile} />
       </main>
 

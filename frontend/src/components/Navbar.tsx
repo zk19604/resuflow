@@ -1,11 +1,21 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router";
 
 interface NavbarProps {
   currentStep?: number;
 }
 
 export function Navbar({ currentStep }: NavbarProps) {
-  const navigate = useNavigate();
+  const location = useLocation();
+  const isLanding = location.pathname === "/";
+
+  const handleAnchorClick = (href: string) => {
+    if (isLanding) {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = `/${href}`;
+    }
+  };
 
   return (
     <nav
@@ -54,37 +64,25 @@ export function Navbar({ currentStep }: NavbarProps) {
 
       {/* Center Nav Links */}
       <div className="hidden md:flex items-center gap-8">
-        {["Home", "How It Works", "Features", "Examples"].map((link) => (
-          <a
-            key={link}
-            href="#"
-            style={{ color: "#BDB8B9", fontSize: "14px", textDecoration: "none" }}
+        {[
+          { label: "Home", href: "#home" },
+          { label: "How It Works", href: "#how-it-works" },
+          { label: "Features", href: "#features" },
+          { label: "Examples", href: "#examples" },
+        ].map(({ label, href }) => (
+          <button
+            key={label}
+            onClick={() => handleAnchorClick(href)}
+            style={{ color: "#BDB8B9", fontSize: "14px", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}
             className="hover:opacity-80 transition-opacity"
           >
-            {link}
-          </a>
+            {label}
+          </button>
         ))}
       </div>
 
-      {/* CTA Button */}
-      <button
-        onClick={() => navigate("/upload")}
-        style={{
-          backgroundColor: "#7F6269",
-          color: "#F4E1E0",
-          fontSize: "15px",
-          fontWeight: 600,
-          padding: "10px 24px",
-          borderRadius: "999px",
-          border: "none",
-          cursor: "pointer",
-          boxShadow: "inset 0 1px 0 rgba(244,225,224,0.12)",
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-        className="hover:opacity-90 transition-opacity"
-      >
-        Get Started Free
-      </button>
+      {/* Spacer to keep logo left-aligned when no CTA */}
+      <div style={{ width: "120px" }} />
     </nav>
   );
 }

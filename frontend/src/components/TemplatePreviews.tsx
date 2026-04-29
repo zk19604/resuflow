@@ -1,3 +1,61 @@
+import { useState, useEffect, useRef } from "react";
+
+const TEMPLATE_ROUTE_MAP: Record<string, string> = {
+  glassmorphism: "glassmorphism",
+  highendminimalist: "highendminimalist",
+  editorial: "editorial",
+  bento: "bento",
+  neumorphism: "neumorphism",
+  "neon-vault": "neon-vault",
+  glassdark: "glassDark",
+  skeuomorphism: "skeuomorphism",
+  retro: "retro",
+};
+
+/** Renders the actual portfolio-templates page scaled to fit its container */
+export function ScaledIframe({ templateId }: { templateId: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setContainerSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const route = TEMPLATE_ROUTE_MAP[templateId] || templateId;
+  const scale = containerSize.width > 0 ? containerSize.width / 1440 : 0;
+  const iframeHeight = scale > 0 ? containerSize.height / scale : 900;
+
+  return (
+    <div ref={containerRef} style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
+      {scale > 0 && (
+        <iframe
+          src={`http://localhost:3000/${route}`}
+          style={{
+            width: "1440px",
+            height: `${iframeHeight}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            border: "none",
+            pointerEvents: "none",
+            display: "block",
+            overflow: "hidden",
+          }}
+          title={`${templateId} preview`}
+        />
+      )}
+    </div>
+  );
+}
+
 export type PaletteRow = {
   name: string;
   colors: string[];
@@ -11,18 +69,21 @@ export const defaultPalette: PaletteRow = {
 export function GlassmorphismPreview({
   palette = defaultPalette,
   profile,
+  sectionVisibility,
 }: {
   palette?: PaletteRow;
   profile: any;
+  sectionVisibility?: Record<string, boolean>;
 }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
-  const summary = profile?.summary || "";
-  const skills: string[] = [
+  const summary = vis("About") ? (profile?.summary || "") : "";
+  const skills: string[] = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
     ...(profile?.skills?.soft || []),
-  ].slice(0, 5);
+  ].slice(0, 5) : [];
 
   const bg = palette.colors[0];
   const accent = palette.colors[1];
@@ -193,12 +254,13 @@ export function GlassmorphismPreview({
   );
 }
 
-export function HighEndMinimalistPreview({ profile }: { profile: any }) {
+export function HighEndMinimalistPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
-  const role = profile?.workExperience?.[0]?.role || "Professional";
-  const company = profile?.workExperience?.[0]?.company || "";
+  const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
+  const company = vis("Experience") ? (profile?.workExperience?.[0]?.company || "") : "";
   const location = profile?.personalInfo?.location || "";
-  const summary = profile?.summary || "";
+  const summary = vis("About") ? (profile?.summary || "") : "";
 
   return (
     <div
@@ -262,9 +324,10 @@ export function HighEndMinimalistPreview({ profile }: { profile: any }) {
   );
 }
 
-export function EditorialPreview({ profile }: { profile: any }) {
+export function EditorialPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
-  const role = profile?.workExperience?.[0]?.role || "Professional";
+  const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
   const location = profile?.personalInfo?.location || "";
   const nameParts = name.toUpperCase().split(" ");
   const firstName = nameParts[0] || "";
@@ -310,18 +373,20 @@ export function EditorialPreview({ profile }: { profile: any }) {
             padding: "10px 12px",
           }}
         >
-          <div
-            style={{
-              background: "rgba(242,237,228,0.9)",
-              border: "1px solid rgba(0,0,0,0.12)",
-              padding: "3px 8px",
-              fontSize: "6px",
-              letterSpacing: "0.15em",
-              color: "#333",
-            }}
-          >
-            {role.toUpperCase()}
-          </div>
+          {role && (
+            <div
+              style={{
+                background: "rgba(242,237,228,0.9)",
+                border: "1px solid rgba(0,0,0,0.12)",
+                padding: "3px 8px",
+                fontSize: "6px",
+                letterSpacing: "0.15em",
+                color: "#333",
+              }}
+            >
+              {role.toUpperCase()}
+            </div>
+          )}
         </div>
         <div
           style={{
@@ -354,7 +419,7 @@ export function EditorialPreview({ profile }: { profile: any }) {
             )}
           </div>
           <div style={{ width: "24px", height: "1px", background: "#C8B89A", margin: "2px 0" }} />
-          <span style={{ fontSize: "7px", color: "#444", fontStyle: "italic" }}>{role}</span>
+          {role && <span style={{ fontSize: "7px", color: "#444", fontStyle: "italic" }}>{role}</span>}
           {location && <span style={{ fontSize: "6px", color: "#888" }}>{location} — Open to Opportunities</span>}
           <div
             style={{
@@ -392,18 +457,20 @@ export function EditorialPreview({ profile }: { profile: any }) {
   );
 }
 
-export function BentoPreview({ profile }: { profile: any }) {
+export function BentoPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
   const location = profile?.personalInfo?.location || "";
-  const summary = profile?.summary || "";
+  const summary = vis("About") ? (profile?.summary || "") : "";
   const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
-  const topSkills: string[] = [
+  const topSkills: string[] = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
-  ].slice(0, 5);
-  const projectCount = profile?.projects?.length || 0;
-  const expCount = profile?.workExperience?.length || 0;
+  ].slice(0, 5) : [];
+  const projectCount = vis("Projects") ? (profile?.projects?.length || 0) : null;
+  const expCount = vis("Experience") ? (profile?.workExperience?.length || 0) : null;
 
   return (
     <div
@@ -468,9 +535,11 @@ export function BentoPreview({ profile }: { profile: any }) {
           overflow: "hidden",
         }}
       >
-        <div style={{ width: "34px", height: "34px", borderRadius: "50%", border: "2px solid #E8E8E8", display: "flex", alignItems: "center", justifyContent: "center", background: "#F5F5F5" }}>
-          <span style={{ fontSize: "9px", fontWeight: 700, color: "#333" }}>{initials}</span>
-        </div>
+        {hasPhoto && (
+          <div style={{ width: "34px", height: "34px", borderRadius: "50%", border: "2px solid #E8E8E8", display: "flex", alignItems: "center", justifyContent: "center", background: "#F5F5F5" }}>
+            <img src={profile.personalInfo.photo} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
+          </div>
+        )}
         <div style={{ fontSize: "7px", fontWeight: 700, color: "#1A1A2E", textAlign: "center" }}>{name.toUpperCase()}</div>
         <div style={{ fontSize: "6px", color: "#666", textAlign: "center" }}>{role}</div>
         <div style={{ background: "#E8F8EE", border: "1px solid #4ade80", borderRadius: "999px", padding: "2px 8px", fontSize: "5px", color: "#16a34a", fontWeight: 600, display: "flex", alignItems: "center", gap: "3px" }}>
@@ -492,9 +561,9 @@ export function BentoPreview({ profile }: { profile: any }) {
       >
         <div style={{ fontSize: "5px", letterSpacing: "0.15em", color: "rgba(0,0,0,0.5)", textTransform: "uppercase" }}>By The Numbers</div>
         {[
-          { val: `${projectCount || 3}+`, label: "Projects Shipped" },
-          { val: `${expCount || 2}+`, label: "Years Experience" },
-        ].map((s) => (
+          projectCount !== null && { val: `${projectCount || 3}+`, label: "Projects Shipped" },
+          expCount !== null && { val: `${expCount || 2}+`, label: "Years Experience" },
+        ].filter(Boolean).map((s: any) => (
           <div key={s.label}>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#1A1A2E", lineHeight: 1 }}>{s.val}</div>
             <div style={{ fontSize: "5px", color: "rgba(0,0,0,0.5)" }}>{s.label}</div>
@@ -543,14 +612,16 @@ export function BentoPreview({ profile }: { profile: any }) {
   );
 }
 
-export function NeumorphismPreview({ palette, profile }: { palette?: any; profile: any }) {
+export function NeumorphismPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
-  const role = profile?.workExperience?.[0]?.role || "Professional";
-  const company = profile?.workExperience?.[0]?.company || "";
-  const skills = [
+  const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
+  const company = vis("Experience") ? (profile?.workExperience?.[0]?.company || "") : "";
+  const skills = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
-  ].slice(0, 3);
+  ].slice(0, 3) : [];
 
   // Use the same colors as your Figma design
   const bgColor = "#E8E3DC";
@@ -585,32 +656,25 @@ export function NeumorphismPreview({ palette, profile }: { palette?: any; profil
         }}
       >
         {/* Avatar Circle */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              background: bgColor,
-              boxShadow: `
-                -3px -3px 6px rgba(255, 252, 247, 0.8),
-                3px 3px 6px rgba(163, 156, 146, 0.3)
-              `,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span style={{ 
-              fontSize: "18px", 
-              fontWeight: 600, 
-              color: accentColor,
-              fontFamily: "'DM Serif Display', serif"
-            }}>
-              {name.charAt(0).toUpperCase()}
-            </span>
+        {hasPhoto && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                background: bgColor,
+                boxShadow: `
+                  -3px -3px 6px rgba(255, 252, 247, 0.8),
+                  3px 3px 6px rgba(163, 156, 146, 0.3)
+                `,
+                overflow: "hidden",
+              }}
+            >
+              <img src={profile.personalInfo.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Name */}
         <h3 style={{ 
@@ -625,24 +689,26 @@ export function NeumorphismPreview({ palette, profile }: { palette?: any; profil
         </h3>
         
         {/* Role */}
-        <p style={{ 
-          fontSize: "10px", 
-          color: accentColor, 
-          textAlign: "center", 
-          margin: "0 0 2px",
-          textTransform: "uppercase",
-          letterSpacing: "1px",
-          fontFamily: "'DM Sans', sans-serif"
-        }}>
-          {role}
-        </p>
-        
+        {role && (
+          <p style={{
+            fontSize: "10px",
+            color: accentColor,
+            textAlign: "center",
+            margin: "0 0 2px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            fontFamily: "'DM Sans', sans-serif"
+          }}>
+            {role}
+          </p>
+        )}
+
         {/* Company/Location */}
         {company && (
-          <p style={{ 
-            fontSize: "8px", 
-            color: mutedColor, 
-            textAlign: "center", 
+          <p style={{
+            fontSize: "8px",
+            color: mutedColor,
+            textAlign: "center",
             margin: "0 0 10px",
             fontFamily: "'DM Sans', sans-serif"
           }}>
@@ -685,20 +751,22 @@ export function NeumorphismPreview({ palette, profile }: { palette?: any; profil
   );
 }
 
-export function NeonVaultPreview({ profile }: { profile: any }) {
+export function NeonVaultPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const title =
     profile?.personalInfo?.title ||
     profile?.workExperience?.[0]?.role ||
     "Creative Developer";
   const location = profile?.personalInfo?.location || "Remote";
-  const summary =
-    profile?.personalInfo?.summary || profile?.summary || "";
-  const skills: string[] = [
+  const summary = vis("About")
+    ? (profile?.personalInfo?.summary || profile?.summary || "")
+    : "";
+  const skills: string[] = vis("Skills") ? [
     ...(profile?.skills?.technical || []),
     ...(profile?.skills?.tools || []),
-  ].slice(0, 6);
-  const exp = profile?.workExperience || [];
+  ].slice(0, 6) : [];
+  const exp = vis("Experience") ? (profile?.workExperience || []) : [];
 
   return (
     <div
@@ -882,17 +950,19 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
         )}
  
         {/* stats */}
-        <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-          {[
-            { val: `${exp.length || 4}+`, label: "Yrs Exp" },
-            { val: `${profile?.projects?.length || 12}+`, label: "Projects" },
-          ].map((s) => (
-            <div key={s.label} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "16px", fontWeight: 800, color: "#22d3ee", lineHeight: 1 }}>{s.val}</div>
-              <div style={{ fontSize: "5.5px", color: "rgba(148,163,184,0.6)" }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
+        {(vis("Experience") || vis("Projects")) && (
+          <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            {[
+              vis("Experience") && { val: `${exp.length || 4}+`, label: "Yrs Exp" },
+              vis("Projects") && { val: `${profile?.projects?.length || 12}+`, label: "Projects" },
+            ].filter(Boolean).map((s: any) => (
+              <div key={s.label} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "16px", fontWeight: 800, color: "#22d3ee", lineHeight: 1 }}>{s.val}</div>
+                <div style={{ fontSize: "5.5px", color: "rgba(148,163,184,0.6)" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
  
         {/* CTA */}
         <div style={{ display: "flex", gap: "6px", marginBottom: "10px" }}>
@@ -1004,41 +1074,92 @@ export function NeonVaultPreview({ profile }: { profile: any }) {
 }
 
 export function GlassDarkPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || profile?.personalInfo?.title || "Professional";
+  const summary = profile?.summary || profile?.personalInfo?.summary || "";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+  const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
-        background: "#0f172a",
+        background: "linear-gradient(135deg, #0d0015 0%, #1a0028 50%, #0a0018 100%)",
+        position: "relative",
+        overflow: "hidden",
+        fontFamily: "'Inter', sans-serif",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "Inter, sans-serif",
-        color: "white",
+        flexDirection: "column",
       }}
     >
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: "32px", fontWeight: 700, marginBottom: "16px" }}>Glass Dark</div>
-        <div style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>Template Preview</div>
+      {/* Blobs */}
+      <div style={{ position: "absolute", top: "-20%", left: "-10%", width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,80,192,0.35) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: 140, height: 140, borderRadius: "50%", background: "radial-gradient(circle, rgba(65,88,208,0.35) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+
+      {/* Nav */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(13,0,21,0.7)", backdropFilter: "blur(12px)", zIndex: 2, flexShrink: 0 }}>
+        <span style={{ fontSize: "8px", fontWeight: 700, color: "#fff", letterSpacing: "0.1em" }}>{name.toUpperCase()}</span>
+        <div style={{ display: "flex", gap: 8 }}>
+          {["About", "Work", "Contact"].map((l) => (
+            <span key={l} style={{ fontSize: "5px", color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em" }}>{l}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Hero card */}
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", zIndex: 2 }}>
+        <div style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(18px)", border: "1px solid rgba(255,255,255,0.13)", borderRadius: 16, padding: "14px 16px", width: "100%", maxWidth: 220 }}>
+          {/* Avatar */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #C850C0, #4158D0)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: "10px", fontWeight: 700, color: "#fff" }}>{initials}</span>
+            </div>
+            <div>
+              <div style={{ fontSize: "8px", fontWeight: 600, color: "#fff" }}>{name}</div>
+              <div style={{ fontSize: "6px", color: "rgba(255,255,255,0.5)" }}>{role}</div>
+            </div>
+          </div>
+
+          {summary && <p style={{ fontSize: "5.5px", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, marginBottom: 8 }}>{summary.slice(0, 70)}{summary.length > 70 ? "…" : ""}</p>}
+
+          {skills.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {skills.map((s) => (
+                <span key={s} style={{ background: "rgba(200,80,192,0.15)", border: "1px solid rgba(200,80,192,0.3)", borderRadius: 999, padding: "2px 7px", fontSize: "5px", color: "rgba(255,255,255,0.7)" }}>{s}</span>
+              ))}
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 5, marginTop: 10 }}>
+            <div style={{ flex: 1, textAlign: "center", padding: "5px 0", background: "linear-gradient(135deg, #C850C0, #4158D0)", borderRadius: 6, fontSize: "5.5px", fontWeight: 700, color: "#fff" }}>View Work</div>
+            <div style={{ flex: 1, textAlign: "center", padding: "5px 0", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 6, fontSize: "5.5px", color: "rgba(255,255,255,0.6)" }}>Contact</div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export function LuxuryHighEndPreview({ profile }: { profile: any }) {
+export function LuxuryHighEndPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Creative Professional";
-  const summary = profile?.summary || "";
-  const skills: string[] = (profile?.skills?.technical || []).slice(0, 3);
- 
+  const summary = vis("About") ? (profile?.summary || "") : "";
+  const skills: string[] = vis("Skills") ? (profile?.skills?.technical || []).slice(0, 3) : [];
+
   // Derive years of experience
-  const yearsOfExperience = (() => {
+  const yearsOfExperience = vis("Experience") ? (() => {
     const dates = (profile?.workExperience || [])
       .map((w: any) => parseInt(w.startDate?.slice(0, 4)))
       .filter((y: number) => !isNaN(y));
     if (!dates.length) return null;
     return new Date().getFullYear() - Math.min(...dates);
-  })();
+  })() : null;
  
   const initials = name
     .split(" ")
@@ -1128,24 +1249,18 @@ export function LuxuryHighEndPreview({ profile }: { profile: any }) {
           </div>
         </div>
  
-        {/* Right — portrait placeholder card */}
-        <div style={{ width: "38%", flexShrink: 0, alignSelf: "stretch", border: `1px solid ${gold}18`, borderRadius: "2px", background: bgAlt, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", position: "relative", overflow: "hidden" }}>
-          {/* Huge faint initials */}
-          <span style={{ fontSize: "48px", fontWeight: 300, color: gold, opacity: 0.06, fontFamily: "Georgia, serif", lineHeight: 1, userSelect: "none", position: "absolute" }}>{initials}</span>
- 
-          {/* Corner accents */}
-          {[["top:0;left:0", "borderTop", "borderLeft"], ["top:0;right:0", "borderTop", "borderRight"], ["bottom:0;left:0", "borderBottom", "borderLeft"], ["bottom:0;right:0", "borderBottom", "borderRight"]].map(([pos], i) => (
-            <div key={i} style={{ position: "absolute", width: "8px", height: "8px", ...(i === 0 ? { top: 0, left: 0, borderTop: `1px solid ${gold}60`, borderLeft: `1px solid ${gold}60` } : i === 1 ? { top: 0, right: 0, borderTop: `1px solid ${gold}60`, borderRight: `1px solid ${gold}60` } : i === 2 ? { bottom: 0, left: 0, borderBottom: `1px solid ${gold}60`, borderLeft: `1px solid ${gold}60` } : { bottom: 0, right: 0, borderBottom: `1px solid ${gold}60`, borderRight: `1px solid ${gold}60` }) }} />
-          ))}
- 
-          {/* Stats floating cards */}
-          {yearsOfExperience !== null && (
-            <div style={{ position: "absolute", top: "8px", left: "-8px", background: "rgba(12,12,14,0.9)", border: `1px solid ${gold}20`, borderRadius: "3px", padding: "4px 6px" }}>
-              <div style={{ fontSize: "10px", fontWeight: 300, color: gold, fontFamily: "monospace" }}>{String(yearsOfExperience).padStart(2, "0")}</div>
-              <div style={{ fontSize: "4px", color: "rgba(255,255,255,0.35)" }}>Yrs exp</div>
-            </div>
-          )}
-        </div>
+        {/* Right — portrait card (only when photo provided) */}
+        {hasPhoto && (
+          <div style={{ width: "38%", flexShrink: 0, alignSelf: "stretch", border: `1px solid ${gold}18`, borderRadius: "2px", background: bgAlt, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px", position: "relative", overflow: "hidden" }}>
+            <img src={profile.personalInfo.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+            {yearsOfExperience !== null && (
+              <div style={{ position: "absolute", top: "8px", left: "-8px", background: "rgba(12,12,14,0.9)", border: `1px solid ${gold}20`, borderRadius: "3px", padding: "4px 6px" }}>
+                <div style={{ fontSize: "10px", fontWeight: 300, color: gold, fontFamily: "monospace" }}>{String(yearsOfExperience).padStart(2, "0")}</div>
+                <div style={{ fontSize: "4px", color: "rgba(255,255,255,0.35)" }}>Yrs exp</div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
  
       {/* Scroll indicator */}
@@ -1158,9 +1273,18 @@ export function LuxuryHighEndPreview({ profile }: { profile: any }) {
 }
 
 export function MusicianPreview({ profile }: { profile: any }) {
-  const artistName = "Luna Vega";
-  const genres = ["Alternative", "Electronic", "Indie Rock"];
- 
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || profile?.personalInfo?.title || "Artist & Performer";
+  const summary = profile?.summary || profile?.personalInfo?.summary || "";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.domain || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+  const expCount = profile?.workExperience?.length || 0;
+  const projectCount = profile?.projects?.length || 0;
+  const tags = skills.length > 0 ? skills : ["Creative", "Performer", "Artist"];
+
   return (
     <div
       style={{
@@ -1176,25 +1300,30 @@ export function MusicianPreview({ profile }: { profile: any }) {
       <div style={{ position: "absolute", bottom: "15%", left: "5%", width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle, rgba(106,27,154,0.35) 0%, transparent 70%)", filter: "blur(25px)", pointerEvents: "none" }} />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", borderBottom: "1px solid rgba(194,24,91,0.12)", background: "rgba(8,11,20,0.85)" }}>
         <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-          <span style={{ color: "#F0EEF5" }}>NOVA</span><span style={{ color: "#C2185B" }}> SOUNDS</span>
+          <span style={{ color: "#F0EEF5" }}>{name.split(" ")[0].toUpperCase()}</span>
+          <span style={{ color: "#C2185B" }}> {name.split(" ").slice(1).join(" ").toUpperCase() || "PORTFOLIO"}</span>
         </span>
         <div style={{ display: "flex", gap: 10 }}>
-          {["Music", "Events", "Gallery"].map((l) => (
+          {["Work", "About", "Contact"].map((l) => (
             <span key={l} style={{ fontSize: "5px", color: "rgba(158,155,176,0.7)", letterSpacing: "0.1em", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase" }}>{l}</span>
           ))}
         </div>
-        <div style={{ fontSize: "5px", padding: "3px 8px", border: "1px solid rgba(194,24,91,0.4)", color: "#F0EEF5", borderRadius: 2, fontFamily: "'Raleway', sans-serif", letterSpacing: "0.1em" }}>Book Now</div>
+        <div style={{ fontSize: "5px", padding: "3px 8px", border: "1px solid rgba(194,24,91,0.4)", color: "#F0EEF5", borderRadius: 2, fontFamily: "'Raleway', sans-serif", letterSpacing: "0.1em" }}>Hire Me</div>
       </div>
       <div style={{ padding: "14px 14px 10px", position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", gap: 5, marginBottom: 8 }}>
-          {genres.map((g) => (
+          {tags.map((g) => (
             <span key={g} style={{ padding: "2px 8px", border: "1px solid rgba(194,24,91,0.30)", background: "rgba(194,24,91,0.06)", borderRadius: 2, fontSize: "5px", color: "#9E9BB0", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'Raleway', sans-serif" }}>{g}</span>
           ))}
         </div>
-        <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(22px,5vw,32px)", fontWeight: 700, fontStyle: "italic", color: "#F0EEF5", lineHeight: 0.92, letterSpacing: "-0.02em", marginBottom: 8 }}>{artistName}</div>
-        <p style={{ fontSize: "6px", color: "#9E9BB0", lineHeight: 1.6, maxWidth: 160, marginBottom: 10 }}>Crafting sonic landscapes that blur the line between concert hall and conscience.</p>
+        <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(18px,4vw,28px)", fontWeight: 700, fontStyle: "italic", color: "#F0EEF5", lineHeight: 0.92, letterSpacing: "-0.02em", marginBottom: 6 }}>{name}</div>
+        <div style={{ fontSize: "6px", color: "#C2185B", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>{role}</div>
+        {summary && <p style={{ fontSize: "6px", color: "#9E9BB0", lineHeight: 1.6, maxWidth: 160, marginBottom: 8 }}>{summary.slice(0, 80)}{summary.length > 80 ? "…" : ""}</p>}
         <div style={{ display: "flex", gap: 16, marginBottom: 10 }}>
-          {[{ v: "4.2M", l: "Listeners" }, { v: "89", l: "Shows" }, { v: "6", l: "Albums" }].map((s, i) => (
+          {[
+            { v: expCount > 0 ? `${expCount}+` : "5+", l: "Years" },
+            { v: projectCount > 0 ? `${projectCount}+` : "12+", l: "Projects" },
+          ].map((s, i) => (
             <div key={i} style={{ position: "relative" }}>
               {i > 0 && <div style={{ position: "absolute", left: -8, top: 0, bottom: 0, width: 1, background: "rgba(240,238,245,0.08)" }} />}
               <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: "#F0EEF5", lineHeight: 1 }}>{s.v}</div>
@@ -1203,8 +1332,8 @@ export function MusicianPreview({ profile }: { profile: any }) {
           ))}
         </div>
         <div style={{ display: "flex", gap: 6 }}>
-          <div style={{ padding: "5px 12px", borderRadius: 2, background: "linear-gradient(to right, #C2185B, #6A1B9A)", fontSize: "6px", fontWeight: 700, color: "#F0EEF5", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>▶ Listen Now</div>
-          <div style={{ padding: "5px 12px", borderRadius: 2, border: "1px solid rgba(194,24,91,0.40)", fontSize: "6px", color: "#9E9BB0", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>Tour Dates</div>
+          <div style={{ padding: "5px 12px", borderRadius: 2, background: "linear-gradient(to right, #C2185B, #6A1B9A)", fontSize: "6px", fontWeight: 700, color: "#F0EEF5", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>View Work</div>
+          <div style={{ padding: "5px 12px", borderRadius: 2, border: "1px solid rgba(194,24,91,0.40)", fontSize: "6px", color: "#9E9BB0", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>Contact</div>
         </div>
       </div>
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 24, background: "rgba(8,11,20,0.85)", borderTop: "1px solid rgba(194,24,91,0.12)", display: "flex", alignItems: "center", padding: "0 10px", gap: 8, zIndex: 3 }}>
@@ -1213,10 +1342,268 @@ export function MusicianPreview({ profile }: { profile: any }) {
         </div>
         <div style={{ width: 16, height: 16, borderRadius: 2, background: "linear-gradient(135deg, rgba(194,24,91,0.4), rgba(106,27,154,0.4))", flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: "6px", color: "#F0EEF5", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Midnight Echoes</div>
-          <div style={{ fontSize: "5px", color: "#9E9BB0", fontFamily: "'Inter', sans-serif" }}>Luna Vega</div>
+          <div style={{ fontSize: "6px", color: "#F0EEF5", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Featured Work</div>
+          <div style={{ fontSize: "5px", color: "#9E9BB0", fontFamily: "'Inter', sans-serif" }}>{name}</div>
         </div>
-        <div style={{ marginLeft: "auto", fontFamily: "'Space Mono', monospace", fontSize: "5px", color: "#9E9BB0" }}>2:34 / 4:17</div>
+        <div style={{ marginLeft: "auto", fontFamily: "'Space Mono', monospace", fontSize: "5px", color: "#9E9BB0" }}>Portfolio</div>
+      </div>
+    </div>
+  );
+}
+export function RetroPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const vis = (s: string) => sectionVisibility?.[s] !== false;
+  const name = profile?.personalInfo?.name || 'Your Name';
+  const nameParts = name.split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+  const role = vis('Experience') ? (profile?.workExperience?.[0]?.role || 'Professional') : 'Professional';
+  const location = profile?.personalInfo?.location || '';
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#F5EDD8',
+        backgroundImage: 'radial-gradient(circle, rgba(80,40,0,0.08) 2px, transparent 2px)',
+        backgroundSize: '10px 10px',
+        display: 'flex',
+        fontFamily: "'DM Sans', sans-serif",
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* Left content area */}
+      <div style={{ flex: '0 0 62%', display: 'flex', flexDirection: 'column', padding: '14px 18px', justifyContent: 'center', gap: '6px' }}>
+        {/* Top banner */}
+        <div style={{ backgroundColor: '#1A1208', height: '18px', borderBottom: '2px solid #C9340A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '4px' }}>
+          <span style={{ fontFamily: 'serif', fontSize: '6px', color: '#F5EDD8', letterSpacing: '0.3em' }}>RESUFLOW PRESENTS</span>
+        </div>
+
+        {/* Headline */}
+        <div style={{ fontFamily: 'serif', fontSize: 'clamp(14px, 3vw, 22px)', color: '#1A1208', lineHeight: 0.85, fontWeight: 900, textTransform: 'uppercase' }}>
+          THE ONE &
+        </div>
+        <div style={{ fontFamily: 'serif', fontSize: 'clamp(18px, 4vw, 30px)', color: '#C9340A', lineHeight: 0.85, fontWeight: 900, textTransform: 'uppercase' }}>
+          ONLY
+        </div>
+        <div style={{ fontFamily: 'serif', fontSize: 'clamp(12px, 2.5vw, 18px)', color: '#1A1208', lineHeight: 0.9, fontWeight: 900, textTransform: 'uppercase' }}>
+          {firstName.toUpperCase()}
+        </div>
+        {lastName && (
+          <div style={{ fontFamily: 'serif', fontSize: 'clamp(12px, 2.5vw, 18px)', color: '#F5EDD8', backgroundColor: '#1A1208', lineHeight: 0.9, fontWeight: 900, display: 'inline-block', padding: '0 4px', textTransform: 'uppercase', alignSelf: 'flex-start' }}>
+            {lastName.toUpperCase()}
+          </div>
+        )}
+
+        {/* Ribbon */}
+        <div style={{ backgroundColor: '#C9340A', height: '16px', borderTop: '1px solid #1A1208', borderBottom: '1px solid #1A1208', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
+          <span style={{ fontFamily: 'serif', fontSize: '5px', color: '#F5EDD8', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+            {[role, location].filter(Boolean).join(' · ').toUpperCase()}
+          </span>
+        </div>
+
+        {/* Buttons */}
+        <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+          <div style={{ backgroundColor: '#C9340A', border: '1px solid #1A1208', boxShadow: '2px 2px 0 #1A1208', padding: '3px 8px', fontFamily: 'serif', fontSize: '5px', color: '#F5EDD8', textTransform: 'uppercase' }}>
+            READ PROFILE
+          </div>
+          <div style={{ border: '1px solid #1A1208', boxShadow: '2px 2px 0 #1A1208', padding: '3px 8px', fontFamily: 'serif', fontSize: '5px', color: '#1A1208', textTransform: 'uppercase', backgroundColor: '#F5EDD8' }}>
+            GET IN TOUCH
+          </div>
+        </div>
+      </div>
+
+      {/* Right dark panel */}
+      <div style={{ flex: '0 0 38%', backgroundColor: '#1A1208', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px', gap: '10px' }}>
+        {/* Seal */}
+        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#C9340A', border: '2px solid #F5EDD8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontFamily: 'serif', fontSize: '8px', color: '#F5EDD8', fontWeight: 900 }}>№001</span>
+        </div>
+
+        <div style={{ width: '100%', height: '1px', backgroundColor: 'rgba(245,237,216,0.2)' }} />
+
+        {/* Stats */}
+        {[
+          { n: profile?.workExperience?.length ? `${profile.workExperience.length}+` : '5+', l: 'YEARS' },
+          { n: profile?.projects?.length ? `${profile.projects.length}+` : '10+', l: 'PROJECTS' },
+        ].map((s, i) => (
+          <div key={i} style={{ textAlign: 'center', width: '100%' }}>
+            <div style={{ fontFamily: 'serif', fontSize: '22px', color: '#C9340A', fontWeight: 900, lineHeight: 1 }}>{s.n}</div>
+            <div style={{ fontFamily: 'sans-serif', fontSize: '5px', color: '#9A8060', textTransform: 'uppercase', letterSpacing: '0.2em' }}>{s.l}</div>
+            {i === 0 && <div style={{ width: '100%', height: '1px', backgroundColor: 'rgba(245,237,216,0.15)', marginTop: '6px' }} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function SkeuomorphismPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || "Professional";
+  const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+  const skills = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+  const projectCount = profile?.projects?.length || 0;
+  const expCount = profile?.workExperience?.length || 0;
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#0E0A04",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'DM Sans', sans-serif",
+        padding: "12px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "280px",
+          background: "linear-gradient(to bottom, #C9A96E, #7A4E1E, #C9A96E)",
+          borderRadius: "16px",
+          padding: "16px",
+          boxShadow: "0 16px 40px rgba(0,0,0,0.6)",
+          border: "1px solid rgba(255,255,255,0.25)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Grid lines texture */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0,0,0,0.04) 19px, rgba(0,0,0,0.04) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0,0,0,0.04) 19px, rgba(0,0,0,0.04) 20px)",
+            pointerEvents: "none",
+          }}
+        />
+        
+        {/* Leather grain */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0.05,
+            backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.5) 1px, rgba(0,0,0,0.5) 2px)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Content */}
+        <div style={{ position: "relative", zIndex: 2 }}>
+          {/* Monogram */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                background: "#1A1004",
+                border: "2px solid rgba(200, 160, 80, 0.4)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span style={{ 
+                fontSize: "18px", 
+                fontWeight: 700, 
+                color: "#C9A96E",
+                fontFamily: "'Playfair Display', serif"
+              }}>
+                {initials}
+              </span>
+            </div>
+          </div>
+
+          {/* Name */}
+          <h3 style={{ 
+            fontSize: "14px", 
+            fontWeight: 700, 
+            color: "#1A1004", 
+            textAlign: "center", 
+            margin: "0 0 2px",
+            fontFamily: "'Playfair Display', serif"
+          }}>
+            {name}
+          </h3>
+
+          {/* Role */}
+          <p style={{ 
+            fontSize: "8px", 
+            color: "#1A1004", 
+            opacity: 0.65,
+            textAlign: "center", 
+            margin: "0 0 10px",
+            fontFamily: "'DM Sans', sans-serif"
+          }}>
+            {role}
+          </p>
+
+          {/* Stats */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-around",
+            borderTop: "1px solid rgba(0,0,0,0.15)",
+            borderBottom: "1px solid rgba(0,0,0,0.15)",
+            padding: "10px 0",
+            marginBottom: "10px"
+          }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1004", fontFamily: "'Playfair Display', serif" }}>
+                {projectCount || 3}+
+              </div>
+              <div style={{ fontSize: "6px", color: "#1A1004", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                Projects
+              </div>
+            </div>
+            <div style={{ width: "1px", background: "rgba(0,0,0,0.15)" }} />
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1004", fontFamily: "'Playfair Display', serif" }}>
+                {expCount || 2}+
+              </div>
+              <div style={{ fontSize: "6px", color: "#1A1004", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                Years Exp
+              </div>
+            </div>
+          </div>
+
+          {/* Skills */}
+          {skills.length > 0 && (
+            <div style={{ 
+              display: "flex", 
+              flexWrap: "wrap", 
+              gap: "4px", 
+              justifyContent: "center"
+            }}>
+              {skills.slice(0, 3).map((skill) => (
+                <span
+                  key={skill}
+                  style={{
+                    padding: "3px 8px",
+                    fontSize: "7px",
+                    background: "rgba(0,0,0,0.15)",
+                    borderRadius: "12px",
+                    color: "#1A1004",
+                    fontFamily: "'DM Sans', sans-serif",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

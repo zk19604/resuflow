@@ -8,11 +8,22 @@ import {
   EditorialPreview,
   BentoPreview,
   NeumorphismPreview,
-  LuxuryHighEndPreview,
-  MusicianPreview,
   NeonVaultPreview,
   GlassDarkPreview,
+  SkeuomorphismPreview,
+  RetroPreview,
 } from "./TemplatePreviews";
+import {
+  GlassmorphismFullPage,
+  HighEndMinimalistFullPage,
+  EditorialFullPage,
+  BentoFullPage,
+  NeumorphismFullPage,
+  NeonVaultFullPage,
+  GlassDarkFullPage,
+  SkeuomorphismFullPage,
+  RetroFullPage,
+} from "./FullPagePreviews";
 
 const paletteRows = [
   { name: "Rose Navy",   colors: ["#0E1627", "#7F6269", "#F4E1E0", "#BDB8B9", "#E5C5C1"] },
@@ -27,41 +38,113 @@ const fontOptions = ["Modern Sans", "Serif Editorial"];
 
 type TemplateType =
   | "glassmorphism"
-  | "luxuryhighend"
   | "highendminimalist"
   | "editorial"
   | "bento"
   | "neumorphism"
   | "neon-vault"
-  | "musician"
-  | "glassdark";
+  | "glassdark"
+  | "skeuomorphism"
+  | "retro";
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism:     "Glassmorphism",
-  luxuryhighend:     "Luxury High-End",
   highendminimalist: "High-End Minimalist",
   editorial:         "Editorial",
   bento:             "Bento",
   neumorphism:       "Neumorphism",
   "neon-vault":      "Neon Vault",
-  musician:          "Musician",
   glassdark:         "Glass Dark",
+  skeuomorphism:     "Skeuomorphism",
+  retro:             "Retro Press",
 };
 
 const ALL_TEMPLATE_IDS: TemplateType[] = [
   "glassmorphism",
-  "luxuryhighend",
   "highendminimalist",
   "editorial",
   "bento",
   "neumorphism",
   "neon-vault",
-  "musician",
   "glassdark",
+  "skeuomorphism",
+  "retro",
 ];
 
 /** Single place to render the correct preview component for any template id */
 function TemplatePreviewRenderer({
+  templateId,
+  palette,
+  profile,
+  sectionVisibility,
+}: {
+  templateId: TemplateType;
+  palette: typeof paletteRows[number];
+  profile: any;
+  sectionVisibility?: Record<string, boolean>;
+}) {
+  switch (templateId) {
+    case "glassmorphism":
+      return <GlassmorphismPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
+    case "highendminimalist":
+      return <HighEndMinimalistPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    case "editorial":
+      return <EditorialPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    case "bento":
+      return <BentoPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    case "neumorphism":
+      return <NeumorphismPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    case "neon-vault":
+      return <NeonVaultPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    case "glassdark":
+      return <GlassDarkPreview profile={profile} />;
+    case "skeuomorphism":
+      return <SkeuomorphismPreview profile={profile} />;
+    case "retro":
+      return <RetroPreview profile={profile} sectionVisibility={sectionVisibility} />;
+    default:
+      return null;
+  }
+}
+
+/** Full-page scrollable preview for the main preview pane */
+function FullPagePreviewRenderer({
+  templateId,
+  palette,
+  profile,
+  sectionVisibility,
+}: {
+  templateId: TemplateType;
+  palette: typeof paletteRows[number];
+  profile: any;
+  sectionVisibility?: Record<string, boolean>;
+}) {
+  switch (templateId) {
+    case "glassmorphism":
+      return <GlassmorphismFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
+    case "highendminimalist":
+      return <HighEndMinimalistFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "editorial":
+      return <EditorialFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "bento":
+      return <BentoFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "neumorphism":
+      return <NeumorphismFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "neon-vault":
+      return <NeonVaultFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    case "glassdark":
+      return <GlassDarkFullPage profile={profile} />;
+    case "skeuomorphism":
+      return <SkeuomorphismFullPage profile={profile} />;
+    case "retro":
+      return <RetroFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+    default:
+      return null;
+  }
+}
+
+/** Scaled-down thumbnail of the actual preview component using real profile data */
+function TemplateThumbnail({
   templateId,
   palette,
   profile,
@@ -70,28 +153,28 @@ function TemplatePreviewRenderer({
   palette: typeof paletteRows[number];
   profile: any;
 }) {
-  switch (templateId) {
-    case "glassmorphism":
-      return <GlassmorphismPreview palette={palette} profile={profile} />;
-    case "luxuryhighend":
-      return <LuxuryHighEndPreview profile={profile} />;
-    case "highendminimalist":
-      return <HighEndMinimalistPreview profile={profile} />;
-    case "editorial":
-      return <EditorialPreview profile={profile} />;
-    case "bento":
-      return <BentoPreview profile={profile} />;
-    case "neumorphism":
-      return <NeumorphismPreview profile={profile} />;
-    case "neon-vault":
-      return <NeonVaultPreview profile={profile} />;
-    case "musician":
-      return <MusicianPreview profile={profile} />;
-    case "glassdark":
-      return <GlassDarkPreview profile={profile} />;
-    default:
-      return null;
-  }
+  return (
+    <div style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "300%",
+          height: "300%",
+          transform: "scale(0.333)",
+          transformOrigin: "top left",
+          pointerEvents: "none",
+        }}
+      >
+        <TemplatePreviewRenderer
+          templateId={templateId}
+          palette={palette}
+          profile={profile}
+        />
+      </div>
+    </div>
+  );
 }
 
 export function PreviewDashboard() {
@@ -221,14 +304,14 @@ export function PreviewDashboard() {
                 </div>
               </div>
 
-              {/* Template Preview */}
-              <div style={{ flex: 1, overflow: "hidden" }}>
-                <TemplatePreviewRenderer
+              {/* Full Page Template Preview */}
+              <div style={{ flex: 1, overflow: "auto", minHeight: 0 }}>
+                <FullPagePreviewRenderer
                   templateId={selectedTemplate}
                   palette={paletteRows[selectedPalette]}
                   profile={profile}
+                  sectionVisibility={sectionVisibility}
                 />
-
               </div>
             </div>
           </div>
@@ -253,70 +336,12 @@ export function PreviewDashboard() {
                       style={{ borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: selectedTemplate === t.id ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)", transition: "border 0.15s ease", backgroundColor: "rgba(189,184,185,0.04)" }}
                     >
                       <div style={{ width: "100%", height: "80px", overflow: "hidden", pointerEvents: "none" }}>
-                        <TemplatePreviewRenderer templateId={t.id} palette={paletteRows[selectedPalette]} profile={profile} />
-                        {t.id === "glassmorphism" && <GlassmorphismPreview palette={paletteRows[selectedPalette]} profile={profile} />}
-                        {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
-                        {t.id === "editorial" && <EditorialPreview profile={profile} />}
-                        {t.id === "bento" && <BentoPreview profile={profile} />}
-                        {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />}
-                        {t.id === "glassdark" && <GlassDarkPreview profile={profile} />}
+                        <TemplateThumbnail templateId={t.id} palette={paletteRows[selectedPalette]} profile={profile} />
                       </div>
                       <div style={{ padding: "8px 10px", fontSize: "11px", fontWeight: selectedTemplate === t.id ? 600 : 500, color: selectedTemplate === t.id ? "#F4E1E0" : "#BDB8B9", textAlign: "center" }}>
                         {t.label}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CustomSection>
-
-              {/* Color Palette */}
-              <CustomSection title="Color Scheme" icon="🎨">
-                <div className="flex flex-col gap-3">
-                  {paletteRows.map((row, i) => (
-                    <div
-                      key={row.name}
-                      onClick={() => setSelectedPalette(i)}
-                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderRadius: "12px", cursor: "pointer", backgroundColor: selectedPalette === i ? "rgba(127,98,105,0.15)" : "rgba(244,225,224,0.03)", border: selectedPalette === i ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.1)", transition: "all 0.2s ease" }}
-                    >
-                      <span style={{ color: selectedPalette === i ? "#F4E1E0" : "#BDB8B9", fontSize: "13px", fontWeight: selectedPalette === i ? 600 : 500 }}>{row.name}</span>
-                      <div className="flex gap-1.5">
-                        {row.colors.map((c) => (
-                          <div key={c} style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: c, border: "1px solid rgba(255,255,255,0.1)" }} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CustomSection>
-
-              {/* Typography */}
-              <CustomSection title="Typography" icon="✍️">
-                <div className="flex gap-3">
-                  {fontOptions.map((f, i) => (
-                    <button
-                      key={f}
-                      onClick={() => setSelectedFont(i)}
-                      style={{ flex: 1, backgroundColor: selectedFont === i ? "rgba(127,98,105,0.2)" : "rgba(244,225,224,0.04)", border: selectedFont === i ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)", borderRadius: "12px", padding: "16px 12px", cursor: "pointer", fontFamily: i === 1 ? "'DM Serif Display', serif" : "'DM Sans', sans-serif", transition: "all 0.2s ease" }}
-                    >
-                      <div style={{ color: selectedFont === i ? "#F4E1E0" : "#BDB8B9", fontSize: "14px", fontWeight: selectedFont === i ? 600 : 500, marginBottom: "4px" }}>{f}</div>
-                      <div style={{ color: "#BDB8B9", fontSize: "10px", opacity: 0.5 }}>{i === 0 ? "Clean & Modern" : "Classic & Elegant"}</div>
-                    </button>
-                  ))}
-                </div>
-              </CustomSection>
-
-              {/* Voice & Tone */}
-              <CustomSection title="Voice & Tone" icon="💬">
-                <div className="flex gap-2">
-                  {[{ label: "Professional", desc: "Formal" }, { label: "Friendly", desc: "Casual" }, { label: "Creative", desc: "Bold" }].map((t, i) => (
-                    <button
-                      key={t.label}
-                      onClick={() => setSelectedTone(i)}
-                      style={{ flex: 1, backgroundColor: selectedTone === i ? "#7F6269" : "rgba(244,225,224,0.04)", color: selectedTone === i ? "#F4E1E0" : "#BDB8B9", fontSize: "12px", fontWeight: selectedTone === i ? 600 : 500, padding: "10px 8px", borderRadius: "999px", border: selectedTone === i ? "none" : "1px solid rgba(189,184,185,0.25)", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s ease", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}
-                    >
-                      <span>{t.label}</span>
-                      <span style={{ fontSize: "9px", opacity: 0.6 }}>{t.desc}</span>
-                    </button>
                   ))}
                 </div>
               </CustomSection>

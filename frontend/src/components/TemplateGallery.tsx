@@ -3,28 +3,25 @@ import { useNavigate } from "react-router";
 import { Check, Star } from "lucide-react";
 import { Navbar } from "./Navbar";
 import { Breadcrumb } from "./Breadcrumb";
-
-
-// Template preview gradients (replacing Figma assets)
-const templateGradients: Record<number, string> = {
-  1: "linear-gradient(135deg, #1a0810 0%, #3d1424 50%, #6b2040 100%)",
-  2: "linear-gradient(135deg, #0d0008 0%, #4a1527 50%, #7a1e3f 100%)",
-  3: "linear-gradient(135deg, #001433 0%, #0052a3 50%, #00a8e8 100%)",
-  4: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #5e3ba8 100%)",
-  5: "linear-gradient(135deg, #001f5c 0%, #1565c0 50%, #4fc3f7 100%)",
-  6: "linear-gradient(135deg, #120020 0%, #5a0080 50%, #9c27b0 100%)",
-  7: "linear-gradient(135deg, #f5f0e8 0%, #e8dcc8 50%, #c8b48a 100%)",
-  8: "linear-gradient(135deg, #070015 0%, #1c0535 50%, #4a0e70 100%)",
-  9: "linear-gradient(135deg, #0a1828 0%, #1b3a5c 50%, #2e5a8a 100%)",
-  10: "linear-gradient(135deg, #000000 0%, #111111 50%, #002222 100%)",
-  11: "linear-gradient(135deg, #0f172a 0%, #581c87 50%, #7c3aed 100%)", // Purple and Slate Neon
-};
+import { ScaledIframe } from "./TemplatePreviews";
 
 const categories = ["All", "Minimal", "Bold", "Creative", "Corporate", "Academic"];
 
+const templateIdMap: Record<number, string> = {
+  1: "editorial",
+  3: "glassmorphism",
+  4: "bento",
+  5: "highendminimalist",
+  6: "neon-vault",
+  7: "neumorphism",
+  8: "glassdark",
+  9: "skeuomorphism",
+  11: "neon-vault",
+  12: "retro",
+};
+
 const templates = [
   { id: 1, name: "Morgan Hayes", category: "Bold", desc: "Dramatic book-themed design with rich typography and editorial flair.", rating: 5 },
-  { id: 2, name: "Luxe Portfolio", category: "Creative", desc: "Dark luxury design with burgundy and gold accents for premium brands.", rating: 5 },
   { id: 3, name: "Code Builder", category: "Bold", desc: "Vibrant primary colors and geometric shapes for modern developers.", rating: 4 },
   { id: 4, name: "Ahmed Raza", category: "Corporate", desc: "Card-based layout with yellow and purple accents for software engineers.", rating: 5 },
   { id: 5, name: "Clean Developer", category: "Minimal", desc: "Professional blue design with clean sections and modern aesthetics.", rating: 4 },
@@ -32,9 +29,11 @@ const templates = [
   { id: 7, name: "Fatima Mazhar", category: "Minimal", desc: "Elegant beige editorial layout with sophisticated typography.", rating: 4 },
   { id: 8, name: "Alex Moracain", category: "Creative", desc: "Space-themed dark design with purple gradients and modern cards.", rating: 5 },
   { id: 9, name: "Alexandra Whitmore", category: "Academic", desc: "Traditional clean layout with navy accents for corporate professionals.", rating: 4 },
-  { id: 10, name: "Taylor Sheeran", category: "Bold", desc: "High-contrast black design with cyan and orange accent colors.", rating: 5 }, 
-  { id: 11,  name: "neon-vault", category: "Creative",  desc: "Cyberpunk aesthetic with glowing purple accents and slate backgrounds.", rating: 5 },
+  { id: 11, name: "Neon Vault", category: "Creative", desc: "Cyberpunk aesthetic with glowing purple accents and slate backgrounds.", rating: 5 },
+  { id: 12, name: "Retro Press", category: "Bold", desc: "Vintage newspaper-inspired layout with bold Bebas Neue typography and red editorial accents.", rating: 5 },
 ];
+
+
 
 
 function StarRating({ count }: { count: number }) {
@@ -57,7 +56,7 @@ function StarRating({ count }: { count: number }) {
 export function TemplateGallery() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("All");
-  const [selectedId, setSelectedId] = useState(2);
+  const [selectedId, setSelectedId] = useState(3);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const filteredTemplates =
@@ -194,42 +193,11 @@ export function TemplateGallery() {
                 <div
                   style={{
                     height: "280px",
-                    background: templateGradients[tmpl.id] || "#111",
                     overflow: "hidden",
                     position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "20px",
-                    }}
-                  >
-                    <div style={{ color: "rgba(255,255,255,0.15)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "8px" }}>
-                      {tmpl.category}
-                    </div>
-                    <div style={{ color: "rgba(255,255,255,0.25)", fontSize: "14px", fontWeight: 600 }}>
-                      {tmpl.name === 'neon-vault' ? 'Neon Vault' : tmpl.name}
-                    </div>
-                  </div>
-                  {/* Watermark */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: "10px",
-                      right: "12px",
-                      color: "rgba(189,184,185,0.2)",
-                      fontSize: "9px",
-                      fontWeight: 600,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {tmpl.name}
-                  </div>
+                  <ScaledIframe templateId={templateIdMap[tmpl.id] || ""} />
                 </div>
 
                 {/* Bottom info */}
@@ -404,6 +372,12 @@ export function TemplateGallery() {
               const tmpl = templates.find((t) => t.id === selectedId);
               if (tmpl) {
                 localStorage.setItem("resuflow_template", JSON.stringify({ id: tmpl.id, name: tmpl.name, category: tmpl.category }));
+                const previewId = templateIdMap[tmpl.id];
+                if (previewId) {
+                  const existingVibe = localStorage.getItem("resuflow_vibe");
+                  const vibeData = existingVibe ? JSON.parse(existingVibe) : {};
+                  localStorage.setItem("resuflow_vibe", JSON.stringify({ ...vibeData, template: previewId }));
+                }
               }
               navigate("/preview");
             }}

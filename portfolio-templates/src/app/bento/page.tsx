@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Github, Linkedin, Twitter, ExternalLink, Folder, ChevronDown, Copy, Check } from 'lucide-react';
 import { motion } from 'motion/react';
