@@ -8,25 +8,23 @@ import editorialImg from "../assets/editorial.png";
 import glassDarkImg from "../assets/glassDark.png";
 import glassmorphismImg from "../assets/examples/glassmorphism.png";
 import highendMinimalistImg from "../assets/highendminimalist.png";
-import luxuryHighEndImg from "../assets/examples/luxuryhighend.png";
-import musicianImg from "../assets/musician.png";
 import neonVaultImg from "../assets/neon-vault-thumb.png";
 import neumorphismImg from "../assets/neumorphism.png";
 import skeumorphism from "../assets/examples/skeumorphism.png";
-import retro from "../assets/retro.png";
+import retro from "../assets/examples/retro.png";
+
+const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "http://localhost:3000";
 
 const templates = [
-  { label: "Glassmorphism", img: glassmorphismImg, link :"http://localhost:3000/zainab-khalil-jhirc" },
-  { label: "Bento Grid", img: bentoImg, link: "http://localhost:3000/zainab-khalil-oa6z7" },
+  { label: "Glassmorphism", img: glassmorphismImg, link: `${PORTFOLIO_BASE}/zainab-khalil-jhirc` },
+  { label: "Bento Grid", img: bentoImg, link: `${PORTFOLIO_BASE}/zainab-khalil-oa6z7` },
   { label: "Editorial", img: editorialImg },
   { label: "Neon Vault", img: neonVaultImg },
   { label: "Neumorphism", img: neumorphismImg },
-  { label: "Luxury High End", img: luxuryHighEndImg, link :"http://localhost:3000/zainab-khalil-eh69e" },
   { label: "High End Minimalist", img: highendMinimalistImg },
   { label: "Glass Dark", img: glassDarkImg },
-  { label: "Musician", img: musicianImg },
-  { label: "Skeuomorphism", img: skeumorphism, link :"http://localhost:3000/zainab-khalil-qdvcc" },
-  {label : "Retro", img: retro},
+  { label: "Skeuomorphism", img: skeumorphism, link: `${PORTFOLIO_BASE}/zainab-khalil-qdvcc` },
+  { label: "Retro", img: retro, link: `${PORTFOLIO_BASE}/zainab-khalil-mn6td` },
 ];
 
 const features = [
@@ -796,13 +794,18 @@ export function LandingPage() {
               © 2026 ResuFlow. All rights reserved.
             </span>
             <div className="flex gap-6">
-              {["Privacy", "Terms", "Cookies"].map((l) => (
+              {[
+                { label: "Privacy", path: "/privacy" },
+                { label: "Terms", path: "/terms" },
+                { label: "Cookies", path: "/cookies" },
+              ].map(({ label, path }) => (
                 <a
-                  key={l}
-                  href="#"
+                  key={label}
+                  href={path}
                   style={{ color: "#BDB8B9", fontSize: "12px", textDecoration: "none" }}
+                  className="hover:opacity-80 transition-opacity"
                 >
-                  {l}
+                  {label}
                 </a>
               ))}
             </div>

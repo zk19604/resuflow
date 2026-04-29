@@ -1,31 +1,10 @@
-const testimonials = [
-  {
-    quote: "Alex brought a level of spatial thinking I've never seen in a designer. The Vision Pro UI they designed for us became the blueprint for our entire product vision.",
-    name: "Sarah Chen",
-    role: "CPO at Luminary Labs",
-    initials: "SC",
-    blur: 18,
-    accentColor: 'rgba(123,47,255,0.5)',
-  },
-  {
-    quote: "Working with Alex is like having a creative polymath on your team. They bridge design, engineering and strategy in a way that's genuinely rare.",
-    name: "Marcus Okafor",
-    role: "VP Design at Nexus AI",
-    initials: "MO",
-    blur: 24,
-    accentColor: 'rgba(26,111,255,0.5)',
-  },
-  {
-    quote: "The design system Alex architected scaled from 3 products to 40+ in 18 months. Clean, opinionated, and beautiful — exactly what we needed.",
-    name: "Priya Nair",
-    role: "Head of Design at Scale",
-    initials: "PN",
-    blur: 20,
-    accentColor: 'rgba(255,45,120,0.5)',
-  },
-];
+import { UserProfile } from '@/types/userProfile';
 
-function TestimonialCard({ t }: { t: typeof testimonials[0] }) {
+interface TestimonialsSectionProps {
+  profile?: UserProfile;
+}
+
+function TestimonialCard({ t }: { t: { quote: string; name: string; role: string; initials: string; blur: number; accentColor: string } }) {
   return (
     <div
       style={{
@@ -42,7 +21,6 @@ function TestimonialCard({ t }: { t: typeof testimonials[0] }) {
         flex: '0 0 380px',
       }}
     >
-      {/* Quote mark */}
       <div
         style={{
           fontFamily: 'Syne, sans-serif',
@@ -58,7 +36,6 @@ function TestimonialCard({ t }: { t: typeof testimonials[0] }) {
         &ldquo;
       </div>
 
-      {/* Quote */}
       <p
         style={{
           fontFamily: 'Inter, sans-serif',
@@ -72,7 +49,6 @@ function TestimonialCard({ t }: { t: typeof testimonials[0] }) {
         {t.quote}
       </p>
 
-      {/* Author */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div
           style={{
@@ -104,14 +80,33 @@ function TestimonialCard({ t }: { t: typeof testimonials[0] }) {
   );
 }
 
-export function TestimonialsSection() {
+const ACCENT_COLORS = [
+  'rgba(123,47,255,0.5)',
+  'rgba(26,111,255,0.5)',
+  'rgba(255,45,120,0.5)',
+  'rgba(0,200,150,0.5)',
+];
+
+export function TestimonialsSection({ profile }: TestimonialsSectionProps) {
+  const references = profile?.references || [];
+
+  if (references.length === 0) return null;
+
+  const testimonials = references.slice(0, 4).map((ref: any, i: number) => ({
+    quote: ref.description || ref.contact || `A valued reference from ${ref.name}.`,
+    name: ref.name || 'Reference',
+    role: ref.role || '',
+    initials: (ref.name || 'R').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase(),
+    blur: 18 + i * 2,
+    accentColor: ACCENT_COLORS[i % ACCENT_COLORS.length],
+  }));
+
   return (
     <section style={{ padding: '120px 0', position: 'relative', zIndex: 2, overflow: 'hidden', width: '100%' }}>
-      {/* Heading */}
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px', marginBottom: 56 }}>
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.35)' }}>
-            Testimonials
+            References
           </span>
         </div>
         <h2
@@ -121,7 +116,6 @@ export function TestimonialsSection() {
         </h2>
       </div>
 
-      {/* Scroll row */}
       <div
         style={{
           display: 'flex',

@@ -194,7 +194,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         {isVisible('about') && <AboutSection profile={profile} />}
         {isVisible('skills') && profile?.skills && <SkillsSection skills={profile.skills} />}
         {isVisible('experience') && profile?.workExperience && <WorkSection experience={profile.workExperience} />}
-        <TestimonialsSection />
+        {(profile?.references?.length ?? 0) > 0 && <TestimonialsSection profile={profile} />}
         <ContactSection profile={profile} />
       </main>
 

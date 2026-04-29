@@ -1,4 +1,60 @@
-import glassDarkImg from "../assets/glassDark.png";
+import { useState, useEffect, useRef } from "react";
+
+const TEMPLATE_ROUTE_MAP: Record<string, string> = {
+  glassmorphism: "glassmorphism",
+  highendminimalist: "highendminimalist",
+  editorial: "editorial",
+  bento: "bento",
+  neumorphism: "neumorphism",
+  "neon-vault": "neon-vault",
+  glassdark: "glassDark",
+  skeuomorphism: "skeuomorphism",
+  retro: "retro",
+};
+
+/** Renders the actual portfolio-templates page scaled to fit its container */
+export function ScaledIframe({ templateId }: { templateId: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setContainerSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const route = TEMPLATE_ROUTE_MAP[templateId] || templateId;
+  const scale = containerSize.width > 0 ? containerSize.width / 1440 : 0;
+  const iframeHeight = scale > 0 ? containerSize.height / scale : 900;
+
+  return (
+    <div ref={containerRef} style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
+      {scale > 0 && (
+        <iframe
+          src={`http://localhost:3000/${route}`}
+          style={{
+            width: "1440px",
+            height: `${iframeHeight}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            border: "none",
+            pointerEvents: "none",
+            display: "block",
+            overflow: "hidden",
+          }}
+          title={`${templateId} preview`}
+        />
+      )}
+    </div>
+  );
+}
 
 export type PaletteRow = {
   name: string;
@@ -1018,13 +1074,72 @@ export function NeonVaultPreview({ profile, sectionVisibility }: { profile: any;
 }
 
 export function GlassDarkPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || profile?.personalInfo?.title || "Professional";
+  const summary = profile?.summary || profile?.personalInfo?.summary || "";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+  const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+
   return (
-    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-      <img
-        src={glassDarkImg}
-        alt="Glass Dark template preview"
-        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
-      />
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "linear-gradient(135deg, #0d0015 0%, #1a0028 50%, #0a0018 100%)",
+        position: "relative",
+        overflow: "hidden",
+        fontFamily: "'Inter', sans-serif",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Blobs */}
+      <div style={{ position: "absolute", top: "-20%", left: "-10%", width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,80,192,0.35) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: 140, height: 140, borderRadius: "50%", background: "radial-gradient(circle, rgba(65,88,208,0.35) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+
+      {/* Nav */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(13,0,21,0.7)", backdropFilter: "blur(12px)", zIndex: 2, flexShrink: 0 }}>
+        <span style={{ fontSize: "8px", fontWeight: 700, color: "#fff", letterSpacing: "0.1em" }}>{name.toUpperCase()}</span>
+        <div style={{ display: "flex", gap: 8 }}>
+          {["About", "Work", "Contact"].map((l) => (
+            <span key={l} style={{ fontSize: "5px", color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em" }}>{l}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Hero card */}
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", zIndex: 2 }}>
+        <div style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(18px)", border: "1px solid rgba(255,255,255,0.13)", borderRadius: 16, padding: "14px 16px", width: "100%", maxWidth: 220 }}>
+          {/* Avatar */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #C850C0, #4158D0)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: "10px", fontWeight: 700, color: "#fff" }}>{initials}</span>
+            </div>
+            <div>
+              <div style={{ fontSize: "8px", fontWeight: 600, color: "#fff" }}>{name}</div>
+              <div style={{ fontSize: "6px", color: "rgba(255,255,255,0.5)" }}>{role}</div>
+            </div>
+          </div>
+
+          {summary && <p style={{ fontSize: "5.5px", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, marginBottom: 8 }}>{summary.slice(0, 70)}{summary.length > 70 ? "…" : ""}</p>}
+
+          {skills.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {skills.map((s) => (
+                <span key={s} style={{ background: "rgba(200,80,192,0.15)", border: "1px solid rgba(200,80,192,0.3)", borderRadius: 999, padding: "2px 7px", fontSize: "5px", color: "rgba(255,255,255,0.7)" }}>{s}</span>
+              ))}
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 5, marginTop: 10 }}>
+            <div style={{ flex: 1, textAlign: "center", padding: "5px 0", background: "linear-gradient(135deg, #C850C0, #4158D0)", borderRadius: 6, fontSize: "5.5px", fontWeight: 700, color: "#fff" }}>View Work</div>
+            <div style={{ flex: 1, textAlign: "center", padding: "5px 0", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 6, fontSize: "5.5px", color: "rgba(255,255,255,0.6)" }}>Contact</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1157,10 +1272,19 @@ export function LuxuryHighEndPreview({ profile, sectionVisibility }: { profile: 
   );
 }
 
-export function MusicianPreview({ profile: _profile }: { profile: any }) {
-  const artistName = "Luna Vega";
-  const genres = ["Alternative", "Electronic", "Indie Rock"];
- 
+export function MusicianPreview({ profile }: { profile: any }) {
+  const name = profile?.personalInfo?.name || "Your Name";
+  const role = profile?.workExperience?.[0]?.role || profile?.personalInfo?.title || "Artist & Performer";
+  const summary = profile?.summary || profile?.personalInfo?.summary || "";
+  const skills: string[] = [
+    ...(profile?.skills?.technical || []),
+    ...(profile?.skills?.domain || []),
+    ...(profile?.skills?.tools || []),
+  ].slice(0, 3);
+  const expCount = profile?.workExperience?.length || 0;
+  const projectCount = profile?.projects?.length || 0;
+  const tags = skills.length > 0 ? skills : ["Creative", "Performer", "Artist"];
+
   return (
     <div
       style={{
@@ -1176,25 +1300,30 @@ export function MusicianPreview({ profile: _profile }: { profile: any }) {
       <div style={{ position: "absolute", bottom: "15%", left: "5%", width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle, rgba(106,27,154,0.35) 0%, transparent 70%)", filter: "blur(25px)", pointerEvents: "none" }} />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 14px", borderBottom: "1px solid rgba(194,24,91,0.12)", background: "rgba(8,11,20,0.85)" }}>
         <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-          <span style={{ color: "#F0EEF5" }}>NOVA</span><span style={{ color: "#C2185B" }}> SOUNDS</span>
+          <span style={{ color: "#F0EEF5" }}>{name.split(" ")[0].toUpperCase()}</span>
+          <span style={{ color: "#C2185B" }}> {name.split(" ").slice(1).join(" ").toUpperCase() || "PORTFOLIO"}</span>
         </span>
         <div style={{ display: "flex", gap: 10 }}>
-          {["Music", "Events", "Gallery"].map((l) => (
+          {["Work", "About", "Contact"].map((l) => (
             <span key={l} style={{ fontSize: "5px", color: "rgba(158,155,176,0.7)", letterSpacing: "0.1em", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase" }}>{l}</span>
           ))}
         </div>
-        <div style={{ fontSize: "5px", padding: "3px 8px", border: "1px solid rgba(194,24,91,0.4)", color: "#F0EEF5", borderRadius: 2, fontFamily: "'Raleway', sans-serif", letterSpacing: "0.1em" }}>Book Now</div>
+        <div style={{ fontSize: "5px", padding: "3px 8px", border: "1px solid rgba(194,24,91,0.4)", color: "#F0EEF5", borderRadius: 2, fontFamily: "'Raleway', sans-serif", letterSpacing: "0.1em" }}>Hire Me</div>
       </div>
       <div style={{ padding: "14px 14px 10px", position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", gap: 5, marginBottom: 8 }}>
-          {genres.map((g) => (
+          {tags.map((g) => (
             <span key={g} style={{ padding: "2px 8px", border: "1px solid rgba(194,24,91,0.30)", background: "rgba(194,24,91,0.06)", borderRadius: 2, fontSize: "5px", color: "#9E9BB0", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'Raleway', sans-serif" }}>{g}</span>
           ))}
         </div>
-        <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(22px,5vw,32px)", fontWeight: 700, fontStyle: "italic", color: "#F0EEF5", lineHeight: 0.92, letterSpacing: "-0.02em", marginBottom: 8 }}>{artistName}</div>
-        <p style={{ fontSize: "6px", color: "#9E9BB0", lineHeight: 1.6, maxWidth: 160, marginBottom: 10 }}>Crafting sonic landscapes that blur the line between concert hall and conscience.</p>
+        <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(18px,4vw,28px)", fontWeight: 700, fontStyle: "italic", color: "#F0EEF5", lineHeight: 0.92, letterSpacing: "-0.02em", marginBottom: 6 }}>{name}</div>
+        <div style={{ fontSize: "6px", color: "#C2185B", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>{role}</div>
+        {summary && <p style={{ fontSize: "6px", color: "#9E9BB0", lineHeight: 1.6, maxWidth: 160, marginBottom: 8 }}>{summary.slice(0, 80)}{summary.length > 80 ? "…" : ""}</p>}
         <div style={{ display: "flex", gap: 16, marginBottom: 10 }}>
-          {[{ v: "4.2M", l: "Listeners" }, { v: "89", l: "Shows" }, { v: "6", l: "Albums" }].map((s, i) => (
+          {[
+            { v: expCount > 0 ? `${expCount}+` : "5+", l: "Years" },
+            { v: projectCount > 0 ? `${projectCount}+` : "12+", l: "Projects" },
+          ].map((s, i) => (
             <div key={i} style={{ position: "relative" }}>
               {i > 0 && <div style={{ position: "absolute", left: -8, top: 0, bottom: 0, width: 1, background: "rgba(240,238,245,0.08)" }} />}
               <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: "#F0EEF5", lineHeight: 1 }}>{s.v}</div>
@@ -1203,8 +1332,8 @@ export function MusicianPreview({ profile: _profile }: { profile: any }) {
           ))}
         </div>
         <div style={{ display: "flex", gap: 6 }}>
-          <div style={{ padding: "5px 12px", borderRadius: 2, background: "linear-gradient(to right, #C2185B, #6A1B9A)", fontSize: "6px", fontWeight: 700, color: "#F0EEF5", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>▶ Listen Now</div>
-          <div style={{ padding: "5px 12px", borderRadius: 2, border: "1px solid rgba(194,24,91,0.40)", fontSize: "6px", color: "#9E9BB0", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>Tour Dates</div>
+          <div style={{ padding: "5px 12px", borderRadius: 2, background: "linear-gradient(to right, #C2185B, #6A1B9A)", fontSize: "6px", fontWeight: 700, color: "#F0EEF5", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>View Work</div>
+          <div style={{ padding: "5px 12px", borderRadius: 2, border: "1px solid rgba(194,24,91,0.40)", fontSize: "6px", color: "#9E9BB0", fontFamily: "'Raleway', sans-serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>Contact</div>
         </div>
       </div>
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 24, background: "rgba(8,11,20,0.85)", borderTop: "1px solid rgba(194,24,91,0.12)", display: "flex", alignItems: "center", padding: "0 10px", gap: 8, zIndex: 3 }}>
@@ -1213,10 +1342,10 @@ export function MusicianPreview({ profile: _profile }: { profile: any }) {
         </div>
         <div style={{ width: 16, height: 16, borderRadius: 2, background: "linear-gradient(135deg, rgba(194,24,91,0.4), rgba(106,27,154,0.4))", flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: "6px", color: "#F0EEF5", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Midnight Echoes</div>
-          <div style={{ fontSize: "5px", color: "#9E9BB0", fontFamily: "'Inter', sans-serif" }}>Luna Vega</div>
+          <div style={{ fontSize: "6px", color: "#F0EEF5", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Featured Work</div>
+          <div style={{ fontSize: "5px", color: "#9E9BB0", fontFamily: "'Inter', sans-serif" }}>{name}</div>
         </div>
-        <div style={{ marginLeft: "auto", fontFamily: "'Space Mono', monospace", fontSize: "5px", color: "#9E9BB0" }}>2:34 / 4:17</div>
+        <div style={{ marginLeft: "auto", fontFamily: "'Space Mono', monospace", fontSize: "5px", color: "#9E9BB0" }}>Portfolio</div>
       </div>
     </div>
   );

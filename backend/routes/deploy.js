@@ -208,25 +208,35 @@ router.get('/profile/:username', async (req, res) => {
 router.get('/status/:userId', async (req, res) => {
   const { userId } = req.params;
   const username = userId.toLowerCase().replace(/[^a-z0-9]/g, '-');
-  const profile = userProfiles.get(username);
 
-  if (!profile) {
-    return res.status(404).json({ message: 'Profile not found' });
+  if (userProfiles.has(username)) {
+    return res.json({ deployed: true, portfolioUrl: `${DEPLOYED_APP_URL}/${username}`, username });
   }
 
-  const portfolioUrl = `${DEPLOYED_APP_URL}/${username}`;
-  res.json({
-    deployed: true,
-    portfolioUrl,
-    username,
-  });
+  if (mongoose.connection.readyState !== 1)
+    return res.status(404).json({ message: 'Profile not found' });
+
+  try {
+    const doc = await PortfolioDeployment.findOne({ username }).lean();
+    if (!doc) return res.status(404).json({ message: 'Profile not found' });
+    return res.json({ deployed: true, portfolioUrl: `${DEPLOYED_APP_URL}/${username}`, username });
+  } catch {
+    return res.status(404).json({ message: 'Profile not found' });
+  }
 });
 
 router.get('/qrcode/:username', async (req, res) => {
   const { username } = req.params;
-  const profile = userProfiles.get(username);
 
-  if (!profile) {
+  const inMemory = userProfiles.has(username);
+  if (!inMemory && mongoose.connection.readyState === 1) {
+    try {
+      const doc = await PortfolioDeployment.findOne({ username }).lean();
+      if (!doc) return res.status(404).json({ message: 'Profile not found' });
+    } catch {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+  } else if (!inMemory) {
     return res.status(404).json({ message: 'Profile not found' });
   }
 

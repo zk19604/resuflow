@@ -489,60 +489,143 @@ function FormSection({
   );
 }
 
+/* ─── TYPES ─── */
+type Experience = {
+  jobTitle: string; company: string; startDate: string; endDate: string;
+  workLocation: string; responsibilities: string; achievements: string; currentlyHere: boolean;
+};
+type Education = {
+  degree: string; field: string; institution: string;
+  startDate: string; endDate: string; grade: string;
+};
+type Project = { name: string; description: string; link: string; tools: string };
+
+const emptyExp = (): Experience => ({
+  jobTitle: "", company: "", startDate: "", endDate: "",
+  workLocation: "", responsibilities: "", achievements: "", currentlyHere: false,
+});
+const emptyEdu = (): Education => ({
+  degree: "", field: "", institution: "", startDate: "", endDate: "", grade: "",
+});
+const emptyProject = (): Project => ({ name: "", description: "", link: "", tools: "" });
+
 /* ─── MANUAL FORM TAB ─── */
 function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const [activeTone, setActiveTone] = useState(0);
-  const [skills, setSkills] = useState(["UX Research", "Figma", "Product Strategy"]);
+  const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
+  const [aboutText, setAboutText] = useState("");
+  const [experiences, setExperiences] = useState<Experience[]>([emptyExp()]);
+  const [educations, setEducations] = useState<Education[]>([emptyEdu()]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [checkedIndustries, setCheckedIndustries] = useState<string[]>(["Technology", "Design"]);
   const [checkedOpportunities, setCheckedOpportunities] = useState<string[]>(["Full-time", "Remote Only"]);
   const [selectedStyle, setSelectedStyle] = useState(0);
   const [sectionToggles, setSectionToggles] = useState({
-    Education: false,
-    Hobbies: true,
-    References: true,
-    Photo: false,
-    "Contact Info": false,
+    Education: false, Hobbies: true, References: true, Photo: false, "Contact Info": false,
   });
   const [wantsTestimonial, setWantsTestimonial] = useState<boolean | null>(true);
+  const [savedDraft, setSavedDraft] = useState(false);
 
   const tones = ["professional", "friendly", "creative"] as const;
 
-  const handleContinue = () => {
+  /* ── Experience helpers ── */
+  const updateExp = (idx: number, field: keyof Experience, val: any) =>
+    setExperiences((prev) => prev.map((e, i) => i === idx ? { ...e, [field]: val } : e));
+  const addExp = () => setExperiences((prev) => [...prev, emptyExp()]);
+  const removeExp = (idx: number) =>
+    setExperiences((prev) => prev.length > 1 ? prev.filter((_, i) => i !== idx) : [emptyExp()]);
+
+  /* ── Education helpers ── */
+  const updateEdu = (idx: number, field: keyof Education, val: string) =>
+    setEducations((prev) => prev.map((e, i) => i === idx ? { ...e, [field]: val } : e));
+  const addEdu = () => setEducations((prev) => [...prev, emptyEdu()]);
+  const removeEdu = (idx: number) =>
+    setEducations((prev) => prev.length > 1 ? prev.filter((_, i) => i !== idx) : [emptyEdu()]);
+
+  /* ── Project helpers ── */
+  const updateProject = (idx: number, field: keyof Project, val: string) =>
+    setProjects((prev) => prev.map((p, i) => i === idx ? { ...p, [field]: val } : p));
+  const addProject = () => setProjects((prev) => [...prev, emptyProject()]);
+  const removeProject = (idx: number) =>
+    setProjects((prev) => prev.filter((_, i) => i !== idx));
+
+  /* ── Photo ── */
+  const handlePhotoSelect = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setPhotoPreview(url);
+  };
+
+  /* ── Build profile ── */
+  const buildProfile = () => {
     const fd = formRef.current ? new FormData(formRef.current) : new FormData();
     const g = (k: string) => (fd.get(k) as string) || "";
-    const profile = {
+    return {
       personalInfo: {
-        name: g("name"),
-        title: g("title"),
-        email: g("email"),
-        phone: g("phone"),
+        name: g("name"), title: g("title"), email: g("email"), phone: g("phone"),
         location: [g("city"), g("country")].filter(Boolean).join(", "),
-        website: g("website"),
-        linkedin: g("linkedin"),
-        summary: g("about"),
+        website: g("website"), linkedin: g("linkedin"),
+        summary: aboutText,
+        photo: photoPreview || undefined,
       },
+      summary: aboutText,
       skills: { technical: skills, domain: [], soft: [], tools: [] },
-      workExperience: [
-        {
-          role: g("jobTitle"),
-          company: g("company"),
-          startDate: g("startDate"),
-          endDate: g("endDate"),
-          location: g("workLocation"),
-          description: g("responsibilities"),
-          achievements: g("achievements"),
-        },
-      ].filter((e) => e.role || e.company),
-      education: [],
+      workExperience: experiences
+        .filter((e) => e.jobTitle || e.company)
+        .map((e) => ({
+          role: e.jobTitle, company: e.company,
+          startDate: e.startDate,
+          endDate: e.currentlyHere ? "Present" : e.endDate,
+          location: e.workLocation,
+          description: e.responsibilities,
+          achievements: e.achievements ? [e.achievements] : [],
+        })),
+      education: educations
+        .filter((e) => e.institution || e.degree)
+        .map((e) => ({
+          degree: e.degree, field: e.field, institution: e.institution,
+          startDate: e.startDate, endDate: e.endDate, grade: e.grade,
+        })),
+      projects: projects
+        .filter((p) => p.name)
+        .map((p) => ({
+          name: p.name, description: p.description, link: p.link,
+          tools: p.tools.split(",").map((t) => t.trim()).filter(Boolean),
+        })),
       achievements: [],
       tone: tones[activeTone],
       industries: checkedIndustries,
       opportunities: checkedOpportunities,
     };
-    onContinue(profile);
   };
+
+  const handleContinue = () => onContinue(buildProfile());
+
+  const saveDraft = () => {
+    try {
+      localStorage.setItem("resuflow_draft", JSON.stringify(buildProfile()));
+      setSavedDraft(true);
+      setTimeout(() => setSavedDraft(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
+  /* ── Progress ── */
+  const fd = formRef.current ? new FormData(formRef.current) : null;
+  const completedSections = [
+    !!fd?.get("name"),
+    aboutText.length > 0,
+    skills.length > 0,
+    experiences.some((e) => e.jobTitle || e.company),
+    educations.some((e) => e.institution),
+    projects.length > 0,
+    photoPreview !== null,
+  ].filter(Boolean).length;
+  const totalSections = 7;
 
   const industries = [
     "Technology", "Finance", "Healthcare", "Education", "Marketing",
@@ -595,12 +678,20 @@ function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
           >
             {/* Profile photo */}
             <div style={{ gridColumn: "1 / -1", display: "flex", alignItems: "flex-start", gap: "20px" }}>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoSelect(f); }}
+              />
               <div
+                onClick={() => photoInputRef.current?.click()}
                 style={{
                   width: "100px",
                   height: "100px",
                   borderRadius: "12px",
-                  border: "2px dashed rgba(189,184,185,0.5)",
+                  border: photoPreview ? "2px solid #7F6269" : "2px dashed rgba(189,184,185,0.5)",
                   backgroundColor: "rgba(244,225,224,0.05)",
                   display: "flex",
                   flexDirection: "column",
@@ -609,10 +700,18 @@ function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
                   gap: "6px",
                   cursor: "pointer",
                   flexShrink: 0,
+                  overflow: "hidden",
+                  position: "relative",
                 }}
               >
-                <Camera size={20} style={{ color: "#7F6269" }} />
-                <span style={{ color: "#BDB8B9", fontSize: "11px" }}>Upload Photo</span>
+                {photoPreview ? (
+                  <img src={photoPreview} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <>
+                    <Camera size={20} style={{ color: "#7F6269" }} />
+                    <span style={{ color: "#BDB8B9", fontSize: "11px" }}>Upload Photo</span>
+                  </>
+                )}
               </div>
               <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                 <FormInput label="Full Name" placeholder="Fatima Mazhar" fullSpan={true} name="name" />
@@ -648,12 +747,31 @@ function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
         {/* ── Section 2: About Me ── */}
         <FormSection title="About Me" icon={<Quote size={18} />}>
           <div style={{ display: "grid", gap: "14px" }}>
-            <FormTextarea
-              placeholder="Write a short professional summary about yourself... (2-4 sentences recommended)"
-              height={120}
-              charCount="142 / 400"
-              name="about"
-            />
+            <div style={{ position: "relative" }}>
+              <textarea
+                placeholder="Write a short professional summary about yourself... (2-4 sentences recommended)"
+                value={aboutText}
+                onChange={(e) => setAboutText(e.target.value.slice(0, 400))}
+                maxLength={400}
+                style={{
+                  width: "100%",
+                  backgroundColor: "rgba(244,225,224,0.08)",
+                  border: "1px solid #BDB8B9",
+                  borderRadius: "8px",
+                  padding: "11px 14px",
+                  color: "#F4E1E0",
+                  fontSize: "14px",
+                  fontFamily: "'DM Sans', sans-serif",
+                  outline: "none",
+                  resize: "none",
+                  height: 120,
+                  boxSizing: "border-box",
+                }}
+              />
+              <div style={{ position: "absolute", bottom: "8px", right: "12px", color: aboutText.length >= 380 ? "#f87171" : "#BDB8B9", fontSize: "11px" }}>
+                {aboutText.length} / 400
+              </div>
+            </div>
             <div>
               <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, letterSpacing: "0.04em", marginBottom: "8px", fontFamily: "'DM Sans', sans-serif" }}>
                 Tone Preference
@@ -790,84 +908,150 @@ function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
 
         {/* ── Section 4: Work Experience ── */}
         <FormSection title="Work Experience" icon={<Briefcase size={18} />}>
-          <div
-            style={{
-              backgroundColor: "rgba(14,22,39,0.8)",
-              borderRadius: "12px",
-              padding: "20px",
-              border: "1px solid rgba(189,184,185,0.2)",
-              marginBottom: "12px",
-            }}
-          >
-            <div style={{ display: "grid", gridTemplateColumns: "60fr 38fr", gap: "12px", marginBottom: "12px" }}>
-              <FormInput label="Job Title" placeholder="Senior UX Strategist" name="jobTitle" />
-              <FormSelect label="Employment Type" options={["Full-time", "Part-time", "Freelance", "Internship"]} />
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-              <FormInput label="Company Name" placeholder="Horizon Digital" name="company" />
-              <FormSelect label="Industry" options={["Technology", "Finance", "Healthcare", "Design", "Consulting"]} />
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "12px", marginBottom: "12px", alignItems: "end" }}>
-              <FormInput label="Start Date" placeholder="Jan 2021" name="startDate" />
-              <FormInput label="End Date" placeholder="Present" name="endDate" />
-              <div style={{ paddingBottom: "2px", display: "flex", alignItems: "center", gap: "7px" }}>
-                <div
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    borderRadius: "4px",
-                    border: "1.5px solid #BDB8B9",
-                    backgroundColor: "rgba(127,98,105,0.2)",
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div style={{ width: "8px", height: "8px", borderRadius: "2px", backgroundColor: "#7F6269" }} />
+          {experiences.map((exp, idx) => (
+            <div
+              key={idx}
+              style={{
+                backgroundColor: "rgba(14,22,39,0.8)",
+                borderRadius: "12px",
+                padding: "20px",
+                border: "1px solid rgba(189,184,185,0.2)",
+                marginBottom: "12px",
+              }}
+            >
+              {experiences.length > 1 && (
+                <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>
+                  Experience {idx + 1}
                 </div>
-                <span style={{ color: "#BDB8B9", fontSize: "12px", whiteSpace: "nowrap" }}>Currently here</span>
+              )}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Job Title</label>
+                  <input value={exp.jobTitle} onChange={(e) => updateExp(idx, "jobTitle", e.target.value)} placeholder="Senior UX Strategist" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Company Name</label>
+                  <input value={exp.company} onChange={(e) => updateExp(idx, "company", e.target.value)} placeholder="Horizon Digital" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "12px", marginBottom: "12px", alignItems: "end" }}>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Start Date</label>
+                  <input value={exp.startDate} onChange={(e) => updateExp(idx, "startDate", e.target.value)} placeholder="Jan 2021" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>End Date</label>
+                  <input value={exp.currentlyHere ? "Present" : exp.endDate} onChange={(e) => updateExp(idx, "endDate", e.target.value)} placeholder="Present" disabled={exp.currentlyHere} style={{ width: "100%", backgroundColor: exp.currentlyHere ? "rgba(244,225,224,0.03)" : "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div style={{ paddingBottom: "2px", display: "flex", alignItems: "center", gap: "7px", cursor: "pointer" }} onClick={() => updateExp(idx, "currentlyHere", !exp.currentlyHere)}>
+                  <div style={{ width: "16px", height: "16px", borderRadius: "4px", border: "1.5px solid #BDB8B9", backgroundColor: exp.currentlyHere ? "#7F6269" : "rgba(127,98,105,0.2)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {exp.currentlyHere && <div style={{ width: "8px", height: "8px", borderRadius: "2px", backgroundColor: "#F4E1E0" }} />}
+                  </div>
+                  <span style={{ color: "#BDB8B9", fontSize: "12px", whiteSpace: "nowrap" }}>Currently here</span>
+                </div>
+              </div>
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Location</label>
+                <input value={exp.workLocation} onChange={(e) => updateExp(idx, "workLocation", e.target.value)} placeholder="London, UK" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Key Responsibilities</label>
+                <textarea value={exp.responsibilities} onChange={(e) => updateExp(idx, "responsibilities", e.target.value)} placeholder="Describe your main responsibilities and impact..." style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", resize: "none", height: 90, boxSizing: "border-box" }} />
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Achievements</label>
+                <textarea value={exp.achievements} onChange={(e) => updateExp(idx, "achievements", e.target.value)} placeholder="List 2-3 measurable achievements (e.g. Increased sales by 30%)" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", resize: "none", height: 80, boxSizing: "border-box" }} />
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <button onClick={() => removeExp(idx)} style={{ background: "none", border: "none", color: "rgba(212,60,60,0.7)", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+                  Remove Entry
+                </button>
+                {idx === experiences.length - 1 && (
+                  <button onClick={addExp} style={{ background: "none", border: "none", color: "#BDB8B9", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+                    + Add Another Experience
+                  </button>
+                )}
               </div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-              <FormInput label="Location" placeholder="London, UK" name="workLocation" />
-              <FormSelect label="Work Mode" options={["Remote", "On-site", "Hybrid"]} />
-            </div>
-            <div style={{ marginBottom: "12px" }}>
-              <FormTextarea
-                label="Key Responsibilities"
-                placeholder="Describe your main responsibilities and impact..."
-                height={90}
-                name="responsibilities"
-              />
-            </div>
-            <FormTextarea
-              label="Achievements"
-              placeholder="List 2-3 measurable achievements (e.g. Increased sales by 30%)"
-              height={80}
-              name="achievements"
-            />
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "14px" }}>
-              <button style={{ background: "none", border: "none", color: "rgba(212,60,60,0.7)", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                Remove Entry
-              </button>
-              <button style={{ background: "none", border: "none", color: "#BDB8B9", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                + Add Another Experience
-              </button>
-            </div>
-          </div>
+          ))}
         </FormSection>
 
-        {/* ── Section 5: Education (collapsed) ── */}
+        {/* ── Section 5: Education ── */}
         <FormSection title="Education" icon={<GraduationCap size={18} />} defaultOpen={false}>
-          <div style={{ opacity: 0.5, padding: "8px 0" }}>
-            <span style={{ color: "#BDB8B9", fontSize: "13px" }}>BSc Human-Computer Interaction · University of Manchester</span>
-          </div>
+          {educations.map((edu, idx) => (
+            <div key={idx} style={{ backgroundColor: "rgba(14,22,39,0.8)", borderRadius: "12px", padding: "20px", border: "1px solid rgba(189,184,185,0.2)", marginBottom: "12px" }}>
+              {educations.length > 1 && (
+                <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>Education {idx + 1}</div>
+              )}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Degree</label>
+                  <input value={edu.degree} onChange={(e) => updateEdu(idx, "degree", e.target.value)} placeholder="BSc / MSc / PhD" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Field of Study</label>
+                  <input value={edu.field} onChange={(e) => updateEdu(idx, "field", e.target.value)} placeholder="Computer Science" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Institution</label>
+                <input value={edu.institution} onChange={(e) => updateEdu(idx, "institution", e.target.value)} placeholder="University of Manchester" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Start Year</label>
+                  <input value={edu.startDate} onChange={(e) => updateEdu(idx, "startDate", e.target.value)} placeholder="2018" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>End Year</label>
+                  <input value={edu.endDate} onChange={(e) => updateEdu(idx, "endDate", e.target.value)} placeholder="2021" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Grade / GPA</label>
+                  <input value={edu.grade} onChange={(e) => updateEdu(idx, "grade", e.target.value)} placeholder="First Class / 3.8" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <button onClick={() => removeEdu(idx)} style={{ background: "none", border: "none", color: "rgba(212,60,60,0.7)", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Remove Entry</button>
+                {idx === educations.length - 1 && (
+                  <button onClick={addEdu} style={{ background: "none", border: "none", color: "#BDB8B9", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>+ Add Another Education</button>
+                )}
+              </div>
+            </div>
+          ))}
         </FormSection>
 
-        {/* ── Section 6: Projects (collapsed) ── */}
+        {/* ── Section 6: Projects ── */}
         <FormSection title="Projects & Portfolio" icon={<FolderOpen size={18} />} defaultOpen={false}>
-          <p style={{ color: "#BDB8B9", fontSize: "13px" }}>No projects added yet.</p>
+          {projects.length === 0 && (
+            <p style={{ color: "#BDB8B9", fontSize: "13px", marginBottom: "12px" }}>No projects added yet.</p>
+          )}
+          {projects.map((proj, idx) => (
+            <div key={idx} style={{ backgroundColor: "rgba(14,22,39,0.8)", borderRadius: "12px", padding: "20px", border: "1px solid rgba(189,184,185,0.2)", marginBottom: "12px" }}>
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Project Name</label>
+                <input value={proj.name} onChange={(e) => updateProject(idx, "name", e.target.value)} placeholder="ResuFlow Portfolio Builder" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Description</label>
+                <textarea value={proj.description} onChange={(e) => updateProject(idx, "description", e.target.value)} placeholder="What did you build and what impact did it have?" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", resize: "none", height: 80, boxSizing: "border-box" }} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Project URL</label>
+                  <input value={proj.link} onChange={(e) => updateProject(idx, "link", e.target.value)} placeholder="https://github.com/..." style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#BDB8B9", fontSize: "12px", fontWeight: 500, marginBottom: "6px", fontFamily: "'DM Sans', sans-serif" }}>Tools Used (comma separated)</label>
+                  <input value={proj.tools} onChange={(e) => updateProject(idx, "tools", e.target.value)} placeholder="React, Node.js, MongoDB" style={{ width: "100%", backgroundColor: "rgba(244,225,224,0.08)", border: "1px solid #BDB8B9", borderRadius: "8px", padding: "11px 14px", color: "#F4E1E0", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                <button onClick={() => removeProject(idx)} style={{ background: "none", border: "none", color: "rgba(212,60,60,0.7)", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Remove Project</button>
+              </div>
+            </div>
+          ))}
+          <button onClick={addProject} style={{ background: "none", border: "1px dashed rgba(189,184,185,0.4)", color: "#BDB8B9", fontSize: "13px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", width: "100%", padding: "12px", borderRadius: "8px" }}>+ Add a Project</button>
         </FormSection>
 
         {/* ── Section 7: Additional Questions ── */}
@@ -1094,30 +1278,32 @@ function ManualFormTab({ onContinue }: { onContinue: (profile: any) => void }) {
           {/* Progress */}
           <div style={{ flex: 1 }}>
             <div style={{ color: "#BDB8B9", fontSize: "12px", marginBottom: "6px" }}>
-              6 of 7 sections complete
+              {completedSections} of {totalSections} sections complete
             </div>
             <div style={{ height: "4px", backgroundColor: "rgba(189,184,185,0.2)", borderRadius: "999px", overflow: "hidden" }}>
-              <div style={{ width: "85%", height: "100%", backgroundColor: "#7F6269", borderRadius: "999px" }} />
+              <div style={{ width: `${Math.round((completedSections / totalSections) * 100)}%`, height: "100%", backgroundColor: "#7F6269", borderRadius: "999px", transition: "width 0.3s ease" }} />
             </div>
           </div>
 
           {/* Buttons */}
           <div style={{ display: "flex", gap: "10px", flexShrink: 0 }}>
             <button
+              onClick={saveDraft}
               style={{
-                backgroundColor: "transparent",
-                color: "#F4E1E0",
+                backgroundColor: savedDraft ? "rgba(74,222,128,0.15)" : "transparent",
+                color: savedDraft ? "#4ade80" : "#F4E1E0",
                 fontSize: "14px",
                 fontWeight: 500,
                 padding: "11px 22px",
                 borderRadius: "999px",
-                border: "1.5px solid rgba(189,184,185,0.5)",
+                border: savedDraft ? "1.5px solid #4ade80" : "1.5px solid rgba(189,184,185,0.5)",
                 cursor: "pointer",
                 fontFamily: "'DM Sans', sans-serif",
+                transition: "all 0.2s ease",
               }}
               className="hover:opacity-80 transition-opacity"
             >
-              Save Draft
+              {savedDraft ? "Saved!" : "Save Draft"}
             </button>
             <button
               onClick={handleContinue}

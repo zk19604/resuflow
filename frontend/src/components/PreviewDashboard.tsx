@@ -8,8 +8,6 @@ import {
   EditorialPreview,
   BentoPreview,
   NeumorphismPreview,
-  LuxuryHighEndPreview,
-  MusicianPreview,
   NeonVaultPreview,
   GlassDarkPreview,
   SkeuomorphismPreview,
@@ -29,26 +27,22 @@ const fontOptions = ["Modern Sans", "Serif Editorial"];
 
 type TemplateType =
   | "glassmorphism"
-  | "luxuryhighend"
   | "highendminimalist"
   | "editorial"
   | "bento"
   | "neumorphism"
   | "neon-vault"
-  | "musician"
   | "glassdark"
   | "skeuomorphism"
   | "retro";
 
 const templateLabels: Record<TemplateType, string> = {
   glassmorphism:     "Glassmorphism",
-  luxuryhighend:     "Luxury High-End",
   highendminimalist: "High-End Minimalist",
   editorial:         "Editorial",
   bento:             "Bento",
   neumorphism:       "Neumorphism",
   "neon-vault":      "Neon Vault",
-  musician:          "Musician",
   glassdark:         "Glass Dark",
   skeuomorphism:     "Skeuomorphism",
   retro:             "Retro Press",
@@ -56,13 +50,11 @@ const templateLabels: Record<TemplateType, string> = {
 
 const ALL_TEMPLATE_IDS: TemplateType[] = [
   "glassmorphism",
-  "luxuryhighend",
   "highendminimalist",
   "editorial",
   "bento",
   "neumorphism",
   "neon-vault",
-  "musician",
   "glassdark",
   "skeuomorphism",
   "retro",
@@ -83,8 +75,6 @@ function TemplatePreviewRenderer({
   switch (templateId) {
     case "glassmorphism":
       return <GlassmorphismPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
-    case "luxuryhighend":
-      return <LuxuryHighEndPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "highendminimalist":
       return <HighEndMinimalistPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "editorial":
@@ -95,8 +85,6 @@ function TemplatePreviewRenderer({
       return <NeumorphismPreview profile={profile} sectionVisibility={sectionVisibility} />;
     case "neon-vault":
       return <NeonVaultPreview profile={profile} sectionVisibility={sectionVisibility} />;
-    case "musician":
-      return <MusicianPreview profile={profile} />;
     case "glassdark":
       return <GlassDarkPreview profile={profile} />;
     case "skeuomorphism":
@@ -106,6 +94,40 @@ function TemplatePreviewRenderer({
     default:
       return null;
   }
+}
+
+/** Scaled-down thumbnail of the actual preview component using real profile data */
+function TemplateThumbnail({
+  templateId,
+  palette,
+  profile,
+}: {
+  templateId: TemplateType;
+  palette: typeof paletteRows[number];
+  profile: any;
+}) {
+  return (
+    <div style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "300%",
+          height: "300%",
+          transform: "scale(0.333)",
+          transformOrigin: "top left",
+          pointerEvents: "none",
+        }}
+      >
+        <TemplatePreviewRenderer
+          templateId={templateId}
+          palette={palette}
+          profile={profile}
+        />
+      </div>
+    </div>
+  );
 }
 
 export function PreviewDashboard() {
@@ -236,14 +258,15 @@ export function PreviewDashboard() {
               </div>
 
               {/* Template Preview */}
-              <div style={{ flex: 1, overflow: "hidden" }}>
-                <TemplatePreviewRenderer
-                  templateId={selectedTemplate}
-                  palette={paletteRows[selectedPalette]}
-                  profile={profile}
-                  sectionVisibility={sectionVisibility}
-                />
-
+              <div style={{ flex: 1, overflow: "auto", minHeight: 0 }}>
+                <div style={{ width: "100%", height: "100%", minHeight: "500px" }}>
+                  <TemplatePreviewRenderer
+                    templateId={selectedTemplate}
+                    palette={paletteRows[selectedPalette]}
+                    profile={profile}
+                    sectionVisibility={sectionVisibility}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -268,13 +291,7 @@ export function PreviewDashboard() {
                       style={{ borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: selectedTemplate === t.id ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)", transition: "border 0.15s ease", backgroundColor: "rgba(189,184,185,0.04)" }}
                     >
                       <div style={{ width: "100%", height: "80px", overflow: "hidden", pointerEvents: "none" }}>
-                        <TemplatePreviewRenderer templateId={t.id} palette={paletteRows[selectedPalette]} profile={profile} />
-                        {t.id === "glassmorphism" && <GlassmorphismPreview palette={paletteRows[selectedPalette]} profile={profile} />}
-                        {t.id === "highendminimalist" && <HighEndMinimalistPreview profile={profile} />}
-                        {t.id === "editorial" && <EditorialPreview profile={profile} />}
-                        {t.id === "bento" && <BentoPreview profile={profile} />}
-                        {t.id === "neumorphism" && <NeumorphismPreview profile={profile} />}
-                        {t.id === "glassdark" && <GlassDarkPreview profile={profile} />}
+                        <TemplateThumbnail templateId={t.id} palette={paletteRows[selectedPalette]} profile={profile} />
                       </div>
                       <div style={{ padding: "8px 10px", fontSize: "11px", fontWeight: selectedTemplate === t.id ? 600 : 500, color: selectedTemplate === t.id ? "#F4E1E0" : "#BDB8B9", textAlign: "center" }}>
                         {t.label}

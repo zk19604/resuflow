@@ -1,10 +1,22 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 interface NavbarProps {
   currentStep?: number;
 }
 
 export function Navbar({ currentStep }: NavbarProps) {
+  const location = useLocation();
+  const isLanding = location.pathname === "/";
+
+  const handleAnchorClick = (href: string) => {
+    if (isLanding) {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = `/${href}`;
+    }
+  };
+
   return (
     <nav
       style={{
@@ -58,14 +70,14 @@ export function Navbar({ currentStep }: NavbarProps) {
           { label: "Features", href: "#features" },
           { label: "Examples", href: "#examples" },
         ].map(({ label, href }) => (
-          <Link
+          <button
             key={label}
-            to={`/${href}`}
-            style={{ color: "#BDB8B9", fontSize: "14px", textDecoration: "none" }}
+            onClick={() => handleAnchorClick(href)}
+            style={{ color: "#BDB8B9", fontSize: "14px", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}
             className="hover:opacity-80 transition-opacity"
           >
             {label}
-          </Link>
+          </button>
         ))}
       </div>
 
