@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Github, Linkedin, Twitter, ExternalLink, Folder, ChevronDown, Copy, Check } from 'lucide-react';
+import { ExternalLink, Folder, ChevronDown, Copy, Check } from 'lucide-react';
+import { GitHub, LinkedIn, XIcon } from './components/BrandIcons';
 import { motion } from 'motion/react';
 import { ProjectModal } from './components/ProjectModal';
 
@@ -162,13 +163,13 @@ export default function App() {
               </div>
               <div className="flex gap-3 mt-8">
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-150" style={{ backgroundColor: 'rgba(242, 239, 233, 0.1)' }}>
-                  <Github className="w-5 h-5 text-[#F2EFE9]" />
+                  <GitHub className="w-5 h-5 text-[#F2EFE9]" />
                 </a>
                 <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-150" style={{ backgroundColor: 'rgba(242, 239, 233, 0.1)' }}>
-                  <Linkedin className="w-5 h-5 text-[#F2EFE9]" />
+                  <LinkedIn className="w-5 h-5 text-[#F2EFE9]" />
                 </a>
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-150" style={{ backgroundColor: 'rgba(242, 239, 233, 0.1)' }}>
-                  <Twitter className="w-5 h-5 text-[#F2EFE9]" />
+                  <XIcon className="w-5 h-5 text-[#F2EFE9]" />
                 </a>
               </div>
             </motion.div>
@@ -481,7 +482,7 @@ export default function App() {
                     <div className="flex justify-between items-start mb-4">
                       <Folder className="w-6 h-6 text-[#4F46E5]" />
                       <div className="flex gap-2">
-                        <Github className="w-4 h-4 text-[#6B7280] hover:text-[#1A1A2E]" />
+                        <GitHub className="w-4 h-4 text-[#6B7280] hover:text-[#1A1A2E]" />
                         <ExternalLink className="w-4 h-4 text-[#6B7280] hover:text-[#1A1A2E]" />
                       </div>
                     </div>

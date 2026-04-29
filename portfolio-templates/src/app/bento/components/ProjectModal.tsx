@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { X, ExternalLink, Github } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
+import { GitHub } from './BrandIcons';
 
 interface Project {
   id: string;
@@ -160,7 +161,7 @@ export function ProjectModal({ isOpen, onClose, project }: ProjectModalProps) {
                 textDecoration: 'none',
               }}
             >
-              <Github className="w-4 h-4" /> GitHub
+              <GitHub className="w-4 h-4" /> GitHub
             </a>
           )}
         </div>
