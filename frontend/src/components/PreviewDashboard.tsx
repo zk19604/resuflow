@@ -236,7 +236,7 @@ export function PreviewDashboard() {
         ),
         tone: (["professional", "friendly", "creative"] as const)[selectedTone],
       };
-      const response = await fetch("/api/deploy", {
+      const response = fetch(`${import.meta.env.VITE_BACKEND_URL}/api/deploy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, template: selectedTemplate, config, profile: profileData }),
