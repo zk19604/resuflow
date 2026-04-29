@@ -55,7 +55,7 @@ function UploadTab({ onSuccess }: { onSuccess: (profile: any) => void }) {
     const formData = new FormData();
     formData.append("cv", selectedFile);
     try {
-      const response = await fetch("/api/cv/upload", {
+      const response = await fetch(`${process.env.BACKEND_URL}/api/cv/upload`, {
         method: "POST",
         body: formData,
       });
