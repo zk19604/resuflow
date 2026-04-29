@@ -14,7 +14,7 @@ app.use(express.json());
 app.use('/api/cv', uploadRoute);
 app.use('/api/', deployRoute);
 
-const PORT = 3003 ;
+const PORT = process.env.PORT || 3003;
 
 async function start() {
     try {

@@ -11,7 +11,7 @@ import { Footer } from '@/components/glassmorphism/Footer';
 import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Template';
 import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
-import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
+
 import { MusicianTemplate } from '@/components/musician/Template';
 import { GlassDarkTemplate } from '@/components/glassDark/Template';
 import { NeumorphismTemplate } from '@/components/neumorphism/Template';
@@ -82,9 +82,7 @@ export default async function PortfolioPage({ params }: PageProps) {
     return <SkeuomorphismTemplate profile={profile} config={config} />;
   }
 
-  if (config?.template === 'luxuryhighend') {
-    return <LuxuryHighEndTemplate profile={profile} config={config} />;
-  }
+
 
   if (config?.template === 'highendminimalist') {
     return <HighEndMinimalistTemplate profile={profile} config={config} />;
