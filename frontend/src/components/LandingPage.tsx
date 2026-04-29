@@ -23,7 +23,7 @@ const templates = [
   { label: "Neumorphism", img: neumorphismImg },
   { label: "High End Minimalist", img: highendMinimalistImg, link: `${PORTFOLIO_BASE}/zainab-khalil-bda6c` },
   { label: "Glass Dark", img: glassDarkImg },
-  { label: "Skeuomorphism", img: skeumorphism },
+  { label: "Skeuomorphism", img: skeumorphism, link: `${PORTFOLIO_BASE}/zainab-khalil-m9is5` },
   { label: "Retro", img: retro, link: `${PORTFOLIO_BASE}/zainab-khalil-h8ijr` },
 ];
 

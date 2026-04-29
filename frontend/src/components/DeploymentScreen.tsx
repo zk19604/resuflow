@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Copy, ExternalLink, Download, CheckCheck, Loader2 } from "lucide-react";
+import { Copy, ExternalLink, Download, CheckCheck } from "lucide-react";
+import QRCode from "qrcode";
 import { Navbar } from "./Navbar";
 import { Breadcrumb } from "./Breadcrumb";
 
@@ -148,30 +149,24 @@ export function DeploymentScreen() {
   const [copiedText, setCopiedText] = useState(false);
   const [sigTab, setSigTab] = useState<"html" | "text">("html");
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-  const [qrLoading, setQrLoading] = useState(true);
-  const [qrError, setQrError] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
 
   const portfolioUrl =
     localStorage.getItem("resuflow_portfolio_url") || "resuflow.app/your-portfolio";
-  const username = localStorage.getItem("resuflow_username") || "";
 
   useEffect(() => {
     const stored = localStorage.getItem("resuflow_profile");
     if (stored) {
       try { setProfile(JSON.parse(stored)); } catch {}
     }
-    if (!username) { setQrLoading(false); return; }
-    (async () => {
-      try {
-        const res = await fetch(`/api/qrcode/${username}`);
-        const data = await res.json();
-        if (res.ok && data.qrCode) setQrCodeUrl(data.qrCode);
-        else setQrError("QR code unavailable");
-      } catch { setQrError("Failed to load QR code"); }
-      finally { setQrLoading(false); }
-    })();
-  }, [username]);
+    const url = portfolioUrl.startsWith("http") ? portfolioUrl : `https://${portfolioUrl}`;
+    QRCode.toDataURL(url, {
+      width: 360,
+      margin: 2,
+      errorCorrectionLevel: "H",
+      color: { dark: "#0E1627", light: "#E5C5C1" },
+    }).then(setQrCodeUrl).catch(() => {});
+  }, [portfolioUrl]);
 
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "";
@@ -184,10 +179,21 @@ export function DeploymentScreen() {
 
   const handleDownloadQr = () => {
     if (!qrCodeUrl) return;
+    const arr = qrCodeUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)?.[1] ?? "image/png";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    const blob = new Blob([u8arr], { type: mime });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = qrCodeUrl;
-    link.download = `resuflow-qr-${username}.png`;
+    link.href = url;
+    link.download = `resuflow-qr.png`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handlePrintCard = () => {
@@ -287,13 +293,13 @@ export function DeploymentScreen() {
         </div>
 
         {/* Main URL + QR card */}
-        <div style={{ backgroundColor: "rgba(189,184,185,0.05)", borderRadius: "24px", padding: "clamp(28px, 5vw, 48px)", border: "1px solid rgba(189,184,185,0.2)", boxShadow: "0 8px 60px rgba(0,0,0,0.4)", marginBottom: "32px" }}>
+        <div style={{ backgroundColor: "rgba(189,184,185,0.05)", borderRadius: "24px", padding: "clamp(28px, 5vw, 48px)", border: "1px solid rgba(189,184,185,0.2)", boxShadow: "0 8px 60px rgba(0,0,0,0.4)", marginBottom: "32px", overflow: "hidden" }}>
           <div className="flex flex-col md:flex-row gap-10 md:gap-0">
             {/* Left */}
             <div className="flex-1 pr-0 md:pr-10">
               <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>Your Portfolio URL</div>
               <div style={{ backgroundColor: "#0E1627", borderRadius: "8px", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "16px", border: "1px solid rgba(189,184,185,0.2)" }}>
-                <span style={{ color: "#F4E1E0", fontSize: "14px", fontFamily: "monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{portfolioUrl}</span>
+                <span style={{ color: "#F4E1E0", fontSize: "13px", fontFamily: "monospace", wordBreak: "break-all", lineHeight: 1.5 }}>{portfolioUrl}</span>
                 <button onClick={handleCopy} style={{ background: "none", border: "none", cursor: "pointer", color: copied ? "#4ade80" : "#7F6269", flexShrink: 0, display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", fontFamily: "'DM Sans', sans-serif", transition: "color 0.2s ease" }}>
                   {copied ? <CheckCheck size={16} /> : <Copy size={16} />}
                   {copied ? "Copied!" : "Copy"}
@@ -323,18 +329,14 @@ export function DeploymentScreen() {
             <div className="flex-1 pl-0 md:pl-10">
               <div style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "16px" }}>Your QR Code</div>
               <div className="flex justify-center mb-4">
-                {qrLoading ? (
-                  <div style={{ width: 180, height: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Loader2 size={32} style={{ color: "#7F6269" }} className="animate-spin" />
-                  </div>
-                ) : qrError || !qrCodeUrl ? (
-                  <QRCodeSVG />
-                ) : (
+                {qrCodeUrl ? (
                   <img src={qrCodeUrl} alt="QR Code" style={{ width: 180, height: 180, borderRadius: 12 }} />
+                ) : (
+                  <QRCodeSVG />
                 )}
               </div>
               <p style={{ color: "#BDB8B9", fontSize: "12px", textAlign: "center", marginBottom: "20px" }}>High-res, print-ready, Level H error correction.</p>
-              <button onClick={handleDownloadQr} disabled={!qrCodeUrl || qrLoading} style={{ width: "100%", backgroundColor: !qrCodeUrl || qrLoading ? "rgba(127,98,105,0.5)" : "#7F6269", color: "#F4E1E0", fontSize: "13px", fontWeight: 600, padding: "12px 0", borderRadius: "999px", border: "none", cursor: qrCodeUrl && !qrLoading ? "pointer" : "not-allowed", fontFamily: "'DM Sans', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", boxShadow: "inset 0 1px 0 rgba(244,225,224,0.12)" }} className="hover:opacity-90 transition-opacity">
+              <button onClick={handleDownloadQr} disabled={!qrCodeUrl} style={{ width: "100%", backgroundColor: !qrCodeUrl ? "rgba(127,98,105,0.5)" : "#7F6269", color: "#F4E1E0", fontSize: "13px", fontWeight: 600, padding: "12px 0", borderRadius: "999px", border: "none", cursor: qrCodeUrl ? "pointer" : "not-allowed", fontFamily: "'DM Sans', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", boxShadow: "inset 0 1px 0 rgba(244,225,224,0.12)" }} className="hover:opacity-90 transition-opacity">
                 <Download size={14} />Download PNG
               </button>
             </div>
@@ -378,8 +380,8 @@ export function DeploymentScreen() {
                 </button>
                 <button
                   onClick={handleDownloadQr}
-                  disabled={!qrCodeUrl || qrLoading}
-                  style={{ backgroundColor: "transparent", color: "#F4E1E0", fontSize: "14px", fontWeight: 600, padding: "13px 28px", borderRadius: "999px", border: "1.5px solid rgba(189,184,185,0.35)", cursor: qrCodeUrl && !qrLoading ? "pointer" : "not-allowed", fontFamily: "'DM Sans', sans-serif", display: "flex", alignItems: "center", gap: "8px", opacity: !qrCodeUrl || qrLoading ? 0.5 : 1 }}
+                  disabled={!qrCodeUrl}
+                  style={{ backgroundColor: "transparent", color: "#F4E1E0", fontSize: "14px", fontWeight: 600, padding: "13px 28px", borderRadius: "999px", border: "1.5px solid rgba(189,184,185,0.35)", cursor: qrCodeUrl ? "pointer" : "not-allowed", fontFamily: "'DM Sans', sans-serif", display: "flex", alignItems: "center", gap: "8px", opacity: !qrCodeUrl ? 0.5 : 1 }}
                   className="hover:border-[rgba(189,184,185,0.6)] transition-colors"
                 >
                   <Download size={16} />
