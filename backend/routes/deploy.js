@@ -157,14 +157,18 @@ router.post('/deploy', async (req, res) => {
     if (!resolvedConfig.template) resolvedConfig.template = template || 'glassmorphism';
     userProfiles.set(username, { profile, config: resolvedConfig });
 
-    try {
-      await PortfolioDeployment.findOneAndUpdate(
-        { username },
-        { username, profile, config: resolvedConfig },
-        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
-      );
-    } catch (dbErr) {
-      console.warn('MongoDB deploy save failed (non-fatal):', dbErr.message);
+    if (mongoose.connection.readyState === 1) {
+      try {
+        await PortfolioDeployment.findOneAndUpdate(
+          { username },
+          { username, profile, config: resolvedConfig },
+          { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
+        );
+      } catch (dbErr) {
+        console.warn('MongoDB deploy save failed (non-fatal):', dbErr.message);
+      }
+    } else {
+      console.warn('MongoDB not connected, skipping DB save for:', username);
     }
 
     const portfolioUrl = `${DEPLOYED_APP_URL}/${username}`;

@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import {
   UploadCloud,
-  Globe,
   Lock,
   ChevronDown,
   ChevronUp,
@@ -156,36 +155,6 @@ function UploadTab({ onSuccess }: { onSuccess: (profile: any) => void }) {
               </button>
             </>
           )}
-        </div>
-
-        {/* OR divider */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-          <div style={{ flex: 1, height: "1px", backgroundColor: "rgba(189,184,185,0.25)" }} />
-          <span style={{ color: "#BDB8B9", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            or paste your LinkedIn URL
-          </span>
-          <div style={{ flex: 1, height: "1px", backgroundColor: "rgba(189,184,185,0.25)" }} />
-        </div>
-
-        {/* LinkedIn input */}
-        <div style={{ position: "relative", marginBottom: "16px" }}>
-          <Globe size={15} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#BDB8B9" }} />
-          <input
-            type="url"
-            placeholder="https://linkedin.com/in/your-profile"
-            style={{
-              width: "100%",
-              backgroundColor: "rgba(244,225,224,0.08)",
-              border: "1px solid #BDB8B9",
-              borderRadius: "8px",
-              padding: "12px 14px 12px 38px",
-              color: "#F4E1E0",
-              fontSize: "14px",
-              fontFamily: "'DM Sans', sans-serif",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
-          />
         </div>
 
         {/* Privacy note */}
