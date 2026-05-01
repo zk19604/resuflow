@@ -1,9 +1,10 @@
 "use client";
 
-import { UserProfile } from '@/types/userProfile';
+import { UserProfile, PortfolioConfig } from '@/types/userProfile';
 
 interface HeroSectionProps {
   profile: UserProfile;
+  palette?: PortfolioConfig['palette'];
 }
 
 function FloatingCard({ style, children }: { style: React.CSSProperties; children: React.ReactNode }) {
@@ -27,7 +28,10 @@ function FloatingCard({ style, children }: { style: React.CSSProperties; childre
   );
 }
 
-export function HeroSection({ profile }: HeroSectionProps) {
+export function HeroSection({ profile, palette }: HeroSectionProps) {
+  const c1 = palette?.colors?.[1] || '#7B2FFF';
+  const c2 = palette?.colors?.[4] || '#1A6FFF';
+  const c3 = palette?.colors?.[2] || '#00D4C8';
   return (
     <section
       id="work"
@@ -46,19 +50,19 @@ export function HeroSection({ profile }: HeroSectionProps) {
       {/* Floating background cards */}
       <FloatingCard style={{ top: '22%', left: '6%', transform: 'rotate(-8deg)', opacity: 0.7 }}>
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.35)', marginBottom: 8 }}>Design Systems</div>
-        <div style={{ width: 80, height: 3, borderRadius: 2, background: 'linear-gradient(90deg,#7B2FFF,#1A6FFF)', marginBottom: 6 }} />
+        <div style={{ width: 80, height: 3, borderRadius: 2, background: `linear-gradient(90deg,${c1},${c2})`, marginBottom: 6 }} />
         <div style={{ width: 60, height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.12)' }} />
       </FloatingCard>
 
       <FloatingCard style={{ top: '30%', right: '5%', transform: 'rotate(5deg)', opacity: 0.65 }}>
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.35)', marginBottom: 8 }}>Vision Pro UI</div>
-        <div style={{ width: 64, height: 3, borderRadius: 2, background: 'linear-gradient(90deg,#FF2D78,#7B2FFF)', marginBottom: 6 }} />
+        <div style={{ width: 64, height: 3, borderRadius: 2, background: `linear-gradient(90deg,${c3},${c1})`, marginBottom: 6 }} />
         <div style={{ width: 48, height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.12)' }} />
       </FloatingCard>
 
       <FloatingCard style={{ bottom: '22%', left: '8%', transform: 'rotate(-3deg)', opacity: 0.60 }}>
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.35)', marginBottom: 8 }}>Innovation</div>
-        <div style={{ width: 56, height: 3, borderRadius: 2, background: 'linear-gradient(90deg,#00D4C8,#1A6FFF)', marginBottom: 6 }} />
+        <div style={{ width: 56, height: 3, borderRadius: 2, background: `linear-gradient(90deg,${c3},${c2})`, marginBottom: 6 }} />
         <div style={{ width: 40, height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.12)' }} />
       </FloatingCard>
 
@@ -90,7 +94,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
             marginBottom: 32,
           }}
         >
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'linear-gradient(135deg,#7B2FFF,#1A6FFF)' }} />
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: `linear-gradient(135deg,${c1},${c2})` }} />
           <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.02em' }}>
             {profile.workExperience[0]?.role || 'Professional'}
           </span>
@@ -133,7 +137,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
               fontSize: 14,
               fontWeight: 600,
               color: '#FFFFFF',
-              background: 'linear-gradient(135deg, #7B2FFF 0%, #1A6FFF 100%)',
+              background: `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`,
               border: 'none',
               borderRadius: 100,
               height: 48,
