@@ -87,21 +87,21 @@ function TemplatePreviewRenderer({
     case "glassmorphism":
       return <GlassmorphismPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "highendminimalist":
-      return <HighEndMinimalistPreview profile={profile} sectionVisibility={sectionVisibility} />;
+      return <HighEndMinimalistPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "editorial":
-      return <EditorialPreview profile={profile} sectionVisibility={sectionVisibility} />;
+      return <EditorialPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "bento":
-      return <BentoPreview profile={profile} sectionVisibility={sectionVisibility} />;
+      return <BentoPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "neumorphism":
-      return <NeumorphismPreview profile={profile} sectionVisibility={sectionVisibility} />;
+      return <NeumorphismPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "neon-vault":
-      return <NeonVaultPreview profile={profile} sectionVisibility={sectionVisibility} />;
+      return <NeonVaultPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "glassdark":
-      return <GlassDarkPreview profile={profile} />;
+      return <GlassDarkPreview palette={palette} profile={profile} />;
     case "skeuomorphism":
-      return <SkeuomorphismPreview profile={profile} />;
+      return <SkeuomorphismPreview palette={palette} profile={profile} />;
     case "retro":
-      return <RetroPreview profile={profile} sectionVisibility={sectionVisibility} />;
+      return <RetroPreview palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     default:
       return null;
   }
@@ -123,21 +123,21 @@ function FullPagePreviewRenderer({
     case "glassmorphism":
       return <GlassmorphismFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "highendminimalist":
-      return <HighEndMinimalistFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+      return <HighEndMinimalistFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "editorial":
-      return <EditorialFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+      return <EditorialFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "bento":
-      return <BentoFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+      return <BentoFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "neumorphism":
-      return <NeumorphismFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+      return <NeumorphismFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "neon-vault":
-      return <NeonVaultFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+      return <NeonVaultFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "glassdark":
-      return <GlassDarkFullPage profile={profile} />;
+      return <GlassDarkFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "skeuomorphism":
-      return <SkeuomorphismFullPage profile={profile} />;
+      return <SkeuomorphismFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     case "retro":
-      return <RetroFullPage profile={profile} sectionVisibility={sectionVisibility} />;
+      return <RetroFullPage palette={palette} profile={profile} sectionVisibility={sectionVisibility} />;
     default:
       return null;
   }
@@ -326,6 +326,38 @@ export function PreviewDashboard() {
 
             {/* Content Area */}
             <div style={{ padding: "24px", flex: 1 }}>
+              {/* Color Scheme Picker — REQ-8 */}
+              <CustomSection title="Color Scheme" icon="🎨">
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {paletteRows.map((p, i) => (
+                    <button
+                      key={p.name}
+                      onClick={() => setSelectedPalette(i)}
+                      style={{
+                        display: "flex", alignItems: "center", gap: "10px",
+                        padding: "9px 12px", borderRadius: "8px", border: "none",
+                        cursor: "pointer", width: "100%", textAlign: "left",
+                        backgroundColor: selectedPalette === i ? "rgba(127,98,105,0.15)" : "transparent",
+                        outline: selectedPalette === i ? "1.5px solid #7F6269" : "1px solid rgba(189,184,185,0.12)",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: "3px", flexShrink: 0 }}>
+                        {p.colors.map((c) => (
+                          <div key={c} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: c, border: "1px solid rgba(255,255,255,0.1)", flexShrink: 0 }} />
+                        ))}
+                      </div>
+                      <span style={{ color: selectedPalette === i ? "#F4E1E0" : "#BDB8B9", fontSize: "12px", fontWeight: selectedPalette === i ? 600 : 400, flex: 1 }}>
+                        {p.name}
+                      </span>
+                      {selectedPalette === i && (
+                        <span style={{ color: "#7F6269", fontSize: "13px", flexShrink: 0 }}>✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </CustomSection>
+
               {/* Template Selection — 3 columns, 2 rows for 6 templates */}
               <CustomSection title="Template" icon="🖼️">
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>

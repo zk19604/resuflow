@@ -180,12 +180,12 @@ export default async function PortfolioPage({ params }: PageProps) {
         }
       `}</style>
 
-      <Background />
+      <Background palette={config?.palette} />
 
       <NavBar profile={profile} />
 
       <main style={{ position: 'relative', zIndex: 2 }}>
-        <HeroSection profile={profile} />
+        <HeroSection profile={profile} palette={config?.palette} />
         {isVisible('about') && <AboutSection profile={profile} />}
         {isVisible('skills') && profile?.skills && <SkillsSection skills={profile.skills} />}
         {isVisible('experience') && profile?.workExperience && <WorkSection experience={profile.workExperience} />}

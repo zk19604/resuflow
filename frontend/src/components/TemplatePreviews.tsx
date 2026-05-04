@@ -255,7 +255,7 @@ export function GlassmorphismPreview({
   );
 }
 
-export function HighEndMinimalistPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function HighEndMinimalistPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
@@ -325,7 +325,7 @@ export function HighEndMinimalistPreview({ profile, sectionVisibility }: { profi
   );
 }
 
-export function EditorialPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function EditorialPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = vis("Experience") ? (profile?.workExperience?.[0]?.role || "") : "";
@@ -458,7 +458,7 @@ export function EditorialPreview({ profile, sectionVisibility }: { profile: any;
   );
 }
 
-export function BentoPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function BentoPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const hasPhoto = !!profile?.personalInfo?.photo;
   const name = profile?.personalInfo?.name || "Your Name";
@@ -752,7 +752,7 @@ export function NeumorphismPreview({ palette, profile, sectionVisibility }: { pa
   );
 }
 
-export function NeonVaultPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function NeonVaultPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const title =
@@ -1074,7 +1074,7 @@ export function NeonVaultPreview({ profile, sectionVisibility }: { profile: any;
   );
 }
 
-export function GlassDarkPreview({ profile }: { profile: any }) {
+export function GlassDarkPreview({ palette, profile }: { palette?: any; profile: any }) {
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || profile?.personalInfo?.title || "Professional";
   const summary = profile?.summary || profile?.personalInfo?.summary || "";
@@ -1351,7 +1351,7 @@ export function MusicianPreview({ profile }: { profile: any }) {
     </div>
   );
 }
-export function RetroPreview({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function RetroPreview({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || 'Your Name';
   const nameParts = name.split(' ');
@@ -1440,7 +1440,7 @@ export function RetroPreview({ profile, sectionVisibility }: { profile: any; sec
   );
 }
 
-export function SkeuomorphismPreview({ profile }: { profile: any }) {
+export function SkeuomorphismPreview({ palette, profile }: { palette?: any; profile: any }) {
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
   const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
