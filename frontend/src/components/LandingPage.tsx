@@ -17,14 +17,14 @@ const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "https://portf
 
 const templates = [
   { label: "Glassmorphism", img: glassmorphismImg },
-  { label: "Bento Grid", img: bentoImg, link: `${PORTFOLIO_BASE}/zainab-khalil-4xa6q` },
+  { label: "Bento Grid", img: bentoImg, link: `${PORTFOLIO_BASE}/zainab-khalil-wy04e` },
   { label: "Editorial", img: editorialImg },
   { label: "Neon Vault", img: neonVaultImg },
   { label: "Neumorphism", img: neumorphismImg },
-  { label: "High End Minimalist", img: highendMinimalistImg, link: `${PORTFOLIO_BASE}/zainab-khalil-bda6c` },
+  { label: "High End Minimalist", img: highendMinimalistImg },
   { label: "Glass Dark", img: glassDarkImg },
-  { label: "Skeuomorphism", img: skeumorphism, link: `${PORTFOLIO_BASE}/zainab-khalil-m9is5` },
-  { label: "Retro", img: retro, link: `${PORTFOLIO_BASE}/zainab-khalil-h8ijr` },
+  { label: "Skeuomorphism", img: skeumorphism },
+  { label: "Retro", img: retro},
 ];
 
 const features = [
