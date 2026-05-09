@@ -1,7 +1,7 @@
-// frontend/src/context/AuthContext.tsx
+/// <reference types="vite/client" />
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
  
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3003';
+const API = import.meta.env.VITE_API_URL 
  
 interface User {
   id: string;
