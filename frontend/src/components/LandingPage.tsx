@@ -13,18 +13,18 @@ import neumorphismImg from "../assets/neumorphism.png";
 import skeumorphism from "../assets/examples/skeumorphism.png";
 import retro from "../assets/examples/retro.png";
 
-const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "http://localhost:3000";
+const PORTFOLIO_BASE = import.meta.env.VITE_PORTFOLIO_BASE_URL || "https://portfolio-templates-delta.vercel.app";
 
 const templates = [
-  { label: "Glassmorphism", img: glassmorphismImg, link: `${PORTFOLIO_BASE}/zainab-khalil-jhirc` },
-  { label: "Bento Grid", img: bentoImg, link: `${PORTFOLIO_BASE}/zainab-khalil-oa6z7` },
+  { label: "Glassmorphism", img: glassmorphismImg },
+  { label: "Bento Grid", img: bentoImg, link: `${PORTFOLIO_BASE}/zainab-khalil-wy04e` },
   { label: "Editorial", img: editorialImg },
   { label: "Neon Vault", img: neonVaultImg },
   { label: "Neumorphism", img: neumorphismImg },
   { label: "High End Minimalist", img: highendMinimalistImg },
   { label: "Glass Dark", img: glassDarkImg },
-  { label: "Skeuomorphism", img: skeumorphism, link: `${PORTFOLIO_BASE}/zainab-khalil-qdvcc` },
-  { label: "Retro", img: retro, link: `${PORTFOLIO_BASE}/zainab-khalil-mn6td` },
+  { label: "Skeuomorphism", img: skeumorphism },
+  { label: "Retro", img: retro},
 ];
 
 const features = [

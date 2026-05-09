@@ -11,7 +11,7 @@ import { Footer } from '@/components/glassmorphism/Footer';
 import { HighEndMinimalistTemplate } from '@/components/highendminimalist/Template';
 import { EditorialTemplate } from '@/components/editorial/Template';
 import { BentoTemplate } from '@/components/bento/Template';
-import { LuxuryHighEndTemplate } from '@/components/luxuryhighend/Template';
+
 import { MusicianTemplate } from '@/components/musician/Template';
 import { GlassDarkTemplate } from '@/components/glassDark/Template';
 import { NeumorphismTemplate } from '@/components/neumorphism/Template';
@@ -30,14 +30,11 @@ interface ProfileResponse {
 
 async function getPortfolioData(username: string): Promise<ProfileResponse | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://portfolio-templates-delta.vercel.app';
     const res = await fetch(`${baseUrl}/api/profile/${username}`, {
       next: { revalidate: 60 }
     });
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error('Failed to fetch profile');
-    }
+    if (!res.ok) return null;
     return res.json();
   } catch (error) {
     console.error('Error fetching profile:', error);
@@ -82,9 +79,7 @@ export default async function PortfolioPage({ params }: PageProps) {
     return <SkeuomorphismTemplate profile={profile} config={config} />;
   }
 
-  if (config?.template === 'luxuryhighend') {
-    return <LuxuryHighEndTemplate profile={profile} config={config} />;
-  }
+
 
   if (config?.template === 'highendminimalist') {
     return <HighEndMinimalistTemplate profile={profile} config={config} />;
@@ -185,12 +180,12 @@ export default async function PortfolioPage({ params }: PageProps) {
         }
       `}</style>
 
-      <Background />
+      <Background palette={config?.palette} />
 
       <NavBar profile={profile} />
 
       <main style={{ position: 'relative', zIndex: 2 }}>
-        <HeroSection profile={profile} />
+        <HeroSection profile={profile} palette={config?.palette} />
         {isVisible('about') && <AboutSection profile={profile} />}
         {isVisible('skills') && profile?.skills && <SkillsSection skills={profile.skills} />}
         {isVisible('experience') && profile?.workExperience && <WorkSection experience={profile.workExperience} />}

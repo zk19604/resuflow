@@ -3,7 +3,7 @@
  * Complete scrollable full-page previews for all portfolio templates.
  * These match the actual portfolio-templates source exactly.
  */
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // ─── Shared helpers ────────────────────────────────────────────────────────────
 
@@ -17,7 +17,10 @@ function yearsExp(profile: any) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // RETRO PRESS — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function RetroFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function RetroFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const retroAccent = palette?.colors?.[1] || "var(--p-accent)";
+  const retroDark   = palette?.colors?.[0] || "var(--p-dark)";
+  const retroLight  = palette?.colors?.[2] || "var(--p-light)";
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Morgan Hayes";
   const [firstName, ...rest] = name.split(" ");
@@ -104,55 +107,56 @@ export function RetroFullPage({ profile, sectionVisibility }: { profile: any; se
 
   const fonts = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&family=Bebas+Neue&display=swap');`;
 
+  const retroVars = { "--p-accent": retroAccent, "--p-dark": retroDark, "--p-light": retroLight } as React.CSSProperties;
   return (
-    <div style={{ backgroundColor: "#F5EDD8", minHeight: "100%", fontFamily: "DM Sans, sans-serif" }}>
+    <div style={{ ...retroVars, backgroundColor: retroLight, minHeight: "100%", fontFamily: "DM Sans, sans-serif" }}>
       <style>{fonts}</style>
 
       {/* NAV */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 50, height: 72, backgroundColor: "#F5EDD8", borderTop: "3px solid #1A1208", borderBottom: "3px solid #1A1208", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.07) 1.5px, transparent 1.5px)", backgroundSize: "8px 8px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 50, height: 72, backgroundColor: "var(--p-light)", borderTop: "3px solid var(--p-dark)", borderBottom: "3px solid var(--p-dark)", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.07) 1.5px, transparent 1.5px)", backgroundSize: "8px 8px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 44, height: 44, backgroundColor: "#C9340A", border: "2px solid #1A1208", borderRadius: 4, boxShadow: "2px 2px 0 #1A1208", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#F5EDD8" }}>{initials}</div>
-          <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 18, color: "#1A1208" }}>{name}</div>
-          <div style={{ width: 2, height: 24, backgroundColor: "#1A1208" }} />
+          <div style={{ width: 44, height: 44, backgroundColor: "var(--p-accent)", border: "2px solid var(--p-dark)", borderRadius: 4, boxShadow: "2px 2px 0 var(--p-dark)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-light)" }}>{initials}</div>
+          <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 18, color: "var(--p-dark)" }}>{name}</div>
+          <div style={{ width: 2, height: 24, backgroundColor: "var(--p-dark)" }} />
           <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#8B4513", letterSpacing: "0.2em", textTransform: "uppercase" }}>EST. {startYear}</div>
         </div>
         <div style={{ display: "flex", gap: 32 }}>
           {["HOME", "ABOUT", "EXPERIENCE", "SKILLS", "CONTACT"].map(l => (
-            <span key={l} style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "#1A1208", letterSpacing: "0.2em", cursor: "pointer" }}>{l}</span>
+            <span key={l} style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "var(--p-dark)", letterSpacing: "0.2em", cursor: "pointer" }}>{l}</span>
           ))}
         </div>
-        <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 14, color: "#F5EDD8", backgroundColor: "#C9340A", border: "2px solid #1A1208", boxShadow: "3px 3px 0 #1A1208", padding: "12px 20px", cursor: "pointer" }}>HIRE ME →</div>
+        <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 14, color: "var(--p-light)", backgroundColor: "var(--p-accent)", border: "2px solid var(--p-dark)", boxShadow: "3px 3px 0 var(--p-dark)", padding: "12px 20px", cursor: "pointer" }}>HIRE ME →</div>
       </nav>
 
       {/* HERO */}
-      <section style={{ minHeight: "90vh", backgroundColor: "#F5EDD8", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.08) 2px, transparent 2px)", backgroundSize: "10px 10px", display: "grid", gridTemplateColumns: "62% 38%", maxWidth: 1440, margin: "0 auto" }}>
+      <section style={{ minHeight: "90vh", backgroundColor: "var(--p-light)", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.08) 2px, transparent 2px)", backgroundSize: "10px 10px", display: "grid", gridTemplateColumns: "62% 38%", maxWidth: 1440, margin: "0 auto" }}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "80px 40px 80px 80px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#1A1208", height: 48, borderBottom: "3px solid #C9340A", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#F5EDD8", letterSpacing: "0.4em" }}>RESUFLOW PRESENTS</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--p-dark)", height: 48, borderBottom: "3px solid var(--p-accent)", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-light)", letterSpacing: "0.4em" }}>RESUFLOW PRESENTS</div>
           <div style={{ marginTop: 32 }}>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 100, color: "#1A1208", lineHeight: 0.85, textTransform: "uppercase" }}>THE ONE &</div>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 150, color: "#C9340A", lineHeight: 0.85, textTransform: "uppercase" }}>ONLY</div>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 80, color: "#1A1208", lineHeight: 0.85, textTransform: "uppercase" }}>{firstName}</div>
-            {lastName && <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 80, color: "#F5EDD8", backgroundColor: "#1A1208", lineHeight: 0.85, display: "inline-block", padding: "0 12px", textTransform: "uppercase" }}>{lastName}</div>}
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 100, color: "var(--p-dark)", lineHeight: 0.85, textTransform: "uppercase" }}>THE ONE &</div>
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 150, color: "var(--p-accent)", lineHeight: 0.85, textTransform: "uppercase" }}>ONLY</div>
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 80, color: "var(--p-dark)", lineHeight: 0.85, textTransform: "uppercase" }}>{firstName}</div>
+            {lastName && <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 80, color: "var(--p-light)", backgroundColor: "var(--p-dark)", lineHeight: 0.85, display: "inline-block", padding: "0 12px", textTransform: "uppercase" }}>{lastName}</div>}
           </div>
-          <div style={{ marginTop: 28, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#C9340A", height: 56, borderTop: "2px solid #1A1208", borderBottom: "2px solid #1A1208", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#F5EDD8", letterSpacing: "0.25em" }}>
+          <div style={{ marginTop: 28, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--p-accent)", height: 56, borderTop: "2px solid var(--p-dark)", borderBottom: "2px solid var(--p-dark)", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-light)", letterSpacing: "0.25em" }}>
             {[role, location].filter(Boolean).join(" · ").toUpperCase()}
           </div>
           {summary && <div style={{ marginTop: 32, fontFamily: "Playfair Display, serif", fontStyle: "italic", fontSize: 20, color: "#5C2A0A", lineHeight: 1.65, maxWidth: 520 }}>"{summary.slice(0, 140)}{summary.length > 140 ? "…" : ""}"</div>}
           <div style={{ marginTop: 24, fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#8B6B4A", textTransform: "uppercase", letterSpacing: "0.2em" }}>RESUFLOW PORTFOLIO · EXECUTIVE SERIES · {year}</div>
           <div style={{ display: "flex", gap: 16, marginTop: 36 }}>
-            <button style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "#F5EDD8", backgroundColor: "#C9340A", border: "2px solid #1A1208", boxShadow: "4px 4px 0 #1A1208", height: 52, width: 200, cursor: "pointer" }}>READ FULL PROFILE</button>
-            <button style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "#1A1208", backgroundColor: "#F5EDD8", border: "2px solid #1A1208", boxShadow: "4px 4px 0 #1A1208", height: 52, width: 200, cursor: "pointer" }}>GET IN TOUCH</button>
+            <button style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "var(--p-light)", backgroundColor: "var(--p-accent)", border: "2px solid var(--p-dark)", boxShadow: "4px 4px 0 var(--p-dark)", height: 52, width: 200, cursor: "pointer" }}>READ FULL PROFILE</button>
+            <button style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "var(--p-dark)", backgroundColor: "var(--p-light)", border: "2px solid var(--p-dark)", boxShadow: "4px 4px 0 var(--p-dark)", height: 52, width: 200, cursor: "pointer" }}>GET IN TOUCH</button>
           </div>
         </div>
-        <div style={{ backgroundColor: "#1A1208", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40 }}>
-          <div style={{ width: 120, height: 120, borderRadius: "50%", backgroundColor: "#C9340A", border: "3px solid #F5EDD8", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: 36 }}>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 28, color: "#F5EDD8" }}>№001</div>
-            <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 9, color: "#F5EDD8", textTransform: "uppercase" }}>PORTFOLIO</div>
+        <div style={{ backgroundColor: "var(--p-dark)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40 }}>
+          <div style={{ width: 120, height: 120, borderRadius: "50%", backgroundColor: "var(--p-accent)", border: "3px solid var(--p-light)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: 36 }}>
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 28, color: "var(--p-light)" }}>№001</div>
+            <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 9, color: "var(--p-light)", textTransform: "uppercase" }}>PORTFOLIO</div>
           </div>
           <div style={{ width: "100%", height: 1, backgroundColor: "rgba(245,237,216,0.2)", marginBottom: 36 }} />
           {stats.map((stat, i) => (
             <div key={i} style={{ textAlign: "center", width: "100%", marginBottom: 24 }}>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 56, color: "#C9340A", lineHeight: 1 }}>{stat.number}</div>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 56, color: "var(--p-accent)", lineHeight: 1 }}>{stat.number}</div>
               <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 9, color: "#9A8060", textTransform: "uppercase", letterSpacing: "0.2em", marginTop: 6 }}>{stat.label}</div>
               {i < 2 && <div style={{ width: "100%", height: 1, backgroundColor: "rgba(245,237,216,0.15)", marginTop: 14 }} />}
             </div>
@@ -163,38 +167,38 @@ export function RetroFullPage({ profile, sectionVisibility }: { profile: any; se
       {/* ABOUT */}
       {vis("about") && (
         <section style={{ backgroundColor: "#F0E8D0", backgroundImage: "repeating-linear-gradient(transparent, transparent 23px, rgba(139,101,74,0.08) 24px)", maxWidth: 1440, margin: "0 auto" }}>
-          <div style={{ backgroundColor: "#1A1208", height: 80, borderBottom: "3px solid #C9340A", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ color: "#C9340A", fontSize: 24, marginRight: 16 }}>★</span>
-            <span style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 26, color: "#F5EDD8", letterSpacing: "0.3em" }}>THE {name.toUpperCase()} STORY</span>
-            <span style={{ color: "#C9340A", fontSize: 24, marginLeft: 16 }}>★</span>
+          <div style={{ backgroundColor: "var(--p-dark)", height: 80, borderBottom: "3px solid var(--p-accent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "var(--p-accent)", fontSize: 24, marginRight: 16 }}>★</span>
+            <span style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 26, color: "var(--p-light)", letterSpacing: "0.3em" }}>THE {name.toUpperCase()} STORY</span>
+            <span style={{ color: "var(--p-accent)", fontSize: 24, marginLeft: 16 }}>★</span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "28% 44% 28%", gap: 40, padding: "64px 80px" }}>
-            <div style={{ backgroundColor: "#1A1208", border: "2px solid #1A1208", boxShadow: "4px 4px 0 #C9340A", borderRadius: 4, padding: 40 }}>
-              <div style={{ width: 80, height: 80, borderRadius: "50%", backgroundColor: "#C9340A", border: "3px solid #F5EDD8", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 26, color: "#F5EDD8" }}>{initials}</div>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 22, color: "#F5EDD8", textAlign: "center" }}>{name}</div>
+            <div style={{ backgroundColor: "var(--p-dark)", border: "2px solid var(--p-dark)", boxShadow: "4px 4px 0 var(--p-accent)", borderRadius: 4, padding: 40 }}>
+              <div style={{ width: 80, height: 80, borderRadius: "50%", backgroundColor: "var(--p-accent)", border: "3px solid var(--p-light)", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 26, color: "var(--p-light)" }}>{initials}</div>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 22, color: "var(--p-light)", textAlign: "center" }}>{name}</div>
               <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 12, color: "#9A8060", textAlign: "center", marginTop: 4 }}>{role}</div>
               <div style={{ width: "100%", height: 1, backgroundColor: "rgba(245,237,216,0.15)", margin: "24px 0" }} />
               {[{ label: "PROJECTS", value: `${projCount}+` }, { label: "ROLES", value: `${(profile?.workExperience?.length ?? 2)}+` }, { label: "YEARS", value: `${yrs}+` }].map((s, i) => (
                 <div key={i}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0" }}>
                     <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 9, color: "#6A5040", textTransform: "uppercase", letterSpacing: "0.15em" }}>{s.label}</div>
-                    <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 40, color: "#C9340A" }}>{s.value}</div>
+                    <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 40, color: "var(--p-accent)" }}>{s.value}</div>
                   </div>
                   {i < 2 && <div style={{ width: "100%", height: 1, backgroundColor: "rgba(245,237,216,0.1)" }} />}
                 </div>
               ))}
             </div>
             <div style={{ padding: "0 20px" }}>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 72, color: "#1A1208", lineHeight: 0.9 }}>HELLO,</div>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 44, color: "#C9340A", lineHeight: 0.9 }}>I'M {name.toUpperCase()}</div>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 72, color: "var(--p-dark)", lineHeight: 0.9 }}>HELLO,</div>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 44, color: "var(--p-accent)", lineHeight: 0.9 }}>I'M {name.toUpperCase()}</div>
               <div style={{ fontFamily: "Playfair Display, serif", fontSize: 15, color: "#3D2B1A", lineHeight: 1.95, marginTop: 32 }}>{summary}</div>
             </div>
-            <div style={{ backgroundColor: "#C9340A", border: "2px solid #1A1208", boxShadow: "4px 4px 0 #1A1208", borderRadius: 4, padding: 32 }}>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 13, color: "#F5EDD8", letterSpacing: "0.3em", textAlign: "center" }}>AREAS OF</div>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 32, color: "#F5EDD8", textAlign: "center", marginBottom: 24 }}>EXPERTISE</div>
+            <div style={{ backgroundColor: "var(--p-accent)", border: "2px solid var(--p-dark)", boxShadow: "4px 4px 0 var(--p-dark)", borderRadius: 4, padding: 32 }}>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 13, color: "var(--p-light)", letterSpacing: "0.3em", textAlign: "center" }}>AREAS OF</div>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 32, color: "var(--p-light)", textAlign: "center", marginBottom: 24 }}>EXPERTISE</div>
               <div style={{ width: "100%", height: 1, backgroundColor: "rgba(245,237,216,0.3)", marginBottom: 20 }} />
               {displayTags.map((skill: string) => (
-                <div key={skill} style={{ backgroundColor: "rgba(0,0,0,0.2)", border: "1px solid rgba(245,237,216,0.2)", padding: 12, fontFamily: "DM Sans, sans-serif", fontSize: 11, color: "#F5EDD8", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>{skill}</div>
+                <div key={skill} style={{ backgroundColor: "rgba(0,0,0,0.2)", border: "1px solid rgba(245,237,216,0.2)", padding: 12, fontFamily: "DM Sans, sans-serif", fontSize: 11, color: "var(--p-light)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>{skill}</div>
               ))}
             </div>
           </div>
@@ -204,31 +208,31 @@ export function RetroFullPage({ profile, sectionVisibility }: { profile: any; se
       {/* EXPERIENCE */}
       {vis("experience") && (
         <section style={{ backgroundColor: "#EDE4C8", maxWidth: 1440, margin: "0 auto" }}>
-          <div style={{ backgroundColor: "#1A1208", height: 90, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", alignItems: "center", padding: "0 80px" }}>
+          <div style={{ backgroundColor: "var(--p-dark)", height: 90, display: "grid", gridTemplateColumns: "1fr 2fr 1fr", alignItems: "center", padding: "0 80px" }}>
             <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#9A8060", letterSpacing: "0.2em" }}>VOL. XII · NO. {experiences.length}</div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 32, color: "#F5EDD8" }}>THE CAREER GAZETTE</div>
+              <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 32, color: "var(--p-light)" }}>THE CAREER GAZETTE</div>
               <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#9A8060", textTransform: "uppercase", letterSpacing: "0.2em", marginTop: 4 }}>EXPERIENCE & CAREER TIMELINE</div>
             </div>
             <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#9A8060", letterSpacing: "0.2em", textAlign: "right" }}>{location.toUpperCase()} · {year}</div>
           </div>
-          <div style={{ width: "100%", height: 3, backgroundColor: "#C9340A" }} />
+          <div style={{ width: "100%", height: 3, backgroundColor: "var(--p-accent)" }} />
           <div style={{ padding: "40px 80px 80px" }}>
             {experiences.map((exp: any, i: number) => (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "10% 15% 2px 50% 23%", gap: 32, paddingTop: 60, paddingBottom: 60, borderBottom: i < experiences.length - 1 ? "2px solid #1A1208" : "none", alignItems: "start" }}>
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "10% 15% 2px 50% 23%", gap: 32, paddingTop: 60, paddingBottom: 60, borderBottom: i < experiences.length - 1 ? "2px solid var(--p-dark)" : "none", alignItems: "start" }}>
                 <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 28, color: "rgba(26,18,8,0.15)" }}>№ {String(i + 1).padStart(2, "0")}</div>
                 <div>
-                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#C9340A" }}>{exp.year}</div>
-                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#C9340A" }}>{exp.present}</div>
+                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-accent)" }}>{exp.year}</div>
+                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-accent)" }}>{exp.present}</div>
                 </div>
-                <div style={{ width: 2, height: 70, backgroundColor: "#1A1208" }} />
+                <div style={{ width: 2, height: 70, backgroundColor: "var(--p-dark)" }} />
                 <div>
-                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 36, color: "#1A1208", lineHeight: 1.1 }}>{exp.title}</div>
+                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 36, color: "var(--p-dark)", lineHeight: 1.1 }}>{exp.title}</div>
                   <div style={{ fontFamily: "Playfair Display, serif", fontStyle: "italic", fontSize: 15, color: "#5C4030", marginTop: 8 }}>{exp.company}</div>
                   <div style={{ fontFamily: "Playfair Display, serif", fontSize: 13, color: "#3D2B1A", lineHeight: 1.85, marginTop: 14, maxWidth: 500 }}>{exp.description}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ display: "inline-block", backgroundColor: "#C9340A", border: "2px solid #1A1208", boxShadow: "3px 3px 0 #1A1208", padding: "10px 16px", fontFamily: "Bebas Neue, sans-serif", fontSize: 12, color: "#F5EDD8", textTransform: "uppercase" }}>{exp.badge}</div>
+                  <div style={{ display: "inline-block", backgroundColor: "var(--p-accent)", border: "2px solid var(--p-dark)", boxShadow: "3px 3px 0 var(--p-dark)", padding: "10px 16px", fontFamily: "Bebas Neue, sans-serif", fontSize: 12, color: "var(--p-light)", textTransform: "uppercase" }}>{exp.badge}</div>
                 </div>
               </div>
             ))}
@@ -238,40 +242,40 @@ export function RetroFullPage({ profile, sectionVisibility }: { profile: any; se
 
       {/* SKILLS */}
       {vis("skills") && (
-        <section style={{ backgroundColor: "#F5EDD8", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.06) 2px, transparent 2px)", backgroundSize: "10px 10px", padding: "80px 0", maxWidth: 1440, margin: "0 auto" }}>
+        <section style={{ backgroundColor: "var(--p-light)", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.06) 2px, transparent 2px)", backgroundSize: "10px 10px", padding: "80px 0", maxWidth: 1440, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 10 }}>
-              <div style={{ width: 160, height: 3, backgroundColor: "#1A1208" }} />
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#1A1208", letterSpacing: "0.4em" }}>COMPETENCY CATALOGUE</div>
-              <div style={{ width: 160, height: 3, backgroundColor: "#1A1208" }} />
+              <div style={{ width: 160, height: 3, backgroundColor: "var(--p-dark)" }} />
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-dark)", letterSpacing: "0.4em" }}>COMPETENCY CATALOGUE</div>
+              <div style={{ width: 160, height: 3, backgroundColor: "var(--p-dark)" }} />
             </div>
-            <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#C9340A", textTransform: "uppercase", letterSpacing: "0.2em" }}>★ EST. {startYear} · {location.toUpperCase()} ★</div>
+            <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "var(--p-accent)", textTransform: "uppercase", letterSpacing: "0.2em" }}>★ EST. {startYear} · {location.toUpperCase()} ★</div>
           </div>
           <div style={{ padding: "0 80px" }}>
-            <div style={{ border: "3px solid #1A1208", boxShadow: "6px 6px 0 rgba(26,18,8,0.2)", backgroundColor: "#FBF5E6", padding: 48 }}>
+            <div style={{ border: "3px solid var(--p-dark)", boxShadow: "6px 6px 0 rgba(26,18,8,0.2)", backgroundColor: "#FBF5E6", padding: 48 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2px 1fr", gap: 48 }}>
                 <div>
                   {leftSkills.map((skill: any, i: number) => (
                     <div key={i} style={{ paddingTop: 20, paddingBottom: 20, borderBottom: "1px solid rgba(26,18,8,0.15)", display: "grid", gridTemplateColumns: "1fr 1fr 100px 60px", alignItems: "center", gap: 16 }}>
-                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 16, color: "#1A1208" }}>{skill.name}</div>
+                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 16, color: "var(--p-dark)" }}>{skill.name}</div>
                       <div style={{ height: 8, backgroundColor: "rgba(26,18,8,0.1)", border: "1px solid rgba(26,18,8,0.2)", position: "relative", overflow: "hidden" }}>
-                        <div style={{ height: "100%", backgroundColor: "#C9340A", width: `${skill.percentage}%` }} />
+                        <div style={{ height: "100%", backgroundColor: "var(--p-accent)", width: `${skill.percentage}%` }} />
                       </div>
                       <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 11, color: "#8B6B4A", textAlign: "right" }}>{skill.proficiency}</div>
-                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 10, color: "#F5EDD8", backgroundColor: "#1A1208", padding: "4px 8px", textAlign: "center" }}>{skill.years}</div>
+                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 10, color: "var(--p-light)", backgroundColor: "var(--p-dark)", padding: "4px 8px", textAlign: "center" }}>{skill.years}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ width: 2, backgroundColor: "#1A1208" }} />
+                <div style={{ width: 2, backgroundColor: "var(--p-dark)" }} />
                 <div>
                   {rightSkills.map((skill: any, i: number) => (
                     <div key={i} style={{ paddingTop: 20, paddingBottom: 20, borderBottom: "1px solid rgba(26,18,8,0.15)", display: "grid", gridTemplateColumns: "1fr 1fr 100px 60px", alignItems: "center", gap: 16 }}>
-                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 16, color: "#1A1208" }}>{skill.name}</div>
+                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 16, color: "var(--p-dark)" }}>{skill.name}</div>
                       <div style={{ height: 8, backgroundColor: "rgba(26,18,8,0.1)", border: "1px solid rgba(26,18,8,0.2)", position: "relative", overflow: "hidden" }}>
-                        <div style={{ height: "100%", backgroundColor: "#C9340A", width: `${skill.percentage}%` }} />
+                        <div style={{ height: "100%", backgroundColor: "var(--p-accent)", width: `${skill.percentage}%` }} />
                       </div>
                       <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 11, color: "#8B6B4A", textAlign: "right" }}>{skill.proficiency}</div>
-                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 10, color: "#F5EDD8", backgroundColor: "#1A1208", padding: "4px 8px", textAlign: "center" }}>{skill.years}</div>
+                      <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 10, color: "var(--p-light)", backgroundColor: "var(--p-dark)", padding: "4px 8px", textAlign: "center" }}>{skill.years}</div>
                     </div>
                   ))}
                 </div>
@@ -283,20 +287,20 @@ export function RetroFullPage({ profile, sectionVisibility }: { profile: any; se
 
       {/* EDUCATION */}
       {vis("education") && (
-        <section style={{ backgroundColor: "#1A1208", padding: "80px 0", maxWidth: 1440, margin: "0 auto", outline: "3px solid #C9340A", outlineOffset: -20, position: "relative" }}>
+        <section style={{ backgroundColor: "var(--p-dark)", padding: "80px 0", maxWidth: 1440, margin: "0 auto", outline: "3px solid var(--p-accent)", outlineOffset: -20, position: "relative" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#9A8060", textTransform: "uppercase", letterSpacing: "0.3em", marginBottom: 12 }}>THIS CERTIFIES THAT</div>
-            <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontStyle: "italic", fontSize: 44, color: "#F5EDD8", marginBottom: 12 }}>{name}</div>
+            <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontStyle: "italic", fontSize: 44, color: "var(--p-light)", marginBottom: 12 }}>{name}</div>
             <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#9A8060", textTransform: "uppercase", letterSpacing: "0.3em", marginBottom: 20 }}>HAS COMPLETED THE FOLLOWING ACADEMIC DISTINCTIONS</div>
-            <div style={{ width: 360, height: 3, backgroundColor: "#C9340A", margin: "0 auto" }} />
+            <div style={{ width: 360, height: 3, backgroundColor: "var(--p-accent)", margin: "0 auto" }} />
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 60, padding: "0 80px", flexWrap: "wrap" }}>
             {education.map((edu: any, i: number) => (
               <div key={i} style={{ textAlign: "center" }}>
-                <div style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: "#C9340A", border: "3px solid #F5EDD8", margin: "0 auto 16px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Bebas Neue, sans-serif", fontSize: 16, color: "#F5EDD8" }}>{edu.initials}</div>
-                <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 20, color: "#F5EDD8", marginBottom: 8 }}>{edu.institution}</div>
+                <div style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: "var(--p-accent)", border: "3px solid var(--p-light)", margin: "0 auto 16px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Bebas Neue, sans-serif", fontSize: 16, color: "var(--p-light)" }}>{edu.initials}</div>
+                <div style={{ fontFamily: "Playfair Display, serif", fontWeight: 700, fontSize: 20, color: "var(--p-light)", marginBottom: 8 }}>{edu.institution}</div>
                 <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 13, color: "#A09070", marginBottom: 8 }}>{edu.degree}</div>
-                <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#C9340A" }}>{edu.year}</div>
+                <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-accent)" }}>{edu.year}</div>
               </div>
             ))}
           </div>
@@ -305,69 +309,69 @@ export function RetroFullPage({ profile, sectionVisibility }: { profile: any; se
 
       {/* ACHIEVEMENTS */}
       {vis("achievements") && (
-        <section style={{ backgroundColor: "#C9340A", backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.06) 2px, transparent 2px)", backgroundSize: "8px 8px", padding: "80px 0", maxWidth: 1440, margin: "0 auto" }}>
+        <section style={{ backgroundColor: "var(--p-accent)", backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.06) 2px, transparent 2px)", backgroundSize: "8px 8px", padding: "80px 0", maxWidth: 1440, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "#F5EDD8", letterSpacing: "0.4em", marginBottom: 12 }}>★ HALL OF FAME ★</div>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 64, color: "#F5EDD8", lineHeight: 0.9, marginBottom: 24 }}>NOTABLE ACHIEVEMENTS</div>
-            <div style={{ width: 560, height: 3, backgroundColor: "#1A1208", margin: "0 auto" }} />
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 18, color: "var(--p-light)", letterSpacing: "0.4em", marginBottom: 12 }}>★ HALL OF FAME ★</div>
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 64, color: "var(--p-light)", lineHeight: 0.9, marginBottom: 24 }}>NOTABLE ACHIEVEMENTS</div>
+            <div style={{ width: 560, height: 3, backgroundColor: "var(--p-dark)", margin: "0 auto" }} />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: `repeat(${achievements.length}, 1fr)`, gap: 24, padding: "0 80px", marginBottom: 48 }}>
             {achievements.map((a: any, i: number) => (
-              <div key={i} style={{ backgroundColor: "#F5EDD8", border: "3px solid #1A1208", boxShadow: "6px 6px 0 #1A1208" }}>
-                <div style={{ height: 4, backgroundColor: "#1A1208" }} />
+              <div key={i} style={{ backgroundColor: "var(--p-light)", border: "3px solid var(--p-dark)", boxShadow: "6px 6px 0 var(--p-dark)" }}>
+                <div style={{ height: 4, backgroundColor: "var(--p-dark)" }} />
                 <div style={{ padding: 40, textAlign: "center" }}>
-                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 90, color: "#C9340A", lineHeight: 1 }}>{a.stat}</div>
-                  <div style={{ width: "80%", height: 2, backgroundColor: "#1A1208", margin: "20px auto" }} />
-                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 14, color: "#1A1208", letterSpacing: "0.2em", marginBottom: 14 }}>{a.label}</div>
+                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 90, color: "var(--p-accent)", lineHeight: 1 }}>{a.stat}</div>
+                  <div style={{ width: "80%", height: 2, backgroundColor: "var(--p-dark)", margin: "20px auto" }} />
+                  <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 14, color: "var(--p-dark)", letterSpacing: "0.2em", marginBottom: 14 }}>{a.label}</div>
                   <div style={{ fontFamily: "Playfair Display, serif", fontSize: 13, color: "#5C4030", lineHeight: 1.75, maxWidth: 260, margin: "0 auto" }}>{a.description}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ height: 48, backgroundColor: "#1A1208", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 14, color: "#C9340A", letterSpacing: "0.3em" }}>★ {role.toUpperCase()} ★ POWERED BY RESUFLOW ★</div>
+          <div style={{ height: 48, backgroundColor: "var(--p-dark)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 14, color: "var(--p-accent)", letterSpacing: "0.3em" }}>★ {role.toUpperCase()} ★ POWERED BY RESUFLOW ★</div>
           </div>
         </section>
       )}
 
       {/* CONTACT */}
-      <section style={{ backgroundColor: "#F5EDD8", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.06) 2px, transparent 2px)", backgroundSize: "10px 10px", padding: "80px 0 0", maxWidth: 1440, margin: "0 auto" }}>
+      <section style={{ backgroundColor: "var(--p-light)", backgroundImage: "radial-gradient(circle, rgba(80,40,0,0.06) 2px, transparent 2px)", backgroundSize: "10px 10px", padding: "80px 0 0", maxWidth: 1440, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ fontSize: 24, color: "#C9340A", marginBottom: 8 }}>★</div>
-          <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 72, color: "#1A1208", lineHeight: 0.85 }}>LET'S</div>
-          <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 72, color: "#C9340A", lineHeight: 0.85, marginBottom: 8 }}>CONNECT</div>
-          <div style={{ fontSize: 24, color: "#C9340A" }}>★</div>
+          <div style={{ fontSize: 24, color: "var(--p-accent)", marginBottom: 8 }}>★</div>
+          <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 72, color: "var(--p-dark)", lineHeight: 0.85 }}>LET'S</div>
+          <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 72, color: "var(--p-accent)", lineHeight: 0.85, marginBottom: 8 }}>CONNECT</div>
+          <div style={{ fontSize: 24, color: "var(--p-accent)" }}>★</div>
         </div>
-        <div style={{ maxWidth: 840, margin: "0 auto 80px", backgroundColor: "#1A1208", border: "3px solid #C9340A", boxShadow: "8px 8px 0 rgba(26,18,8,0.3)", padding: 56 }}>
+        <div style={{ maxWidth: 840, margin: "0 auto 80px", backgroundColor: "var(--p-dark)", border: "3px solid var(--p-accent)", boxShadow: "8px 8px 0 rgba(26,18,8,0.3)", padding: 56 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2px 1fr", gap: 56 }}>
             <div>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 13, color: "#C9340A", letterSpacing: "0.3em", marginBottom: 24 }}>GET IN TOUCH</div>
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 13, color: "var(--p-accent)", letterSpacing: "0.3em", marginBottom: 24 }}>GET IN TOUCH</div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-                <span style={{ color: "#C9340A", fontSize: 18 }}>→</span>
-                <a href={`mailto:${email}`} style={{ fontFamily: "Playfair Display, serif", fontStyle: "italic", fontSize: 16, color: "#F5EDD8", textDecoration: "none" }}>{email}</a>
+                <span style={{ color: "var(--p-accent)", fontSize: 18 }}>→</span>
+                <a href={`mailto:${email}`} style={{ fontFamily: "Playfair Display, serif", fontStyle: "italic", fontSize: 16, color: "var(--p-light)", textDecoration: "none" }}>{email}</a>
               </div>
               {linkedin && <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-                <span style={{ color: "#C9340A", fontSize: 18 }}>→</span>
+                <span style={{ color: "var(--p-accent)", fontSize: 18 }}>→</span>
                 <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: 14, color: "#C9A96E" }}>{linkedin.replace(/^https?:\/\//, "")}</span>
               </div>}
               {location && <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ color: "#C9340A", fontSize: 18 }}>→</span>
+                <span style={{ color: "var(--p-accent)", fontSize: 18 }}>→</span>
                 <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: 14, color: "#9A8060" }}>{location}</span>
               </div>}
               <div style={{ width: "100%", height: 2, backgroundColor: "rgba(245,237,216,0.15)", margin: "36px 0 28px" }} />
-              <button style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "#F5EDD8", backgroundColor: "#C9340A", border: "2px solid #F5EDD8", boxShadow: "4px 4px 0 rgba(245,237,216,0.3)", height: 52, width: "100%", cursor: "pointer", marginBottom: 12 }}>SEND MESSAGE</button>
+              <button style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 15, color: "var(--p-light)", backgroundColor: "var(--p-accent)", border: "2px solid var(--p-light)", boxShadow: "4px 4px 0 rgba(245,237,216,0.3)", height: 52, width: "100%", cursor: "pointer", marginBottom: 12 }}>SEND MESSAGE</button>
             </div>
             <div style={{ width: 2, backgroundColor: "rgba(245,237,216,0.15)" }} />
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 12, color: "#C9340A", letterSpacing: "0.3em", marginBottom: 16 }}>SCAN TO VISIT</div>
-              <div style={{ width: 120, height: 120, backgroundColor: "#F5EDD8", border: "3px solid #C9340A", marginBottom: 14, backgroundImage: "linear-gradient(#1A1208 1px, transparent 1px), linear-gradient(90deg, #1A1208 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
+              <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 12, color: "var(--p-accent)", letterSpacing: "0.3em", marginBottom: 16 }}>SCAN TO VISIT</div>
+              <div style={{ width: 120, height: 120, backgroundColor: "var(--p-light)", border: "3px solid var(--p-accent)", marginBottom: 14, backgroundImage: "linear-gradient(var(--p-dark) 1px, transparent 1px), linear-gradient(90deg, var(--p-dark) 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
               <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 11, color: "#9A8060", marginBottom: 6 }}>resuflow.app/{slug}</div>
               <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: 10, color: "#6A5040" }}>© {year} {name.toUpperCase()}</div>
             </div>
           </div>
         </div>
-        <div style={{ borderTop: "3px solid #1A1208", backgroundColor: "#F5EDD8", padding: "36px 0", textAlign: "center" }}>
-          <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 12, color: "#C9340A", letterSpacing: "0.25em" }}>★ RETRO THEME · POWERED BY RESUFLOW · EXECUTIVE PORTFOLIO · {year} ★</div>
+        <div style={{ borderTop: "3px solid var(--p-dark)", backgroundColor: "var(--p-light)", padding: "36px 0", textAlign: "center" }}>
+          <div style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: 12, color: "var(--p-accent)", letterSpacing: "0.25em" }}>★ RETRO THEME · POWERED BY RESUFLOW · EXECUTIVE PORTFOLIO · {year} ★</div>
         </div>
       </section>
     </div>
@@ -522,7 +526,7 @@ export function GlassmorphismFullPage({ palette, profile, sectionVisibility }: {
 // ═══════════════════════════════════════════════════════════════════════════════
 // NEON VAULT — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function NeonVaultFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function NeonVaultFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Creative Developer";
@@ -639,7 +643,7 @@ export function NeonVaultFullPage({ profile, sectionVisibility }: { profile: any
 // ═══════════════════════════════════════════════════════════════════════════════
 // HIGH-END MINIMALIST — full page  
 // ═══════════════════════════════════════════════════════════════════════════════
-export function HighEndMinimalistFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function HighEndMinimalistFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "";
@@ -877,7 +881,7 @@ export function LuxuryHighEndFullPage({ profile, sectionVisibility }: { profile:
 // ═══════════════════════════════════════════════════════════════════════════════
 // NEUMORPHISM — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function NeumorphismFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function NeumorphismFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
@@ -984,7 +988,7 @@ export function NeumorphismFullPage({ profile, sectionVisibility }: { profile: a
 // ═══════════════════════════════════════════════════════════════════════════════
 // SKEUOMORPHISM — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function SkeuomorphismFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function SkeuomorphismFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
@@ -1171,7 +1175,11 @@ export function MusicianFullPage({ profile, sectionVisibility }: { profile: any;
 // ═══════════════════════════════════════════════════════════════════════════════
 // EDITORIAL — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function EditorialFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function EditorialFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const editAccent = palette?.colors?.[1] || "var(--p-accent)";
+  const editDark   = palette?.colors?.[0] || "#1A1A1A";
+  const editLight  = palette?.colors?.[2] || "#F2EDE4";
+  const editVars   = { "--p-accent": editAccent, "--p-dark": editDark, "--p-light": editLight } as React.CSSProperties;
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
@@ -1185,12 +1193,12 @@ export function EditorialFullPage({ profile, sectionVisibility }: { profile: any
   const lastName = lastParts.join(" ");
 
   return (
-    <div style={{ background: "#F2EDE4", minHeight: "100%", fontFamily: "Georgia, 'Playfair Display', serif" }}>
+    <div style={{ ...editVars, background: editLight, minHeight: "100%", fontFamily: "Georgia, 'Playfair Display', serif" }}>
       {/* Newspaper header nav */}
       <nav style={{ borderBottom: "3px solid #1A1A1A", position: "sticky", top: 0, background: "#F2EDE4", zIndex: 50 }}>
         <div style={{ borderBottom: "1px solid #D8D0C4", padding: "8px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: 11, letterSpacing: "0.15em", fontStyle: "italic", color: "#888", fontFamily: "DM Sans, sans-serif" }}>PORTFOLIO № 01 · {new Date().getFullYear()}</span>
-          <span style={{ fontSize: 11, color: "#C0392B", fontFamily: "DM Sans, sans-serif", textTransform: "uppercase", letterSpacing: "0.2em" }}>ESTABLISHED {new Date().getFullYear()}</span>
+          <span style={{ fontSize: 11, color: "var(--p-accent)", fontFamily: "DM Sans, sans-serif", textTransform: "uppercase", letterSpacing: "0.2em" }}>ESTABLISHED {new Date().getFullYear()}</span>
           <span style={{ fontSize: 11, letterSpacing: "0.1em", color: "#888", fontFamily: "DM Sans, sans-serif" }}>{location}</span>
         </div>
         <div style={{ padding: "16px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -1210,10 +1218,10 @@ export function EditorialFullPage({ profile, sectionVisibility }: { profile: any
         </div>
         <div style={{ padding: "60px 56px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div style={{ width: 48, height: 2, background: "#C8B89A", marginBottom: 20 }} />
-          <span style={{ fontSize: 12, letterSpacing: "0.2em", color: "#C0392B", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif", marginBottom: 16 }}>Featured Portfolio</span>
+          <span style={{ fontSize: 12, letterSpacing: "0.2em", color: "var(--p-accent)", textTransform: "uppercase", fontFamily: "DM Sans, sans-serif", marginBottom: 16 }}>Featured Portfolio</span>
           <div style={{ lineHeight: 0.92, marginBottom: 20 }}>
             <div style={{ fontSize: 80, fontWeight: 900, color: "#1A1A1A", letterSpacing: "-0.02em" }}>{firstName}</div>
-            {lastName && <div style={{ fontSize: 60, fontWeight: 900, color: "#C0392B", letterSpacing: "-0.02em" }}>{lastName}</div>}
+            {lastName && <div style={{ fontSize: 60, fontWeight: 900, color: "var(--p-accent)", letterSpacing: "-0.02em" }}>{lastName}</div>}
           </div>
           {role && <div style={{ width: 48, height: 2, background: "#C8B89A", marginBottom: 16 }} />}
           {role && <p style={{ fontSize: 15, color: "#444", fontStyle: "italic", marginBottom: 12 }}>{role}</p>}
@@ -1230,12 +1238,12 @@ export function EditorialFullPage({ profile, sectionVisibility }: { profile: any
             {[{ title: "Technical", items: skills.technical || [] }, { title: "Tools", items: skills.tools || [] }, { title: "Domain", items: [...(skills.soft || []), ...(skills.domain || [])] }].map((group, i) => (
               <div key={i}>
                 <div style={{ borderBottom: "2px solid #1A1A1A", paddingBottom: 12, marginBottom: 24 }}>
-                  <h3 style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C0392B", fontFamily: "DM Sans, sans-serif" }}>{group.title}</h3>
+                  <h3 style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--p-accent)", fontFamily: "DM Sans, sans-serif" }}>{group.title}</h3>
                 </div>
                 {group.items.slice(0, 8).map((s: string) => (
                   <div key={s} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #D8D0C4", fontFamily: "DM Sans, sans-serif" }}>
                     <span style={{ fontSize: 14, color: "#333" }}>{s}</span>
-                    <span style={{ fontSize: 11, color: "#C0392B" }}>●</span>
+                    <span style={{ fontSize: 11, color: "var(--p-accent)" }}>●</span>
                   </div>
                 ))}
               </div>
@@ -1254,7 +1262,7 @@ export function EditorialFullPage({ profile, sectionVisibility }: { profile: any
           {workExp.map((exp: any, i: number) => (
             <div key={i} style={{ display: "grid", gridTemplateColumns: "160px 1fr", gap: 48, marginBottom: 60, paddingBottom: 60, borderBottom: "1px solid #D8D0C4" }}>
               <div>
-                <div style={{ fontSize: 11, color: "#C0392B", fontFamily: "DM Sans, sans-serif", marginBottom: 4 }}>{exp.startDate?.slice(0, 4)} — {exp.endDate === "Present" ? "NOW" : exp.endDate?.slice(0, 4)}</div>
+                <div style={{ fontSize: 11, color: "var(--p-accent)", fontFamily: "DM Sans, sans-serif", marginBottom: 4 }}>{exp.startDate?.slice(0, 4)} — {exp.endDate === "Present" ? "NOW" : exp.endDate?.slice(0, 4)}</div>
                 <div style={{ fontSize: 12, color: "#666", fontFamily: "DM Sans, sans-serif" }}>{exp.company}</div>
               </div>
               <div>
@@ -1270,13 +1278,13 @@ export function EditorialFullPage({ profile, sectionVisibility }: { profile: any
       <section style={{ padding: "100px 64px", borderTop: "3px solid #1A1A1A", background: "#1A1A1A" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
           <div>
-            <p style={{ fontSize: 12, letterSpacing: "0.2em", color: "#C0392B", fontFamily: "DM Sans, sans-serif", marginBottom: 16 }}>GET IN TOUCH</p>
+            <p style={{ fontSize: 12, letterSpacing: "0.2em", color: "var(--p-accent)", fontFamily: "DM Sans, sans-serif", marginBottom: 16 }}>GET IN TOUCH</p>
             <h2 style={{ fontSize: 64, fontWeight: 900, color: "#F2EDE4", letterSpacing: "-0.02em", lineHeight: 0.95, marginBottom: 32 }}>LET'S WORK.</h2>
           </div>
           <div>
             {email && <a href={`mailto:${email}`} style={{ display: "block", fontSize: 18, fontStyle: "italic", color: "#F2EDE4", textDecoration: "none", marginBottom: 20 }}>{email}</a>}
             {location && <div style={{ fontSize: 14, color: "rgba(242,237,228,0.5)", fontFamily: "DM Sans, sans-serif", marginBottom: 40 }}>📍 {location}</div>}
-            <div style={{ background: "#C0392B", color: "#F2EDE4", fontSize: 13, fontFamily: "DM Sans, sans-serif", fontWeight: 700, letterSpacing: "0.15em", padding: "16px 32px", display: "inline-block", cursor: "pointer" }}>SEND MESSAGE →</div>
+            <div style={{ background: "var(--p-accent)", color: "#F2EDE4", fontSize: 13, fontFamily: "DM Sans, sans-serif", fontWeight: 700, letterSpacing: "0.15em", padding: "16px 32px", display: "inline-block", cursor: "pointer" }}>SEND MESSAGE →</div>
           </div>
         </div>
       </section>
@@ -1287,7 +1295,11 @@ export function EditorialFullPage({ profile, sectionVisibility }: { profile: any
 // ═══════════════════════════════════════════════════════════════════════════════
 // BENTO — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function BentoFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function BentoFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
+  const bentoAccent    = palette?.colors?.[1] || "var(--p-accent)";
+  const bentoSecondary = palette?.colors?.[4] || "var(--p-secondary)";
+  const bentoDark      = palette?.colors?.[0] || "var(--p-dark)";
+  const bentoVars      = { "--p-accent": bentoAccent, "--p-secondary": bentoSecondary, "--p-dark": bentoDark } as React.CSSProperties;
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";
@@ -1301,15 +1313,15 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
   const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div style={{ background: "#F0F0F0", minHeight: "100%", fontFamily: "'DM Sans', sans-serif", padding: 16, boxSizing: "border-box" }}>
+    <div style={{ ...bentoVars, background: "#F0F0F0", minHeight: "100%", fontFamily: "'DM Sans', sans-serif", padding: 16, boxSizing: "border-box" }}>
       {/* Top bento grid — hero */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gridTemplateRows: "auto", gap: 12, marginBottom: 12 }}>
         {/* Main card */}
-        <div style={{ background: "#1A1A2E", borderRadius: 20, padding: 40, display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 280 }}>
+        <div style={{ background: "var(--p-dark)", borderRadius: 20, padding: 40, display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 280 }}>
           <div>
             <div style={{ fontSize: 12, letterSpacing: "0.15em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", marginBottom: 8 }}>{role}</div>
             <div style={{ fontSize: 60, fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-0.02em" }}>{name.split(" ")[0].toUpperCase()}</div>
-            <div style={{ fontSize: 48, fontWeight: 900, color: "#F5C518", lineHeight: 1, letterSpacing: "-0.02em" }}>{name.split(" ").slice(1).join(" ").toUpperCase()}</div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: "var(--p-accent)", lineHeight: 1, letterSpacing: "-0.02em" }}>{name.split(" ").slice(1).join(" ").toUpperCase()}</div>
           </div>
           {summary && <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.6, marginTop: 16 }}>{summary.slice(0, 120)}…</p>}
           <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
@@ -1319,9 +1331,9 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
         {/* Profile card */}
         <div style={{ background: "#fff", borderRadius: 20, padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
           <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#F0F0F0", border: "3px solid #E8E8E8", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: 22, fontWeight: 700, color: "#1A1A2E" }}>{initials}</span>
+            <span style={{ fontSize: 22, fontWeight: 700, color: "var(--p-dark)" }}>{initials}</span>
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#1A1A2E", textAlign: "center" }}>{name}</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "var(--p-dark)", textAlign: "center" }}>{name}</div>
           <div style={{ fontSize: 12, color: "#666", textAlign: "center" }}>{role}</div>
           <div style={{ background: "#E8F8EE", border: "1px solid #4ade80", borderRadius: 999, padding: "4px 14px", fontSize: 11, color: "#16a34a", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />Available
@@ -1329,14 +1341,14 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
           {location && <div style={{ fontSize: 12, color: "#888", textAlign: "center" }}>📍 {location}</div>}
         </div>
         {/* Stats card */}
-        <div style={{ background: "#F5C518", borderRadius: 20, padding: 24, display: "flex", flexDirection: "column", justifyContent: "space-around" }}>
+        <div style={{ background: "var(--p-accent)", borderRadius: 20, padding: 24, display: "flex", flexDirection: "column", justifyContent: "space-around" }}>
           <div style={{ fontSize: 10, letterSpacing: "0.15em", color: "rgba(0,0,0,0.5)", textTransform: "uppercase" }}>By The Numbers</div>
           <div>
-            <div style={{ fontSize: 48, fontWeight: 900, color: "#1A1A2E", lineHeight: 1 }}>{projects.length || 3}+</div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: "var(--p-dark)", lineHeight: 1 }}>{projects.length || 3}+</div>
             <div style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>Projects</div>
           </div>
           <div>
-            <div style={{ fontSize: 48, fontWeight: 900, color: "#1A1A2E", lineHeight: 1 }}>{yrs}+</div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: "var(--p-dark)", lineHeight: 1 }}>{yrs}+</div>
             <div style={{ fontSize: 12, color: "rgba(0,0,0,0.5)" }}>Years Exp</div>
           </div>
         </div>
@@ -1345,11 +1357,11 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
       {/* Skills row */}
       {vis("skills") && skills.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginBottom: 12 }}>
-          <div style={{ background: "#6C5CE7", borderRadius: 20, padding: 32, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ background: "var(--p-secondary)", borderRadius: 20, padding: 32, display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", lineHeight: 1.3, marginBottom: 16 }}>Let's work together →</div>
-            <div style={{ background: "#fff", borderRadius: 999, padding: "10px 24px", fontSize: 13, fontWeight: 700, color: "#6C5CE7", display: "inline-block", cursor: "pointer" }}>Hire Me</div>
+            <div style={{ background: "#fff", borderRadius: 999, padding: "10px 24px", fontSize: 13, fontWeight: 700, color: "var(--p-secondary)", display: "inline-block", cursor: "pointer" }}>Hire Me</div>
           </div>
-          <div style={{ background: "#1A1A2E", borderRadius: 20, padding: 28 }}>
+          <div style={{ background: "var(--p-dark)", borderRadius: 20, padding: 28 }}>
             <div style={{ fontSize: 10, letterSpacing: "0.15em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", marginBottom: 16 }}>Tech Stack</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {skills.map((s: string) => <div key={s} style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 999, padding: "6px 16px", fontSize: 12, color: "rgba(255,255,255,0.7)" }}>{s}</div>)}
@@ -1362,7 +1374,7 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginBottom: 12 }}>
         <div style={{ background: "#fff", borderRadius: 20, padding: 28 }}>
           <div style={{ fontSize: 10, letterSpacing: "0.15em", color: "#888", textTransform: "uppercase", marginBottom: 12 }}>About</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: "#1A1A2E", marginBottom: 12 }}>A bit about me.</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "var(--p-dark)", marginBottom: 12 }}>A bit about me.</div>
           {summary && <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6 }}>{summary}</p>}
         </div>
         {vis("experience") && workExp.length > 0 && (
@@ -1371,8 +1383,8 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
             {workExp.slice(0, 3).map((exp: any, i: number) => (
               <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, paddingBottom: 20, borderBottom: i < workExp.length - 1 && i < 2 ? "1px solid #F0F0F0" : "none" }}>
                 <div>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1A1A2E", marginBottom: 4 }}>{exp.role}</h3>
-                  <div style={{ fontSize: 13, color: "#6C5CE7" }}>{exp.company}</div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--p-dark)", marginBottom: 4 }}>{exp.role}</h3>
+                  <div style={{ fontSize: 13, color: "var(--p-secondary)" }}>{exp.company}</div>
                 </div>
                 <div style={{ fontSize: 11, color: "#888", flexShrink: 0, marginLeft: 16 }}>{exp.startDate?.slice(0, 4)}–{exp.endDate === "Present" ? "Now" : exp.endDate?.slice(0, 4)}</div>
               </div>
@@ -1382,11 +1394,11 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
       </div>
 
       {/* Contact */}
-      <div style={{ background: "#1A1A2E", borderRadius: 20, padding: 48, textAlign: "center" }}>
+      <div style={{ background: "var(--p-dark)", borderRadius: 20, padding: 48, textAlign: "center" }}>
         <div style={{ fontSize: 12, letterSpacing: "0.15em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", marginBottom: 12 }}>Contact</div>
         <h2 style={{ fontSize: 48, fontWeight: 900, color: "#fff", marginBottom: 16 }}>Let's Connect.</h2>
-        {email && <a href={`mailto:${email}`} style={{ display: "block", fontSize: 18, color: "#F5C518", textDecoration: "none", marginBottom: 32 }}>{email}</a>}
-        <div style={{ background: "#F5C518", color: "#1A1A2E", fontSize: 14, fontWeight: 700, padding: "16px 40px", borderRadius: 999, display: "inline-block", cursor: "pointer" }}>Get In Touch →</div>
+        {email && <a href={`mailto:${email}`} style={{ display: "block", fontSize: 18, color: "var(--p-accent)", textDecoration: "none", marginBottom: 32 }}>{email}</a>}
+        <div style={{ background: "var(--p-accent)", color: "var(--p-dark)", fontSize: 14, fontWeight: 700, padding: "16px 40px", borderRadius: 999, display: "inline-block", cursor: "pointer" }}>Get In Touch →</div>
       </div>
     </div>
   );
@@ -1395,7 +1407,7 @@ export function BentoFullPage({ profile, sectionVisibility }: { profile: any; se
 // ═══════════════════════════════════════════════════════════════════════════════
 // GLASS DARK — full page
 // ═══════════════════════════════════════════════════════════════════════════════
-export function GlassDarkFullPage({ profile, sectionVisibility }: { profile: any; sectionVisibility?: Record<string, boolean> }) {
+export function GlassDarkFullPage({ palette, profile, sectionVisibility }: { palette?: any; profile: any; sectionVisibility?: Record<string, boolean> }) {
   const vis = (s: string) => sectionVisibility?.[s] !== false;
   const name = profile?.personalInfo?.name || "Your Name";
   const role = profile?.workExperience?.[0]?.role || "Professional";

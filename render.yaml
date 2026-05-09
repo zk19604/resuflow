@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: resuflow-backend
+    rootDir: backend
+    runtime: node
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: DEPLOYED_APP_URL
+        sync: false

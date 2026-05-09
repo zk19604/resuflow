@@ -5,7 +5,7 @@ export async function GET(
   { params }: { params: Promise<{ username: string }> }
 ) {
   const { username } = await params;
-  const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+  const backendUrl = process.env.BACKEND_URL || 'https://resuflow-h3g6.onrender.com';
 
   try {
     const res = await fetch(`${backendUrl}/api/profile/${username}`, {
