@@ -54,6 +54,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',  // Vite dev server
     'http://localhost:3000',
+    'https://resuflow-three.vercel.app', 
     process.env.FRONTEND_URL,
   ].filter(Boolean),
   credentials: true,
@@ -61,15 +62,15 @@ app.use(cors({
  
 app.use(express.json());
  
-// ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api/auth', authRoute);   // ← NEW  (signup / login / me)
+// ── Routes
+app.use('/api/auth', authRoute);  
 app.use('/api/cv',   uploadRoute);
 app.use('/api/',     deployRoute);
  
-// ── Health check ──────────────────────────────────────────────────────────────
+
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
  
-// ── DB + Start ────────────────────────────────────────────────────────────────
+
 const PORT = process.env.PORT || 3003;
  
 const connectDB = async () => {
