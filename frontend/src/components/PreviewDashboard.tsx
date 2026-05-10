@@ -33,6 +33,19 @@ const paletteRows = [
   { name: "Slate Modern",colors: ["#1A1A2E", "#16213E", "#0F3460", "#E94560", "#EAEAEA"] },
 ];
 
+/** Native/default color palette for each template — extracted from their hardcoded styles */
+const templateDefaultPalettes: Record<string, { name: string; colors: string[] }> = {
+  bento:             { name: "Midnight",  colors: ["#1A1A2E", "#F5C842", "#F2EFE9", "#6B7280",  "#4F46E5"] },
+  editorial:         { name: "Ink & Ember",    colors: ["#1A1A1A", "#C8391A", "#F5F0E8", "#C8C4B8", "#6B6B6B"] },
+  highendminimalist: { name: "Carbon Linen",   colors: ["#111111", "#333333", "#F0EDE8", "#E8E8E8", "#999999"] },
+  glassmorphism:     { name: "Deep Violet",    colors: ["#080810", "#7B2FFF", "#A855F7", "#1E1E2E", "#FFFFFF"] },
+  neumorphism:       { name: "Warm Clay",      colors: ["#E8E3DC", "#E8B29B", "#3D3830", "#A09890", "#DEDAD3"] },
+  "neon-vault":      { name: "Cyber Pulse",    colors: ["#0f172a", "#9333ea", "#22d3ee", "#f1f5f9", "#2D1B69"] },
+  glassdark:         { name: "Aurora Dark",    colors: ["#0D0B1E", "#4158D0", "#C850C0", "#1A1040", "#FF6B9D"] },
+  skeuomorphism:     { name: "Aged Brass",     colors: ["#1A1004", "#C9A96E", "#C8A050", "#F5E6C8", "#8B6B4A"] },
+  retro:             { name: "Press & Ochre",  colors: ["#F5EDD8", "#1A1A1A", "#C8391A", "#8B7355", "#3D3830"] },
+};
+
 const sections = ["About", "Skills", "Experience", "Education", "Projects", "Achievements"];
 const fontOptions = ["Modern Sans", "Serif Editorial"];
 
@@ -190,6 +203,12 @@ export function PreviewDashboard() {
   const [deployError, setDeployError] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
 
+  /** Full palette list: "Default" (native template colors) first, then the 5 shared palettes */
+  const activePaletteRows = [
+    templateDefaultPalettes[selectedTemplate] ?? { name: "Default", colors: ["#1A1A1A", "#555555", "#EEEEEE", "#CCCCCC", "#888888"] },
+    ...paletteRows,
+  ];
+
   useEffect(() => {
     const stored = localStorage.getItem("resuflow_profile");
     if (!stored) {
@@ -229,7 +248,7 @@ export function PreviewDashboard() {
       const userId = `${slug}-${Math.random().toString(36).slice(2, 7)}`;
       const config = {
         template: selectedTemplate,
-        palette: paletteRows[selectedPalette],
+        palette: activePaletteRows[selectedPalette],
         font: fontOptions[selectedFont] === "Serif Editorial" ? "serif" : "sans",
         sectionsVisible: Object.fromEntries(
           Object.entries(sectionVisibility).map(([k, v]) => [k.toLowerCase(), v])
@@ -308,7 +327,7 @@ export function PreviewDashboard() {
               <div style={{ flex: 1, overflow: "auto", minHeight: 0 }}>
                 <FullPagePreviewRenderer
                   templateId={selectedTemplate}
-                  palette={paletteRows[selectedPalette]}
+                  palette={activePaletteRows[selectedPalette]}
                   profile={profile}
                   sectionVisibility={sectionVisibility}
                 />
@@ -329,7 +348,7 @@ export function PreviewDashboard() {
               {/* Color Scheme Picker — REQ-8 */}
               <CustomSection title="Color Scheme" icon="🎨">
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  {paletteRows.map((p, i) => (
+                  {activePaletteRows.map((p, i) => (
                     <button
                       key={p.name}
                       onClick={() => setSelectedPalette(i)}
@@ -347,8 +366,9 @@ export function PreviewDashboard() {
                           <div key={c} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: c, border: "1px solid rgba(255,255,255,0.1)", flexShrink: 0 }} />
                         ))}
                       </div>
-                      <span style={{ color: selectedPalette === i ? "#F4E1E0" : "#BDB8B9", fontSize: "12px", fontWeight: selectedPalette === i ? 600 : 400, flex: 1 }}>
+                      <span style={{ color: selectedPalette === i ? "#F4E1E0" : "#BDB8B9", fontSize: "12px", fontWeight: selectedPalette === i ? 600 : 400, flex: 1, display: "flex", alignItems: "center", gap: "6px" }}>
                         {p.name}
+                        
                       </span>
                       {selectedPalette === i && (
                         <span style={{ color: "#7F6269", fontSize: "13px", flexShrink: 0 }}>✓</span>
@@ -364,11 +384,11 @@ export function PreviewDashboard() {
                   {templateOptions.map((t) => (
                     <div
                       key={t.id}
-                      onClick={() => setSelectedTemplate(t.id)}
+                      onClick={() => { setSelectedTemplate(t.id); setSelectedPalette(0); }}
                       style={{ borderRadius: "12px", overflow: "hidden", cursor: "pointer", border: selectedTemplate === t.id ? "2px solid #7F6269" : "1px solid rgba(189,184,185,0.2)", transition: "border 0.15s ease", backgroundColor: "rgba(189,184,185,0.04)" }}
                     >
                       <div style={{ width: "100%", height: "80px", overflow: "hidden", pointerEvents: "none" }}>
-                        <TemplateThumbnail templateId={t.id} palette={paletteRows[selectedPalette]} profile={profile} />
+                        <TemplateThumbnail templateId={t.id} palette={activePaletteRows[selectedPalette]} profile={profile} />
                       </div>
                       <div style={{ padding: "8px 10px", fontSize: "11px", fontWeight: selectedTemplate === t.id ? 600 : 500, color: selectedTemplate === t.id ? "#F4E1E0" : "#BDB8B9", textAlign: "center" }}>
                         {t.label}
